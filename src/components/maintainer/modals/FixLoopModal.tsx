@@ -30,7 +30,7 @@ export const FixLoopModal = ({ open, onClose }: FixLoopModalProps) => {
           All code changes are handled by our agents.
         </h3>
         <p className="t-body-md body" style={{ margin: 0 }}>
-          Ube agent runs and debugs the app just like a human would.
+          Ube can run and debug your app just like a human would.
         </p>
       </div>
 
