@@ -20,14 +20,14 @@ export const FixLoopModal = ({ open, onClose }: FixLoopModalProps) => {
     >
       <div className={styles["fl-header"]}>
         <div className="eyebrow" style={{ marginBottom: 10 }}>
-          INSIDE THE FIX LOOP
+          SOFTWARE FACTORY
         </div>
         <h3
           id="fl-title"
           className="t-display-md"
           style={{ margin: 0, marginBottom: 8, lineHeight: 1.15 }}
         >
-          A sealed box. Two adversaries.
+          All code changes are handled by our agents.
         </h3>
         <p className="t-body-md body" style={{ margin: 0 }}>
           Ube agent runs and debugs the app just like a human would.
@@ -46,7 +46,7 @@ export const FixLoopModal = ({ open, onClose }: FixLoopModalProps) => {
             DOCKER SANDBOX
           </span>
           <span className={`${styles["fl-chrome-image"]} mono`}>
-            ube/fix-loop:1.4.2
+            ube/install-analytics-sdk:1.4.2
           </span>
         </div>
 
