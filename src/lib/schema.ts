@@ -191,12 +191,12 @@ export const buildPublisherSchema = (
       "@type": "Offer",
       name: "Maintainer + Publisher early access",
       url: absoluteUrl(site, "/pricing/"),
-      price: "100",
+      price: "200",
       priceCurrency: "USD",
       availability: "https://schema.org/PreOrder",
       priceSpecification: {
         "@type": "UnitPriceSpecification",
-        price: "100",
+        price: "200",
         priceCurrency: "USD",
         unitText: "per app per month",
       },
@@ -263,7 +263,7 @@ export const buildPricingOffers = (site: SiteUrl): JsonLd[] => {
       "@type": "Offer",
       name: "Maintainer + Publisher",
       url: pricingUrl,
-      price: "100",
+      price: "200",
       priceCurrency: "USD",
       availability: "https://schema.org/PreOrder",
       itemOffered: {
@@ -284,7 +284,7 @@ export const buildPricingOffers = (site: SiteUrl): JsonLd[] => {
       },
       priceSpecification: {
         "@type": "UnitPriceSpecification",
-        price: "100",
+        price: "200",
         priceCurrency: "USD",
         unitText: "per app per month",
       },
@@ -298,7 +298,7 @@ export const buildPricingOffers = (site: SiteUrl): JsonLd[] => {
       "@type": "Offer",
       name: "Maintainer + Publisher yearly",
       url: pricingUrl,
-      price: "80",
+      price: "160",
       priceCurrency: "USD",
       availability: "https://schema.org/PreOrder",
       itemOffered: {
@@ -319,7 +319,7 @@ export const buildPricingOffers = (site: SiteUrl): JsonLd[] => {
       },
       priceSpecification: {
         "@type": "UnitPriceSpecification",
-        price: "80",
+        price: "160",
         priceCurrency: "USD",
         unitText: "per app per month, billed yearly",
       },

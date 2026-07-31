@@ -7,7 +7,7 @@
 - **Company**: Chunky Tofu Studios, LLC.
 - **Status**: Pre-launch. The site is a demand probe and accepts early-access requests at https://ube.dev.
 - **Products**: Ube Maintainer, Ube Publisher, and combined Maintainer + Publisher plans.
-- **Pricing**: Maintainer is listed at $40/app/month or $32/app/month billed yearly. Maintainer + Publisher is listed at $100/app/month or $80/app/month billed yearly. Enterprise is custom. Ad spend and optional creative-generation fees are paid directly to those platforms.
+- **Pricing**: Maintainer is listed at $40/app/month or $32/app/month billed yearly. Maintainer + Publisher is listed at $200/app/month or $160/app/month billed yearly. Enterprise is custom. Ad spend and optional creative-generation fees are paid directly to those platforms.
 - **Code privacy**: User code runs in ephemeral, per-repo sandboxes that are destroyed after each job. Ube does not train on user code and does not retain it after the run. Self-hosting is offered for enterprise customers with strict privacy requirements.
 - **Auto-merge policy**: Ube always opens PRs for review. Auto-merge is opt-in per repository and remains gated behind existing branch protections and required checks.
 

@@ -49,9 +49,9 @@ const buildPlans = (billingPeriod: BillingPeriod): Plan[] => [
   },
   {
     name: "Maintainer + Publisher",
-    monthlyPrice: 100,
-    yearlyMonthlyPrice: 80,
-    yearlySavings: "Save $240/yr",
+    monthlyPrice: 200,
+    yearlyMonthlyPrice: 160,
+    yearlySavings: "Save $480/yr",
     unit: "/app/mo",
     includesLabel: "Everything in Maintainer, plus:",
     bullets: [
