@@ -188,7 +188,7 @@ export const buildUbeSchema = (
       "Runs A/B tests through Firebase or RevenueCat with approval gates",
       "Scales budget only after retention, monetization, and campaign math improve",
     ],
-    // The entry price for Ube — the Solo tier. Studio and Enterprise are
+    // The entry price for Ube — the Solo tier. Team and Enterprise are
     // enumerated in `buildPricingOffers` and surfaced via the OfferCatalog.
     offers: {
       "@type": "Offer",
@@ -247,8 +247,8 @@ export const buildPricingOffers = (site: SiteUrl): JsonLd[] => {
   return [
     tierOffer("Solo", "200", false),
     tierOffer("Solo yearly", "160", true),
-    tierOffer("Studio", "500", false),
-    tierOffer("Studio yearly", "400", true),
+    tierOffer("Team", "500", false),
+    tierOffer("Team yearly", "400", true),
     {
       "@type": "Offer",
       name: "Enterprise",

@@ -1,5 +1,5 @@
 .plans-section {
-  padding: 0 0 96px;
+  padding: 0 0 48px;
   background: var(--canvas);
 }
 
@@ -174,6 +174,7 @@
 
 .features-block {
   min-height: 0;
+  margin-top: -12px;
 }
 
 .includes-label {
@@ -222,7 +223,7 @@
 
 @media (max-width: 1024px) {
   .plans-section {
-    padding-bottom: 64px;
+    padding-bottom: 40px;
   }
 
   .plans-grid {
@@ -236,7 +237,7 @@
 
 @media (max-width: 640px) {
   .plans-section {
-    padding-bottom: 48px;
+    padding-bottom: 32px;
   }
 
   .billing-toggle {

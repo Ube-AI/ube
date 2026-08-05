@@ -26,7 +26,7 @@ type Plan = {
 // Ube (ADR 0006). Ube Maintainer is not sold from a pricing tier, so no
 // bullet here may mention maintenance, pull requests, or crash triage.
 //
-// The load-bearing difference between Solo and Studio is the managed
+// The load-bearing difference between Solo and Team is the managed
 // ad-spend ceiling, NOT an app allowance: neither tier caps how many apps a
 // customer brings. Don't write copy that implies a metered app count.
 const FOOTNOTE =
@@ -59,7 +59,7 @@ const buildPlans = (billingPeriod: BillingPeriod): Plan[] => [
       }),
   },
   {
-    name: "Studio",
+    name: "Team",
     monthlyPrice: 500,
     yearlyMonthlyPrice: 400,
     yearlySavings: "Save $1,200/yr",
@@ -67,7 +67,7 @@ const buildPlans = (billingPeriod: BillingPeriod): Plan[] => [
     includesLabel: "Everything in Solo, plus:",
     bullets: [
       "Managed ad spend up to $15k/mo",
-      "Team access with seats for everyone who ships",
+      "Team access with unlimited seats",
       "Multiple campaign refreshes per week",
       "Portfolio view — cross-app analytics, shared audiences, portfolio-level attribution",
       "Dedicated support",
@@ -76,14 +76,14 @@ const buildPlans = (billingPeriod: BillingPeriod): Plan[] => [
     buttonLabel: "Join waitlist",
     buttonStyle: "primary",
     onClick: () =>
-      openRequestAccess("pricing_studio", "default", {
+      openRequestAccess("pricing_team", "default", {
         billing_period: billingPeriod,
       }),
   },
   {
     name: "Enterprise",
     priceLabel: "Custom",
-    includesLabel: "Everything in Studio, plus:",
+    includesLabel: "Everything in Team, plus:",
     bullets: [
       "Dedicated account manager + SLA",
       "SSO (SAML / OIDC)",

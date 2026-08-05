@@ -23,17 +23,17 @@ The Conversion modal's required "What do you need most?" answer. Two choices —
 _Avoid_: "product radio", "product interest" as user-facing wording — those names predate the reframe.
 
 **Pricing tier**:
-One of `Solo` / `Studio` / `Enterprise`. Solo and Studio are billed per app, where **one app = one repo** (cross-platform projects shipping iOS + Android from one codebase count as one app); Enterprise is custom-priced. Every tier sells **Ube** only — no tier mentions **Ube Maintainer**. Solo and Studio route to the default Conversion modal; Enterprise routes to the enterprise variant.
+One of `Solo` / `Team` / `Enterprise`. Solo and Team are billed per app, where **one app = one repo** (cross-platform projects shipping iOS + Android from one codebase count as one app); Enterprise is custom-priced. Every tier sells **Ube** only — no tier mentions **Ube Maintainer**. Solo and Team route to the default Conversion modal; Enterprise routes to the enterprise variant.
 
 **Managed ad spend ceiling**:
-The monthly paid-acquisition budget Ube will run on a customer's behalf under a given **pricing tier** — $1k on Solo, $15k on Studio. Neither tier caps how many apps a customer may bring, so this ceiling, not app count, is what actually separates the two: a studio spending $10k/mo cannot sit on Solo no matter how few apps it has. Treat it as the load-bearing differentiator; the rest of Studio's list (team seats, multiple campaign refreshes per week, portfolio analytics across apps) supports it rather than replacing it.
+The monthly paid-acquisition budget Ube will run on a customer's behalf under a given **pricing tier** — $1k on Solo, $15k on Team. Neither tier caps how many apps a customer may bring, so this ceiling, not app count, is what actually separates the two: a company spending $10k/mo cannot sit on Solo no matter how few apps it has. Treat it as the load-bearing differentiator; the rest of Team's list (team seats, multiple campaign refreshes per week, portfolio analytics across apps) supports it rather than replacing it.
 
 **Portfolio view**:
-Studio's roll-up across every app on an account — cross-app analytics, shared audiences, portfolio-level attribution. A capability, not an allowance: Solo customers may run as many apps as they like, they just see each one on its own.
+Team's roll-up across every app on an account — cross-app analytics, shared audiences, portfolio-level attribution. A capability, not an allowance: Solo customers may run as many apps as they like, they just see each one on its own.
 _Avoid_: "multi-app plan", "app allowance" — nothing about app count is metered.
 
 **Founder support**:
-The offer, stated once in a full-width band below the pricing cards, that Ube's founders work with the customer directly to identify a go-to-market plan and propose improvements to existing channels. Applies to every **pricing tier** but **only for the first cohort**, and the band says so — it is a launch offer, not a standing term. Because it expires, it is not a tier differentiator: Studio's dedicated support and Enterprise's SLA-backed account manager are the standing commitments that outlive it.
+The offer, stated once in a full-width band below the pricing cards, that Ube's founders work with the customer directly to identify a go-to-market plan and propose improvements to existing channels. Applies to every **pricing tier** but **only for the first cohort**, and the band says so — it is a launch offer, not a standing term. Because it expires, it is not a tier differentiator: Team's dedicated support and Enterprise's SLA-backed account manager are the standing commitments that outlive it.
 
 **Detail modal**:
 A modal scoped to a single section. Today: Sources, Dedupe, and Fix Loop modals inside HowItWorks, opened from a step's "Learn more" link. Lifetime is local to its owning section.

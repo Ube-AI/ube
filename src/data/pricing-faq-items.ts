@@ -12,8 +12,8 @@ export const PRICING_FAQ_ITEMS: FaqItem[] = [
     a: "One repo = one app. Cross-platform projects (React Native, Flutter, Capacitor, etc.) ship to both stores under a single subscription.",
   },
   {
-    q: "What's the difference between Solo and Studio?",
-    a: "Managed ad spend, mostly. Solo runs up to $1k/mo of paid acquisition on your behalf; Studio runs up to $15k/mo. Studio also adds seats for your team, several campaign refreshes a week instead of one, and a portfolio view that rolls analytics, audiences, and attribution up across every app on the account. Neither plan limits how many apps you bring — the spend ceiling is the real dividing line.",
+    q: "What's the difference between Solo and Team?",
+    a: "Managed ad spend, mostly. Solo runs up to $1k/mo of paid acquisition on your behalf; Team runs up to $15k/mo. Team also adds unlimited seats, several campaign refreshes a week instead of one, and a portfolio view that rolls analytics, audiences, and attribution up across every app on the account. Neither plan limits how many apps you bring — the spend ceiling is the real dividing line.",
   },
   {
     q: "Do you need access to my ad accounts?",

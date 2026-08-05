@@ -4,14 +4,13 @@
 // The offer applies to every pricing tier, which is exactly why it lives
 // here rather than in a card's bullet list: it is a launch offer for the
 // first cohort only, not a standing term, so it must never read as a tier
-// differentiator. Studio's dedicated support and Enterprise's SLA-backed
+// differentiator. Team's dedicated support and Enterprise's SLA-backed
 // account manager are the commitments that outlive it. The scarcity has to
 // stay explicit in the copy — see the `Founder support` entry in CONTEXT.md.
 //
 // Uses the primary accent rather than the coconut `--accent-2` that the
 // cross-promo cards take: coconut signals "a different product over there",
 // and this is core Ube.
-import { ClockCountdownIcon } from "@phosphor-icons/react"
 ---
 
 <section class="founder-band" aria-labelledby="founder-band-title">
@@ -30,13 +29,6 @@ import { ClockCountdownIcon } from "@phosphor-icons/react"
             On every plan, we sit down with you to identify a go-to-market plan
             and propose concrete improvements to the channels you already run.
           </p>
-          <p class="t-body-sm muted founder-note">
-            <ClockCountdownIcon size={14} aria-hidden="true" />
-            <span>
-              A launch offer for our first cohort — not a standing part of any
-              plan. Once the cohort fills, it ends.
-            </span>
-          </p>
         </div>
       </div>
     </div>
@@ -47,10 +39,9 @@ import { ClockCountdownIcon } from "@phosphor-icons/react"
   /* Shares the plans grid's `--canvas` surface and hangs a floating panel on
      it, so the band reads as a footnote to the cards above rather than a new
      region. TrustedBy below brings its own lighter `--canvas-soft`, which is
-     the next real surface change — no border needed here. `.plans-section`
-     already lays 96px of air above this panel. */
+     the next real surface change — no border needed here. */
   .founder-band {
-    padding: 0 0 32px;
+    padding: 0 0 96px;
     background: var(--canvas);
   }
   .founder-panel {
@@ -119,28 +110,19 @@ import { ClockCountdownIcon } from "@phosphor-icons/react"
     margin: 0;
     line-height: 1.6;
   }
-  .founder-note {
-    display: flex;
-    align-items: baseline;
-    gap: 9px;
-    margin: 0;
-    line-height: 1.5;
-  }
-  /* Phosphor renders a plain <svg> child here, so :global() is needed to
-     reach it from this scoped block. */
-  .founder-note :global(svg) {
-    flex-shrink: 0;
-    color: var(--accent);
-    transform: translateY(2px);
-  }
-
   @media (max-width: 900px) {
+    .founder-band {
+      padding-bottom: 64px;
+    }
     .founder-panel-inner {
       grid-template-columns: 1fr;
       gap: 24px;
     }
   }
   @media (max-width: 640px) {
+    .founder-band {
+      padding-bottom: 48px;
+    }
     .founder-panel {
       padding: 28px 24px;
     }

@@ -15,7 +15,7 @@ import { track } from "@/lib/analytics"
 // Source labels track user-facing copy: when a CTA is renamed, its label is
 // renamed with it, accepting the break in the analytics series rather than
 // carrying a name that no longer describes what it points at. The homepage
-// stopped saying "Publisher" and the pricing cards became Solo/Studio at new
+// stopped saying "Publisher" and the pricing cards became Solo/Team at new
 // prices, so those four labels moved with them (ADR 0006).
 //
 // This is the OPPOSITE of the need-signal values in RequestAccessModal,
@@ -29,7 +29,7 @@ export type ModalSource =
   | "maintainer_final_cta"
   | "home_final_cta"
   | "pricing_solo"
-  | "pricing_studio"
+  | "pricing_team"
   | "pricing_enterprise"
   | "pricing_final_cta"
 
