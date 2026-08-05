@@ -1,5 +1,5 @@
 {
-  "$schema": "https://biomejs.dev/schemas/2.4.15/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.5.7/schema.json",
   "root": true,
   "vcs": {
     "enabled": true,
@@ -22,6 +22,7 @@
       "!skills-lock.json",
       "!.astro",
       "!**/*.astro",
+      "!src/assets/integrations",
       "!claude_design_publisher_page",
       "!.claude/worktrees"
     ]
@@ -29,7 +30,7 @@
   "linter": {
     "enabled": true,
     "rules": {
-      "recommended": true,
+      "preset": "recommended",
       "correctness": {
         "noNestedComponentDefinitions": "error",
         "noUnusedVariables": {
@@ -37,6 +38,7 @@
           "fix": "none"
         },
         "noUnknownPseudoClass": {
+          "level": "error",
           "options": {
             "ignore": ["global"]
           }

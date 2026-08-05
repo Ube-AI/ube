@@ -4,19 +4,35 @@ Static landing for [ube.dev](https://ube.dev). Built with [Astro](https://astro.
 
 ## Local dev
 
-```
+```bash
 npm install
 npm run dev    # Astro dev server (HMR; defaults to :4321)
 ```
 
 ## Production build
 
-```
+```bash
 npm run build   # → dist/
 npm run preview # serve dist/ locally
 ```
 
 GitHub Actions runs `npm ci && npm run build` and publishes `dist/` to Pages.
+
+## Upgrade deps
+
+To upgrade deps:
+
+```bash
+npm update --save
+npm run check && npm run build
+```
+
+To upgrade deps including major versions:
+
+```bash
+npx npm-check-updates@latest -u --install always
+npm run check && npm run build
+```
 
 ## Layout
 
