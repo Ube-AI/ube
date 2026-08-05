@@ -6,7 +6,7 @@
 // Esc dismissal), and the "Request access" button clicks that route into
 // `openRequestAccess('nav')` from the nano store.
 //
-// Active route + landing-page anchor target are derived from
+// Active route + landing-page anchor targets are derived from
 // `Astro.url.pathname` so no prop drilling from BaseLayout is required.
 // Mobile menu lives inline (no React portal) — `.mobile-menu` is
 // `position: fixed; inset: 0; z-index: 1000` in styles.css, which trumps
@@ -21,11 +21,14 @@ import Wordmark from "@/components/Wordmark.astro"
 const pathname = Astro.url.pathname
 const isLandingPage = pathname === "/"
 const isPricingPage = pathname === "/pricing/"
-// `/publisher` redirects to `/`, so on the landing page the Home nav item
-// is "where we are". Other routes (maintainer, terms, privacy) don't have
-// a nav-center entry — nothing highlights. Maintainer is deliberately off
-// the nav (ADR 0006); it is reachable from the footer.
-const homeActive = isLandingPage
+// Homepage sections form the primary navigation. On other routes they link
+// back to the same anchors on `/`. Maintainer is deliberately off the nav
+// (ADR 0006); it is reachable from the footer.
+const homeSections = [
+  { label: "The Stack", anchor: "stack" },
+  { label: "How it Works", anchor: "loop" },
+  { label: "Insights", anchor: "insights" },
+]
 const pricingActive = isPricingPage
 const wordmarkHref = isLandingPage ? "#top" : "/"
 ---
@@ -37,12 +40,16 @@ const wordmarkHref = isLandingPage ? "#top" : "/"
     </a>
 
     <div class="nav-center">
-      <a
-        href="/"
-        class:list={["nav-link", { active: homeActive }]}
-      >
-        Home
-      </a>
+      {
+        homeSections.map(({ label, anchor }) => (
+          <a
+            href={isLandingPage ? `#${anchor}` : `/#${anchor}`}
+            class="nav-link"
+          >
+            {label}
+          </a>
+        ))
+      }
       <a
         href="/pricing/"
         class:list={["nav-link", { active: pricingActive }]}
@@ -93,13 +100,17 @@ const wordmarkHref = isLandingPage ? "#top" : "/"
     </button>
   </div>
   <div class="mobile-menu-links">
-    <a
-      href="/"
-      class:list={["mobile-menu-link", { active: homeActive }]}
-      data-nav-menu-link
-    >
-      Home
-    </a>
+    {
+      homeSections.map(({ label, anchor }) => (
+        <a
+          href={isLandingPage ? `#${anchor}` : `/#${anchor}`}
+          class="mobile-menu-link"
+          data-nav-menu-link
+        >
+          {label}
+        </a>
+      ))
+    }
     <a
       href="/pricing/"
       class:list={["mobile-menu-link", { active: pricingActive }]}
