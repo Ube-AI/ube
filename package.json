@@ -29,5 +29,9 @@
     "@types/react-dom": "^19.2.4",
     "astro": "^7.1.6",
     "typescript": "^6.0.3"
+  },
+  "allowScripts": {
+    "esbuild@0.28.1": true,
+    "fsevents@2.3.3": true
   }
 }

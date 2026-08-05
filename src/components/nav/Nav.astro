@@ -20,15 +20,27 @@ import Wordmark from "@/components/Wordmark.astro"
 
 const pathname = Astro.url.pathname
 const isLandingPage = pathname === "/"
+const isMaintainerPage = pathname === "/maintainer/"
 const isPricingPage = pathname === "/pricing/"
-// Homepage sections form the primary navigation. On other routes they link
-// back to the same anchors on `/`. Maintainer is deliberately off the nav
-// (ADR 0006); it is reachable from the footer.
+// Each product page gets a local table of contents. Other routes use links
+// into the flagship homepage. Maintainer remains absent from the flagship
+// nav (ADR 0006); these links appear only while already on its page.
 const homeSections = [
   { label: "The Stack", anchor: "stack" },
   { label: "How it Works", anchor: "loop" },
   { label: "Insights", anchor: "insights" },
 ]
+const maintainerSections = [
+  { label: "The Problem", anchor: "problem" },
+  { label: "How it Works", anchor: "how" },
+  { label: "Outcomes", anchor: "outcomes" },
+]
+const sections = isMaintainerPage ? maintainerSections : homeSections
+const sectionBasePath = isMaintainerPage ? "/maintainer/" : "/"
+const sectionHref = (anchor: string) =>
+  isLandingPage || isMaintainerPage
+    ? `#${anchor}`
+    : `${sectionBasePath}#${anchor}`
 const pricingActive = isPricingPage
 const wordmarkHref = isLandingPage ? "#top" : "/"
 ---
@@ -41,11 +53,8 @@ const wordmarkHref = isLandingPage ? "#top" : "/"
 
     <div class="nav-center">
       {
-        homeSections.map(({ label, anchor }) => (
-          <a
-            href={isLandingPage ? `#${anchor}` : `/#${anchor}`}
-            class="nav-link"
-          >
+        sections.map(({ label, anchor }) => (
+          <a href={sectionHref(anchor)} class="nav-link">
             {label}
           </a>
         ))
@@ -101,9 +110,9 @@ const wordmarkHref = isLandingPage ? "#top" : "/"
   </div>
   <div class="mobile-menu-links">
     {
-      homeSections.map(({ label, anchor }) => (
+      sections.map(({ label, anchor }) => (
         <a
-          href={isLandingPage ? `#${anchor}` : `/#${anchor}`}
+          href={sectionHref(anchor)}
           class="mobile-menu-link"
           data-nav-menu-link
         >
