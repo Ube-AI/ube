@@ -26,10 +26,13 @@ import { ArrowRightIcon } from "@phosphor-icons/react"
     overflow: hidden;
     padding: 136px 0;
     text-align: center;
-    /* No top border — the CrossPromo band directly above shares this same
-       `--canvas` surface and carries the hairline that separates the dark
-       closing region from the lighter section above it. A border here would
-       draw a seam between two intentionally-blended same-color bands. */
+    /* This band carries the hairline that separates the dark closing region
+       from Moat's lighter `--canvas-soft` surface above. The border used to
+       live on the CrossPromo band that sat between them; CrossPromo was
+       deleted when Publisher collapsed into the Ube brand (ADR 0006), so the
+       hairline moved here. Without it the two surfaces butt together and the
+       colour change reads as an unintended seam. */
+    border-top: 1px solid var(--hairline-soft);
   }
   .publisher-final::before {
     content: "";

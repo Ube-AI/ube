@@ -76,7 +76,7 @@ const toConversionEvent = (
 ): ConversionEvent | null => {
   switch (name) {
     // Every "Request access" CTA routes through openRequestAccess(), which
-    // fires this with a `source` (nav, publisher_hero, …) — our cta_id.
+    // fires this with a `source` (nav, home_hero, …) — our cta_id.
     case "request_access_modal_opened":
       return {
         name: "cta_click",

@@ -1,0 +1,148 @@
+---
+// Founder-support band — full-width strip directly below the plans grid.
+//
+// The offer applies to every pricing tier, which is exactly why it lives
+// here rather than in a card's bullet list: it is a launch offer for the
+// first cohort only, not a standing term, so it must never read as a tier
+// differentiator. Studio's dedicated support and Enterprise's SLA-backed
+// account manager are the commitments that outlive it. The scarcity has to
+// stay explicit in the copy — see the `Founder support` entry in CONTEXT.md.
+//
+// Uses the primary accent rather than the coconut `--accent-2` that the
+// cross-promo cards take: coconut signals "a different product over there",
+// and this is core Ube.
+import { ClockCountdownIcon } from "@phosphor-icons/react"
+---
+
+<section class="founder-band" aria-labelledby="founder-band-title">
+  <div class="container">
+    <div class="founder-panel">
+      <div class="founder-panel-grid" aria-hidden="true"></div>
+      <div class="founder-panel-inner">
+        <div class="founder-lead">
+          <div class="eyebrow founder-eyebrow">First cohort only</div>
+          <h2 class="t-display-md founder-title" id="founder-band-title">
+            Our founders work with you directly.
+          </h2>
+        </div>
+        <div class="founder-detail">
+          <p class="t-body-md body founder-body">
+            On every plan, we sit down with you to identify a go-to-market plan
+            and propose concrete improvements to the channels you already run.
+          </p>
+          <p class="t-body-sm muted founder-note">
+            <ClockCountdownIcon size={14} aria-hidden="true" />
+            <span>
+              A launch offer for our first cohort — not a standing part of any
+              plan. Once the cohort fills, it ends.
+            </span>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* Shares the plans grid's `--canvas` surface and hangs a floating panel on
+     it, so the band reads as a footnote to the cards above rather than a new
+     region. TrustedBy below brings its own lighter `--canvas-soft`, which is
+     the next real surface change — no border needed here. `.plans-section`
+     already lays 96px of air above this panel. */
+  .founder-band {
+    padding: 0 0 32px;
+    background: var(--canvas);
+  }
+  .founder-panel {
+    position: relative;
+    overflow: hidden;
+    padding: 36px 44px;
+    border-radius: var(--r-xl);
+    background: linear-gradient(135deg, var(--accent-tint), var(--card-bg) 62%);
+    border: 1px solid var(--card-border);
+    isolation: isolate;
+  }
+  .founder-panel::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+      ellipse 55% 130% at 0% 0%,
+      var(--accent-tint),
+      transparent 62%
+    );
+    pointer-events: none;
+    z-index: -1;
+  }
+  .founder-panel-grid {
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(
+      rgba(255, 255, 255, 0.12) 1px,
+      transparent 1px
+    );
+    background-size: 30px 30px;
+    opacity: 0.4;
+    pointer-events: none;
+    z-index: -1;
+    mask-image: radial-gradient(
+      ellipse 50% 110% at 0% 0%,
+      #000 0%,
+      transparent 70%
+    );
+    -webkit-mask-image: radial-gradient(
+      ellipse 50% 110% at 0% 0%,
+      #000 0%,
+      transparent 70%
+    );
+  }
+  .founder-panel-inner {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+    gap: 44px;
+    align-items: center;
+  }
+  .founder-eyebrow {
+    margin-bottom: 16px;
+  }
+  .founder-title {
+    margin: 0;
+    color: var(--ink);
+  }
+  .founder-detail {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .founder-body {
+    margin: 0;
+    line-height: 1.6;
+  }
+  .founder-note {
+    display: flex;
+    align-items: baseline;
+    gap: 9px;
+    margin: 0;
+    line-height: 1.5;
+  }
+  /* Phosphor renders a plain <svg> child here, so :global() is needed to
+     reach it from this scoped block. */
+  .founder-note :global(svg) {
+    flex-shrink: 0;
+    color: var(--accent);
+    transform: translateY(2px);
+  }
+
+  @media (max-width: 900px) {
+    .founder-panel-inner {
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
+  }
+  @media (max-width: 640px) {
+    .founder-panel {
+      padding: 28px 24px;
+    }
+  }
+</style>

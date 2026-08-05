@@ -1,9 +1,11 @@
 ---
-// Landing page — the demand-probe homepage, now leading with the
-// Publisher product. The Maintainer page lives at /maintainer/.
+// Landing page — the demand-probe homepage. This is Ube itself: the
+// flagship growth-and-distribution product owns `/` outright (ADR 0006).
+// Its sections still live under `src/components/publisher/` — the directory
+// keeps the pre-rename name on purpose; see the ADR before "finishing" it.
+// Ube Maintainer is the de-emphasised sibling and lives at /maintainer/.
 import { TWEAK_DEFAULTS } from "@/data/tweak-defaults"
 import { CARD_TONES, getUbe } from "@/lib/palette"
-import CrossPromo from "@/components/publisher/sections/CrossPromo.astro"
 import FinalCta from "@/components/publisher/sections/FinalCta.astro"
 import Hero from "@/components/publisher/sections/Hero.astro"
 import Insights from "@/components/publisher/sections/Insights.astro"
@@ -17,15 +19,15 @@ import {
   buildBreadcrumbSchema,
   buildJsonLdGraph,
   buildOrganizationSchema,
-  buildPublisherSchema,
+  buildUbeSchema,
   buildWebPageSchema,
   buildWebsiteSchema,
   schemaIds,
 } from "@/lib/schema"
 
-const title = "Ube Publisher — Mobile App Distribution Orchestrator"
+const title = "Ube — Mobile App Growth Agent"
 const description =
-  "Ube Publisher sets up analytics, attribution, dashboards, paid ads, creatives, and A/B tests so app builders learn what to improve before scaling spend."
+  "Ube sets up analytics, attribution, dashboards, paid ads, creatives, and A/B tests so app builders learn what to improve before scaling spend."
 
 const ube = getUbe(TWEAK_DEFAULTS.accent)
 const accent = `oklch(${ube.L} ${ube.C} ${ube.H})`
@@ -43,15 +45,15 @@ const ids = schemaIds(Astro.site)
 const jsonLd = buildJsonLdGraph([
   buildOrganizationSchema(Astro.site, dateModified),
   buildWebsiteSchema(Astro.site),
-  buildPublisherSchema(Astro.site, dateModified, description),
+  buildUbeSchema(Astro.site, dateModified, description),
   buildWebPageSchema(Astro.site, {
     pageUrl,
     title,
     description,
     dateModified,
-    aboutId: ids.publisherId,
+    aboutId: ids.ubeId,
   }),
-  buildBreadcrumbSchema(pageUrl, [{ name: "Ube Publisher", url: pageUrl }]),
+  buildBreadcrumbSchema(pageUrl, [{ name: "Ube", url: pageUrl }]),
 ])
 ---
 
@@ -82,7 +84,6 @@ const jsonLd = buildJsonLdGraph([
     <Loop />
     <Insights />
     <Moat />
-    <CrossPromo />
     <FinalCta />
   </main>
 </BaseLayout>

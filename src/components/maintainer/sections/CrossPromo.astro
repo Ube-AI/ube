@@ -1,10 +1,12 @@
 ---
-// Cross-promo band — on the Maintainer page, this surfaces the sibling
-// product (Ube Publisher). Minimal content (a title + one CTA) framed in a
-// gold-tinted card that pops against the darker `--canvas` band. The CTA is a
-// plain `<a href="/">`; the colocated `cross-promo.client.ts` fires a
+// Cross-promo band — the one funnel from the de-emphasised Maintainer page
+// back to the flagship at `/` (ADR 0006). The two products are no longer
+// co-equal halves, so this reads as an upsell into Ube rather than a
+// sideways "meet the sibling". Minimal content (a title + one CTA) framed in
+// a gold-tinted card that pops against the darker `--canvas` band. The CTA
+// is a plain `<a href="/">`; the colocated `cross-promo.client.ts` fires a
 // `cross_promo_clicked` analytics event before navigation so we can measure
-// cross-product interest.
+// how much Maintainer traffic converts into flagship interest.
 //
 // Leans on the secondary "coconut" accent (--accent-2) so it reads as a
 // distinct sibling product and doesn't compete with the white "Request
@@ -17,9 +19,9 @@ import { ArrowRightIcon } from "@phosphor-icons/react"
     <div class="xpromo-card">
       <div class="xpromo-grid" aria-hidden="true"></div>
       <div class="xpromo-card-inner">
-        <h2 class="t-display-md xpromo-title">Meet the other half of Ube</h2>
+        <h2 class="t-display-md xpromo-title">Looking to grow your app?</h2>
         <a class="xpromo-cta" href="/" data-xpromo="maintainer_to_publisher">
-          Explore Ube Publisher
+          Explore Ube
           <ArrowRightIcon size={15} aria-hidden="true" />
         </a>
       </div>

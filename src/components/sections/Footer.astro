@@ -1,4 +1,14 @@
 ---
+// Site footer — rendered on every route by BaseLayout (spec 0003).
+//
+// Entity naming is deliberately split (ADR 0006): the copyright line is the
+// ONE place that says "Ube, Inc.", the brand name we present as the company.
+// Ube, Inc. is not yet incorporated, so every surface that makes a legal
+// assertion — Terms, Privacy, schema.org `legalName`, llms.txt — names
+// Chunky Tofu Studios, LLC instead. Because this footer renders on the legal
+// pages too, "© Ube, Inc." sits below copy naming Chunky Tofu Studios, LLC.
+// That mismatch is known and accepted; don't propagate either name over the
+// other to make them agree.
 import Wordmark from "@/components/Wordmark.astro"
 import { CONTACT_EMAIL, GITHUB_URL, LINKEDIN_URL } from "@/constants"
 import { EnvelopeIcon } from "@phosphor-icons/react"
@@ -14,17 +24,17 @@ import { Logo } from "@/lib/logo"
           Your app's agentic watchdog that maintains, improves, and grows your app.
         </p>
         <p class="t-caption muted footer-copyright">
-          © 2026 Ube · Chunky Tofu Studios, LLC
+          © 2026 Ube, Inc.
         </p>
       </div>
       <div class="footer-col">
-        <h3>PRODUCTS</h3>
+        <h3>PRODUCT</h3>
         <ul>
           <li>
-            <a href="/">Ube Publisher</a>
+            <a href="/">Publisher</a>
           </li>
           <li>
-            <a href="/maintainer/">Ube Maintainer</a>
+            <a href="/maintainer/">Maintainer</a>
           </li>
           <li>
             <a href="/pricing/">Pricing</a>
@@ -67,7 +77,7 @@ import { Logo } from "@/lib/logo"
               rel="noopener noreferrer"
               class="footer-contact-link"
             >
-              <Logo name="github" size={13} /> github.com/orkun1675/ube
+              <Logo name="github" size={13} /> github.com/Ube-AI/ube
             </a>
           </li>
         </ul>

@@ -2,6 +2,7 @@
 import { FAQ } from "@/components/sections/FAQ"
 import TrustedBy from "@/components/sections/TrustedBy.astro"
 import FinalCta from "@/components/pricing/sections/FinalCta.astro"
+import FounderSupport from "@/components/pricing/sections/FounderSupport.astro"
 import Hero from "@/components/pricing/sections/Hero.astro"
 import { Plans } from "@/components/pricing/sections/Plans"
 import { TWEAK_DEFAULTS } from "@/data/tweak-defaults"
@@ -12,19 +13,18 @@ import {
   buildBreadcrumbSchema,
   buildFaqPageSchema,
   buildJsonLdGraph,
-  buildMaintainerSchema,
   buildOfferCatalogSchema,
   buildOrganizationSchema,
   buildPricingOffers,
-  buildPublisherSchema,
+  buildUbeSchema,
   buildWebPageSchema,
   buildWebsiteSchema,
   schemaIds,
 } from "@/lib/schema"
 
-const title = "Ube Pricing — App Maintenance and Growth Plans"
+const title = "Ube Pricing — Solo, Studio, and Enterprise Plans"
 const description =
-  "Pricing for Ube Maintainer, Ube Maintainer + Publisher, and Enterprise plans for mobile and cross-platform app teams."
+  "Pricing for Ube, the AI growth agent for mobile apps: Solo at $200/app/mo, Studio at $500/app/mo with a higher managed ad-spend ceiling, and custom Enterprise plans."
 
 const ube = getUbe(TWEAK_DEFAULTS.accent)
 const accent = `oklch(${ube.L} ${ube.C} ${ube.H})`
@@ -45,8 +45,10 @@ const offers = buildPricingOffers(Astro.site)
 const jsonLd = buildJsonLdGraph([
   buildOrganizationSchema(Astro.site, dateModified),
   buildWebsiteSchema(Astro.site),
-  buildMaintainerSchema(Astro.site, dateModified),
-  buildPublisherSchema(Astro.site, dateModified),
+  // No Maintainer node here: it is not sold from a pricing tier any more
+  // (ADR 0006), so none of these offers reference it and emitting the node
+  // would leave it orphaned on this page. It still ships on /maintainer/.
+  buildUbeSchema(Astro.site, dateModified),
   buildOfferCatalogSchema(Astro.site, offers),
   buildWebPageSchema(Astro.site, {
     pageUrl: pricingUrl,
@@ -85,6 +87,7 @@ const jsonLd = buildJsonLdGraph([
   <main>
     <Hero />
     <Plans client:load />
+    <FounderSupport />
     <TrustedBy />
     <FAQ
       client:visible

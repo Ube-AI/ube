@@ -288,7 +288,7 @@ export const RequestAccessModal = ({
 
             <div className="field">
               <span id="ra-product-label" className="field-label">
-                Which product matters more to you? <span className="req-dot" />
+                What do you need most? <span className="req-dot" />
               </span>
               <div
                 className="radio-group"
@@ -304,16 +304,28 @@ export const RequestAccessModal = ({
                     : undefined
                 }
               >
+                {/* This is the need signal — the central measurement the
+                    whole site exists to collect. The question is phrased by
+                    need rather than by product name so a reader never has to
+                    choose between Ube and its own sub-product.
+
+                    The submitted `id`s stay `publisher` / `maintainer` even
+                    though no label says either word any more. That is
+                    deliberate (ADR 0006): the question measures the same
+                    underlying thing — growth versus maintenance — before and
+                    after the rename, so renaming the values would split the
+                    series at exactly the moment we most want to compare
+                    across it. Do not "finish the rename" here. */}
                 {[
                   {
-                    id: "maintainer",
-                    label: "Ube Maintainer",
-                    sub: "Automated triage, fixes, and pull requests (PRs) for production issues.",
+                    id: "publisher",
+                    label: "Growth & distribution",
+                    sub: "Get more users, spend smarter.",
                   },
                   {
-                    id: "publisher",
-                    label: "Ube Publisher",
-                    sub: "Ship faster and reach more users.",
+                    id: "maintainer",
+                    label: "Maintenance & fixes",
+                    sub: "Automated triage and pull requests (PRs) for production issues.",
                   },
                 ].map((opt) => (
                   <button

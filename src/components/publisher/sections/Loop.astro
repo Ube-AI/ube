@@ -2,6 +2,7 @@
 import { ArrowRightIcon } from "@phosphor-icons/react"
 import AcquireMockup from "@/components/publisher/mockups/AcquireMockup.astro"
 import AttributeMockup from "@/components/publisher/mockups/AttributeMockup.astro"
+import CreateMockup from "@/components/publisher/mockups/CreateMockup.astro"
 import InstrumentMockup from "@/components/publisher/mockups/InstrumentMockup.astro"
 import MeasureMockup from "@/components/publisher/mockups/MeasureMockup.astro"
 import MonetizeMockup from "@/components/publisher/mockups/MonetizeMockup.astro"
@@ -62,19 +63,30 @@ const steps: Step[] = [
   },
   {
     num: "04",
-    label: "Acquire",
+    label: "Create",
     reversed: false,
-    title: "Runs and tunes your ads.",
+    title: "Films creatives. Launches campaigns.",
     body: [
-      "Generates creatives, launches campaigns on Meta, Google, Reddit, and TikTok, and shifts budget toward the channel that has the best customer acquisition cost.",
+      "Ube continuously looks for timely ways to market your app. When it finds one, you receive a brief you can edit and approve in seconds. Ube then generates or commissions the creative and adds it to your campaign library automatically.",
     ],
-    learnMore: "How creatives get made",
+    learnMore: "How creative production works",
     disabled: true,
   },
   {
     num: "05",
-    label: "Retain",
+    label: "Acquire",
     reversed: true,
+    title: "Finds the ads that work.",
+    body: [
+      "Runs approved creatives across Meta, Google, Reddit, and TikTok, then shifts budget toward the combination with the best customer acquisition cost.",
+    ],
+    learnMore: "How Ube tunes campaigns",
+    disabled: true,
+  },
+  {
+    num: "06",
+    label: "Retain",
+    reversed: false,
     title: "Spots drop-offs. Tests fixes.",
     body: [
       "Reads your funnel, proposes an A/B test, ships it through Firebase Remote Config, calls the winner once it's statistically conclusive.",
@@ -83,9 +95,9 @@ const steps: Step[] = [
     disabled: true,
   },
   {
-    num: "06",
+    num: "07",
     label: "Monetize",
-    reversed: false,
+    reversed: true,
     title: "Optimizes pricing.",
     body: [
       "Tests price points and trial lengths via RevenueCat. Ad formats and placements via AdMob. Helps you monetize effectively without hurting retention.",
@@ -103,7 +115,7 @@ const steps: Step[] = [
       Measure, iterate, then scale to millions.
     </h2>
     <p class="t-body-md body publisher-section-copy">
-      Six steps from the v1 release to establishing recurring revenue.
+      Seven steps from the v1 release to establishing recurring revenue.
       The agentic loop runs daily to generate insights and recommendations.
     </p>
     <div class="publisher-steps">
@@ -115,9 +127,10 @@ const steps: Step[] = [
                 {step.num === "01" && <InstrumentMockup />}
                 {step.num === "02" && <AttributeMockup />}
                 {step.num === "03" && <MeasureMockup />}
-                {step.num === "04" && <AcquireMockup />}
-                {step.num === "05" && <RetainMockup />}
-                {step.num === "06" && <MonetizeMockup />}
+                {step.num === "04" && <CreateMockup />}
+                {step.num === "05" && <AcquireMockup />}
+                {step.num === "06" && <RetainMockup />}
+                {step.num === "07" && <MonetizeMockup />}
               </div>
             )}
             <div class="step-copy">
@@ -154,9 +167,10 @@ const steps: Step[] = [
                 {step.num === "01" && <InstrumentMockup />}
                 {step.num === "02" && <AttributeMockup />}
                 {step.num === "03" && <MeasureMockup />}
-                {step.num === "04" && <AcquireMockup />}
-                {step.num === "05" && <RetainMockup />}
-                {step.num === "06" && <MonetizeMockup />}
+                {step.num === "04" && <CreateMockup />}
+                {step.num === "05" && <AcquireMockup />}
+                {step.num === "06" && <RetainMockup />}
+                {step.num === "07" && <MonetizeMockup />}
               </div>
             )}
           </article>

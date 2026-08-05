@@ -8,7 +8,6 @@ type BillingPeriod = "monthly" | "yearly"
 
 type Plan = {
   name: string
-  chip?: string
   monthlyPrice?: number
   yearlyMonthlyPrice?: number
   yearlySavings?: string
@@ -23,39 +22,26 @@ type Plan = {
   onClick: () => void
 }
 
+// Every tier sells Ube — the growth-and-distribution flagship — and only
+// Ube (ADR 0006). Ube Maintainer is not sold from a pricing tier, so no
+// bullet here may mention maintenance, pull requests, or crash triage.
+//
+// The load-bearing difference between Solo and Studio is the managed
+// ad-spend ceiling, NOT an app allowance: neither tier caps how many apps a
+// customer brings. Don't write copy that implies a metered app count.
+const FOOTNOTE =
+  "Ad spend and optional creative-AI fees billed directly by those platforms."
+
 const buildPlans = (billingPeriod: BillingPeriod): Plan[] => [
   {
-    name: "Maintainer",
-    chip: "7-day free trial",
-    monthlyPrice: 40,
-    yearlyMonthlyPrice: 32,
-    yearlySavings: "Save $96/yr",
-    unit: "/app/mo",
-    includesLabel: "Includes:",
-    bullets: [
-      "1 repo (cross-platform counts as one)",
-      "8 pull requests (PRs)/mo (bug fixes, dependency upgrades, regression patches)",
-      "Crashlytics + Sentry + Play Console intake",
-      "App-store review monitoring",
-      "Verified PRs against your repo",
-      "Upstream issue filing for unfixable bugs",
-    ],
-    buttonLabel: "Join waitlist",
-    buttonStyle: "secondary",
-    onClick: () =>
-      openRequestAccess("pricing_maintainer", "default", {
-        billing_period: billingPeriod,
-      }),
-  },
-  {
-    name: "Maintainer + Publisher",
+    name: "Solo",
     monthlyPrice: 200,
     yearlyMonthlyPrice: 160,
     yearlySavings: "Save $480/yr",
     unit: "/app/mo",
-    includesLabel: "Everything in Maintainer, plus:",
+    includesLabel: "Includes:",
     bullets: [
-      "12 PRs/mo",
+      "Managed ad spend up to $1k/mo",
       "Full analytics + attribution stack setup",
       "Amplitude / Firebase dashboards built and tuned",
       "Creative direction (image, video, playable)",
@@ -64,26 +50,46 @@ const buildPlans = (billingPeriod: BillingPeriod): Plan[] => [
       "A/B test recommendations and deployment",
       "Scholarship access (Amplitude, AppsFlyer)",
     ],
-    footnote:
-      "Ad spend and optional creative-AI fees billed directly by those platforms.",
+    footnote: FOOTNOTE,
+    buttonLabel: "Join waitlist",
+    buttonStyle: "secondary",
+    onClick: () =>
+      openRequestAccess("pricing_solo", "default", {
+        billing_period: billingPeriod,
+      }),
+  },
+  {
+    name: "Studio",
+    monthlyPrice: 500,
+    yearlyMonthlyPrice: 400,
+    yearlySavings: "Save $1,200/yr",
+    unit: "/app/mo",
+    includesLabel: "Everything in Solo, plus:",
+    bullets: [
+      "Managed ad spend up to $15k/mo",
+      "Team access with seats for everyone who ships",
+      "Multiple campaign refreshes per week",
+      "Portfolio view — cross-app analytics, shared audiences, portfolio-level attribution",
+      "Dedicated support",
+    ],
+    footnote: FOOTNOTE,
     buttonLabel: "Join waitlist",
     buttonStyle: "primary",
     onClick: () =>
-      openRequestAccess("pricing_full", "default", {
+      openRequestAccess("pricing_studio", "default", {
         billing_period: billingPeriod,
       }),
   },
   {
     name: "Enterprise",
     priceLabel: "Custom",
-    includesLabel: "Everything in Maintainer + Publisher, plus:",
+    includesLabel: "Everything in Studio, plus:",
     bullets: [
-      "Account manager (1:1 expert)",
+      "Dedicated account manager + SLA",
       "SSO (SAML / OIDC)",
       "Audit logs",
       "BAA + DPA",
       "Self-hosted / VPC deployment",
-      "Priority support",
       "Custom integrations",
     ],
     buttonLabel: "Contact sales",
@@ -231,14 +237,7 @@ export const Plans = () => {
           {plans.map((plan) => (
             <article className={`card ${styles["plan-card"]}`} key={plan.name}>
               <div>
-                <div className={styles["plan-name-row"]}>
-                  <h2 className={styles["plan-name"]}>{plan.name}</h2>
-                  {plan.chip && (
-                    <span className={`pill pill-accent ${styles["plan-chip"]}`}>
-                      {plan.chip}
-                    </span>
-                  )}
-                </div>
+                <h2 className={styles["plan-name"]}>{plan.name}</h2>
                 <PlanPrice plan={plan} billingPeriod={billingPeriod} />
                 {plan.caption && (
                   <p className={styles["plan-caption"]}>{plan.caption}</p>

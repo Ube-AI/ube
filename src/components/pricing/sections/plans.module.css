@@ -99,24 +99,12 @@
   gap: 28px;
 }
 
-.plan-name-row {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-
 .plan-name {
   color: var(--ink);
   font-size: 22px;
   font-weight: 500;
   line-height: 1.2;
   letter-spacing: 0;
-}
-
-.plan-chip {
-  flex-shrink: 0;
-  margin-left: auto;
 }
 
 .price-block {

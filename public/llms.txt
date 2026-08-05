@@ -1,41 +1,44 @@
 # Ube
 
-> Ube builds AI agents for mobile app teams. Ube Maintainer keeps apps healthy by turning crashes, app reviews, support signals, and dependency releases into verified pull requests. Ube Publisher helps teams grow apps by wiring analytics, attribution, paid acquisition, creative testing, A/B tests, and monetization loops.
+> Ube is an AI growth agent for mobile app teams. It sets up the distribution stack — analytics, attribution, dashboards, paid acquisition, creative testing, A/B tests, and monetization loops — and keeps the loop between ad spend and product learning running, asking for approval at expensive or risky points. Ube Maintainer is a secondary product that turns crashes, app reviews, support signals, and dependency releases into verified pull requests.
 
 ## Key facts
 
 - **Company**: Chunky Tofu Studios, LLC.
 - **Status**: Pre-launch. The site is a demand probe and accepts early-access requests at https://ube.dev.
-- **Products**: Ube Maintainer, Ube Publisher, and combined Maintainer + Publisher plans.
-- **Pricing**: Maintainer is listed at $40/app/month or $32/app/month billed yearly. Maintainer + Publisher is listed at $200/app/month or $160/app/month billed yearly. Enterprise is custom. Ad spend and optional creative-generation fees are paid directly to those platforms.
+- **Products**: Ube (flagship, growth and distribution) and Ube Maintainer (secondary, automated maintenance).
+- **Pricing**: Three tiers, all selling Ube. Solo is $200/app/month or $160/app/month billed yearly, with managed ad spend up to $1k/month. Studio is $500/app/month or $400/app/month billed yearly, with managed ad spend up to $15k/month, team seats, several campaign refreshes per week, and a portfolio view across apps. Enterprise is custom. Neither Solo nor Studio caps how many apps a customer brings — the managed ad-spend ceiling is what separates them. Ad spend and optional creative-generation fees are paid directly to those platforms. Ube Maintainer is not sold from a pricing tier.
+- **Founder support**: For the first cohort only, on every tier, Ube's founders work with the customer directly to identify a go-to-market plan and propose improvements to existing channels. It is a launch offer, not a standing term.
 - **Code privacy**: User code runs in ephemeral, per-repo sandboxes that are destroyed after each job. Ube does not train on user code and does not retain it after the run. Self-hosting is offered for enterprise customers with strict privacy requirements.
 - **Auto-merge policy**: Ube always opens PRs for review. Auto-merge is opt-in per repository and remains gated behind existing branch protections and required checks.
 
+## Ube
+
+- **What it is**: A mobile app growth and distribution agent for small teams, solo founders, indie studios, and vibecoders.
+- **Built for**: Teams that need the growth stack used by larger app studios without spending months wiring tools before learning from users.
+- **Workflow**: Instruments analytics, aligns user IDs and event taxonomy, sets up attribution and SKAdNetwork, builds dashboards, runs acquisition campaigns, refreshes creatives, proposes retention tests, and optimizes monetization once retention is sticky.
+- **How paid ads are treated**: As a measurement engine first. Campaigns create a steady stream of users so Ube can find working creatives, identify drop-off points, recommend A/B tests, and improve retention and monetization — and only then scale spend.
+- **Approval gates**: Account creation, ad spend, campaign launches, monetization changes, and larger budget increases all require customer approval.
+- **Integrations mentioned on the site**: Amplitude, Firebase, AppsFlyer, RevenueCat, Meta, Google Ads, TikTok, AdMob, Apple, Google Play, Sentry, Codemagic, Docker, Bun, Dart, npm, GitHub, Codex, Claude Code, Sett, Clarity, and Creatify.
+
 ## Ube Maintainer
 
-- **What it is**: An autonomous software maintenance agent for mobile and cross-platform app teams.
+- **What it is**: An autonomous software maintenance agent for mobile and cross-platform app teams. Secondary to Ube and not sold from a pricing tier — it is available on request.
 - **Built for**: React Native, Expo, Flutter, native iOS (Swift / Obj-C), native Android (Kotlin / Java), and Capacitor / Ionic. Other stacks are onboardable on request.
 - **Inputs**: Firebase Crashlytics, Sentry, Play Console ANRs, app store reviews, support inboxes, dependency releases, and repository context.
 - **Workflow**: Deduplicates issues across binaries, OS versions, and dependency upgrades; reproduces bugs on emulators; patches and verifies against the test suite; opens a pull request with the diff and recorded reproduction; writes back to the original reporter after the fix ships.
 - **Outcome claim**: Early teams running Ube reclaim 10-30% of their engineering time previously spent on triage and dependency maintenance.
 
-## Ube Publisher
-
-- **What it is**: A mobile app distribution orchestrator for small teams, solo founders, indie studios, and vibecoders.
-- **Built for**: Teams that need the growth stack used by larger app studios without spending months wiring tools before learning from users.
-- **Workflow**: Instruments analytics, aligns user IDs and event taxonomy, sets up attribution and SKAdNetwork, builds dashboards, runs acquisition campaigns, refreshes creatives, proposes retention tests, and optimizes monetization once retention is sticky.
-- **Integrations mentioned on the site**: Amplitude, Firebase, AppsFlyer, RevenueCat, Meta, Google Ads, TikTok, AdMob, Apple, Google Play, Sentry, Codemagic, Docker, Bun, Dart, npm, GitHub, Codex, Claude Code, Sett, Clarity, and Creatify.
-
 ## Pages
 
-- [Ube Publisher](https://ube.dev/): publisher product overview, growth stack, distribution loop, insights, and request access.
-- [Ube Maintainer](https://ube.dev/maintainer/): maintainer product overview, workflow, outcomes, FAQ, and request access.
-- [Pricing](https://ube.dev/pricing/): Maintainer, Maintainer + Publisher, and Enterprise plans.
+- [Ube](https://ube.dev/): flagship product overview, growth stack, distribution loop, insights, and request access.
+- [Ube Maintainer](https://ube.dev/maintainer/): maintenance product overview, workflow, outcomes, FAQ, and request access.
+- [Pricing](https://ube.dev/pricing/): Solo, Studio, and Enterprise plans, founder support, and pricing FAQ.
 - [Terms of Service](https://ube.dev/terms-of-service/)
 - [Privacy Policy](https://ube.dev/privacy-policy/)
 
 ## Contact
 
-- Email: hello@chunkytofustudios.com
-- GitHub: https://github.com/orkun1675/ube
+- Email: hello@ube.dev
+- GitHub: https://github.com/Ube-AI/ube
 - LinkedIn: https://www.linkedin.com/company/chunky-tofu-studios/

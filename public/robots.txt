@@ -1,8 +1,8 @@
-# ube.dev is a public demand-probe site for Ube Maintainer, Ube Publisher,
-# pricing, and legal pages. We want crawlers indexing the public site,
-# including AI answer engines (ChatGPT, Claude, Perplexity, Gemini). The
-# wildcard below covers all named bots; add per-bot groups only if a specific
-# crawler ever needs different rules.
+# ube.dev is a public demand-probe site for Ube, its secondary Ube Maintainer
+# product, pricing, and legal pages. We want crawlers indexing the public
+# site, including AI answer engines (ChatGPT, Claude, Perplexity, Gemini).
+# The wildcard below covers all named bots; add per-bot groups only if a
+# specific crawler ever needs different rules.
 
 User-agent: *
 Allow: /

@@ -34,7 +34,11 @@ export const schemaIds = (site: SiteUrl) => ({
   orgId: absoluteUrl(site, "/#organization"),
   websiteId: absoluteUrl(site, "/#website"),
   maintainerId: absoluteUrl(site, "/maintainer/#ube-maintainer"),
-  publisherId: absoluteUrl(site, "/#ube-publisher"),
+  // Was `/#ube-publisher` until the flagship collapsed into the bare brand
+  // (ADR 0006). This @id change is the least reversible part of that work —
+  // consumers that cached the old node identity see a new one — so don't
+  // churn it again without a reason as good as the rename itself.
+  ubeId: absoluteUrl(site, "/#ube"),
   offerCatalogId: absoluteUrl(site, "/pricing/#offer-catalog"),
 })
 
@@ -48,11 +52,14 @@ export const buildOrganizationSchema = (
     "@type": "Organization",
     "@id": ids.orgId,
     name: "Ube",
+    // `legalName` is a factual claim about a registered entity, and
+    // Ube, Inc. is not one yet — Chunky Tofu Studios, LLC is the operating
+    // company (ADR 0006). Only the footer copyright says "Ube, Inc.".
     legalName: "Chunky Tofu Studios, LLC",
     url: ids.siteUrl,
     logo: absoluteUrl(site, "/assets/favicons/logo-512.png"),
     description:
-      "Ube builds AI agents for mobile app teams: Ube Maintainer triages crashes, reviews, and dependency releases into verified pull requests, and Ube Publisher instruments analytics, attribution, paid acquisition, A/B tests, and monetization loops.",
+      "Ube is an AI growth agent for mobile app teams: it instruments analytics and attribution, builds dashboards, runs paid acquisition and creative testing, and turns A/B tests and monetization experiments into compounding growth. Ube Maintainer is its companion agent, turning crashes, reviews, and dependency releases into verified pull requests.",
     contactPoint: {
       "@type": "ContactPoint",
       email: CONTACT_EMAIL,
@@ -73,13 +80,13 @@ export const buildOrganizationSchema = (
     makesOffer: [
       {
         "@type": "Offer",
-        name: "Ube Publisher early access",
+        name: "Ube early access",
         url: ids.siteUrl,
         availability: "https://schema.org/PreOrder",
         itemOffered: {
           "@type": "SoftwareApplication",
-          "@id": ids.publisherId,
-          name: "Ube Publisher",
+          "@id": ids.ubeId,
+          name: "Ube",
           applicationCategory: "BusinessApplication",
         },
       },
@@ -109,7 +116,7 @@ export const buildWebsiteSchema = (site: SiteUrl): JsonLd => {
     name: "Ube",
     url: ids.siteUrl,
     description:
-      "AI agents for maintaining and growing mobile apps, including Ube Maintainer and Ube Publisher.",
+      "Ube, the AI growth agent for mobile apps — analytics, attribution, paid acquisition, and experimentation — plus Ube Maintainer for automated maintenance.",
     publisher: { "@id": ids.orgId },
     inLanguage: "en-US",
   }
@@ -142,35 +149,29 @@ export const buildMaintainerSchema = (
       "Escalates upstream with detailed reproduction reports",
     ],
     screenshot: absoluteUrl(site, "/assets/social/og-image-maintainer.jpg"),
-    offers: {
-      "@type": "Offer",
-      name: "Ube Maintainer early access",
-      url: absoluteUrl(site, "/pricing/"),
-      price: "40",
-      priceCurrency: "USD",
-      availability: "https://schema.org/PreOrder",
-      priceSpecification: {
-        "@type": "UnitPriceSpecification",
-        price: "40",
-        priceCurrency: "USD",
-        unitText: "per app per month",
-      },
-    },
+    // No `offers` block: Maintainer is no longer sold from a pricing tier
+    // (ADR 0006), so it has no listed price to advertise. It stays an
+    // off-menu product surfaced in conversation — the Organization's
+    // `makesOffer` still carries an early-access offer pointing at
+    // /maintainer/, which is where an interested reader should land.
     creator: { "@id": ids.orgId },
   }
 }
 
-export const buildPublisherSchema = (
+// The flagship node. Named `buildUbeSchema` (was `buildPublisherSchema`)
+// because Publisher stopped being a product name and became the whole of
+// Ube — it owns `/`, the <title>, and the Organization's primary offering.
+export const buildUbeSchema = (
   site: SiteUrl,
   dateModified: string,
-  description = "Ube Publisher sets up analytics, attribution, dashboards, paid ads, creatives, and A/B tests so app builders learn what to improve before scaling spend.",
+  description = "Ube sets up analytics, attribution, dashboards, paid ads, creatives, and A/B tests so app builders learn what to improve before scaling spend.",
 ): JsonLd => {
   const ids = schemaIds(site)
 
   return {
     "@type": "SoftwareApplication",
-    "@id": ids.publisherId,
-    name: "Ube Publisher",
+    "@id": ids.ubeId,
+    name: "Ube",
     url: ids.siteUrl,
     applicationCategory: "BusinessApplication",
     operatingSystem: "Web",
@@ -187,9 +188,11 @@ export const buildPublisherSchema = (
       "Runs A/B tests through Firebase or RevenueCat with approval gates",
       "Scales budget only after retention, monetization, and campaign math improve",
     ],
+    // The entry price for Ube — the Solo tier. Studio and Enterprise are
+    // enumerated in `buildPricingOffers` and surfaced via the OfferCatalog.
     offers: {
       "@type": "Offer",
-      name: "Maintainer + Publisher early access",
+      name: "Ube Solo early access",
       url: absoluteUrl(site, "/pricing/"),
       price: "200",
       priceCurrency: "USD",
@@ -204,131 +207,48 @@ export const buildPublisherSchema = (
   }
 }
 
+// The three pricing tiers, each billed monthly or yearly. Every tier sells
+// Ube and only Ube (ADR 0006) — Maintainer is not offered from a tier, so
+// `ids.maintainerId` deliberately appears nowhere below.
 export const buildPricingOffers = (site: SiteUrl): JsonLd[] => {
   const ids = schemaIds(site)
   const pricingUrl = absoluteUrl(site, "/pricing/")
 
+  const ubeItemOffered = {
+    "@type": "SoftwareApplication",
+    "@id": ids.ubeId,
+    name: "Ube",
+    applicationCategory: "BusinessApplication",
+  }
+
+  const tierOffer = (name: string, price: string, yearly: boolean): JsonLd => ({
+    "@type": "Offer",
+    name,
+    url: pricingUrl,
+    price,
+    priceCurrency: "USD",
+    availability: "https://schema.org/PreOrder",
+    itemOffered: ubeItemOffered,
+    priceSpecification: {
+      "@type": "UnitPriceSpecification",
+      price,
+      priceCurrency: "USD",
+      unitText: yearly
+        ? "per app per month, billed yearly"
+        : "per app per month",
+    },
+    eligibleDuration: {
+      "@type": "QuantitativeValue",
+      value: 1,
+      unitCode: yearly ? "ANN" : "MON",
+    },
+  })
+
   return [
-    {
-      "@type": "Offer",
-      name: "Maintainer",
-      url: pricingUrl,
-      price: "40",
-      priceCurrency: "USD",
-      availability: "https://schema.org/PreOrder",
-      itemOffered: {
-        "@type": "SoftwareApplication",
-        "@id": ids.maintainerId,
-        name: "Ube Maintainer",
-        applicationCategory: "DeveloperApplication",
-      },
-      priceSpecification: {
-        "@type": "UnitPriceSpecification",
-        price: "40",
-        priceCurrency: "USD",
-        unitText: "per app per month",
-      },
-      eligibleDuration: {
-        "@type": "QuantitativeValue",
-        value: 1,
-        unitCode: "MON",
-      },
-    },
-    {
-      "@type": "Offer",
-      name: "Maintainer yearly",
-      url: pricingUrl,
-      price: "32",
-      priceCurrency: "USD",
-      availability: "https://schema.org/PreOrder",
-      itemOffered: {
-        "@type": "SoftwareApplication",
-        "@id": ids.maintainerId,
-        name: "Ube Maintainer",
-        applicationCategory: "DeveloperApplication",
-      },
-      priceSpecification: {
-        "@type": "UnitPriceSpecification",
-        price: "32",
-        priceCurrency: "USD",
-        unitText: "per app per month, billed yearly",
-      },
-      eligibleDuration: {
-        "@type": "QuantitativeValue",
-        value: 1,
-        unitCode: "ANN",
-      },
-    },
-    {
-      "@type": "Offer",
-      name: "Maintainer + Publisher",
-      url: pricingUrl,
-      price: "200",
-      priceCurrency: "USD",
-      availability: "https://schema.org/PreOrder",
-      itemOffered: {
-        "@type": "Product",
-        name: "Ube Maintainer + Publisher",
-        isRelatedTo: [
-          {
-            "@type": "SoftwareApplication",
-            "@id": ids.maintainerId,
-            name: "Ube Maintainer",
-          },
-          {
-            "@type": "SoftwareApplication",
-            "@id": ids.publisherId,
-            name: "Ube Publisher",
-          },
-        ],
-      },
-      priceSpecification: {
-        "@type": "UnitPriceSpecification",
-        price: "200",
-        priceCurrency: "USD",
-        unitText: "per app per month",
-      },
-      eligibleDuration: {
-        "@type": "QuantitativeValue",
-        value: 1,
-        unitCode: "MON",
-      },
-    },
-    {
-      "@type": "Offer",
-      name: "Maintainer + Publisher yearly",
-      url: pricingUrl,
-      price: "160",
-      priceCurrency: "USD",
-      availability: "https://schema.org/PreOrder",
-      itemOffered: {
-        "@type": "Product",
-        name: "Ube Maintainer + Publisher",
-        isRelatedTo: [
-          {
-            "@type": "SoftwareApplication",
-            "@id": ids.maintainerId,
-            name: "Ube Maintainer",
-          },
-          {
-            "@type": "SoftwareApplication",
-            "@id": ids.publisherId,
-            name: "Ube Publisher",
-          },
-        ],
-      },
-      priceSpecification: {
-        "@type": "UnitPriceSpecification",
-        price: "160",
-        priceCurrency: "USD",
-        unitText: "per app per month, billed yearly",
-      },
-      eligibleDuration: {
-        "@type": "QuantitativeValue",
-        value: 1,
-        unitCode: "ANN",
-      },
-    },
+    tierOffer("Solo", "200", false),
+    tierOffer("Solo yearly", "160", true),
+    tierOffer("Studio", "500", false),
+    tierOffer("Studio yearly", "400", true),
     {
       "@type": "Offer",
       name: "Enterprise",

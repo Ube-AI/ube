@@ -12,14 +12,24 @@ import { atom } from "nanostores"
 
 import { track } from "@/lib/analytics"
 
+// Source labels track user-facing copy: when a CTA is renamed, its label is
+// renamed with it, accepting the break in the analytics series rather than
+// carrying a name that no longer describes what it points at. The homepage
+// stopped saying "Publisher" and the pricing cards became Solo/Studio at new
+// prices, so those four labels moved with them (ADR 0006).
+//
+// This is the OPPOSITE of the need-signal values in RequestAccessModal,
+// which stay `publisher`/`maintainer` on purpose. A source label names a
+// CTA; the need signal measures the same growth-vs-maintenance question
+// before and after the rename, so its series must stay continuous.
 export type ModalSource =
   | "nav"
   | "maintainer_hero"
-  | "publisher_hero"
+  | "home_hero"
   | "maintainer_final_cta"
-  | "publisher_final_cta"
-  | "pricing_maintainer"
-  | "pricing_full"
+  | "home_final_cta"
+  | "pricing_solo"
+  | "pricing_studio"
   | "pricing_enterprise"
   | "pricing_final_cta"
 
