@@ -1,6 +1,6 @@
 # Ube — Landing site
 
-Static landing for [ube.dev](https://ube.dev). Built with [Astro](https://astro.build) — per-route static HTML with React islands. Deployed to GitHub Pages on push to `main`.
+Static landing for [ube.dev](https://ube.dev). Built with [Astro](https://astro.build) — per-route static HTML with React islands. Deployed to Cloudflare Workers Static Assets on push to `main`.
 
 ## Local dev
 
@@ -16,7 +16,7 @@ npm run build   # → dist/
 npm run preview # serve dist/ locally
 ```
 
-GitHub Actions runs `npm ci && npm run build` and publishes `dist/` to Pages.
+Cloudflare Workers Builds runs `npm run build` and deploys `dist/` with `npx wrangler deploy`.
 
 ## Upgrade deps
 
@@ -38,11 +38,12 @@ npm run check && npm run build
 
 ```
 astro.config.mjs               # Astro config — integrations, redirects, sitemap
+wrangler.jsonc                 # Cloudflare deployment, assets, and custom domains
 tsconfig.json                  # TypeScript strict mode (per ADR 0004)
 biome.json                     # lint/format
 public/                        # served verbatim at the site root
   assets/                      # customer logos, integration icons, favicons, og image
-  CNAME, robots.txt
+  robots.txt
 src/
   pages/                       # one .astro file per route → one HTML file
   layouts/BaseLayout.astro     # shared <head> + RequestAccessModal island
@@ -57,7 +58,6 @@ src/
   lib/                         # analytics, palette, modal primitive, asset registry
   dev/                         # tweaks panel (dev-only; gated by import.meta.env.DEV)
   styles.css                   # tokens, layout, components, mockups
-.github/workflows/             # Pages deploy workflow
 docs/adr/                      # architecture decision records
 spec/                          # implementation slices (0001 → ...)
 ```

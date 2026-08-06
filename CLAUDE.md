@@ -12,7 +12,7 @@ Other Claude Code sessions may be running in this repo in parallel.
 
 ## Build / run
 - **Dev server:** `npm run dev` (or use the `preview_*` tools with the `dev-a`..`dev-f` configs in [.claude/launch.json](.claude/launch.json) — each runs `astro dev --port {port}`).
-- **Prod build:** `npm run build` → Astro emits one HTML file per route into `dist/`, plus `sitemap-index.xml`. GitHub Actions deploys `dist/` to Pages on push to `main`.
+- **Prod build:** `npm run build` → Astro emits one HTML file per route into `dist/`, plus `sitemap-index.xml`. Cloudflare Workers Builds deploys `dist/` as static assets on push to `main`.
 - **Prod preview locally:** `npm run preview` serves `dist/`.
 
 ## Verifying changes
@@ -23,6 +23,7 @@ Astro + React islands; one big `<PageApp client:load />` per route for now (slic
 
 ```
 astro.config.mjs               # output: static, redirects { /maintainer: / }, sitemap
+wrangler.jsonc                 # Cloudflare deployment, assets, and custom domains
 tsconfig.json                  # strict; ADR 0004
 src/
   pages/                       # one .astro per route
@@ -47,7 +48,7 @@ src/
   styles.css                   # tokens + components + mockups
 public/                        # copied verbatim to dist/ — served at site root
   assets/                      # favicons, og image, social (unhashed, stable URLs)
-  CNAME, robots.txt
+  robots.txt
 ```
 
 ## Things to know before editing
