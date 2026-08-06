@@ -2,6 +2,18 @@
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "ube",
   "compatibility_date": "2026-08-05",
+  "workers_dev": false,
+  "preview_urls": false,
+  "routes": [
+    {
+      "pattern": "ube.dev",
+      "custom_domain": true
+    },
+    {
+      "pattern": "www.ube.dev",
+      "custom_domain": true
+    }
+  ],
   "assets": {
     "directory": "./dist"
   }
