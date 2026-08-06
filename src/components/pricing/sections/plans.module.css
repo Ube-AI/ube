@@ -209,11 +209,12 @@
   color: var(--ink);
 }
 
-.plan-footnote {
-  margin: 16px 0 0;
+.plans-footnote {
+  margin: 24px 0 0;
   color: var(--muted);
   font-size: 13px;
   line-height: 1.5;
+  text-align: center;
 }
 
 .plan-button {

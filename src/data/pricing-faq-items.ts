@@ -21,7 +21,7 @@ export const PRICING_FAQ_ITEMS: FaqItem[] = [
   },
   {
     q: "Are ad platform fees included in my plan?",
-    a: "No. Ad spend (Meta, Google, TikTok, etc.) is paid directly to those platforms with your own credit card. Same for optional creative-generation AI fees (Ube doesn't mark these up).",
+    a: "No. Ad spend is billed directly by the platforms. Ube charges a 5% commission on managed ad spend. Optional creative-generation AI fees are also billed directly without markup.",
   },
   {
     q: "What does scholarship access mean?",

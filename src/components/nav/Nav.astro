@@ -68,6 +68,7 @@ const wordmarkHref = isLandingPage ? "#top" : "/"
     </div>
 
     <div class="nav-right-actions">
+      <a href="https://app.ube.dev" class="dashboard-link">Dashboard</a>
       <button type="button" class="btn btn-primary btn-sm" data-nav-cta>
         Request access
       </button>
@@ -128,15 +129,24 @@ const wordmarkHref = isLandingPage ? "#top" : "/"
       Pricing
     </a>
   </div>
-  <button
-    type="button"
-    class="btn btn-primary mobile-menu-cta"
-    data-nav-cta
-    data-nav-menu-cta
-  >
-    Request access
-    <ArrowRightIcon size={14} aria-hidden="true" />
-  </button>
+  <div class="mobile-menu-actions">
+    <a
+      href="https://app.ube.dev"
+      class="dashboard-link mobile-dashboard-link"
+      data-nav-menu-link
+    >
+      Dashboard
+    </a>
+    <button
+      type="button"
+      class="btn btn-primary mobile-menu-cta"
+      data-nav-cta
+      data-nav-menu-cta
+    >
+      Request access
+      <ArrowRightIcon size={14} aria-hidden="true" />
+    </button>
+  </div>
 </div>
 
 <script src="./nav.client.ts"></script>
@@ -259,7 +269,22 @@ const wordmarkHref = isLandingPage ? "#top" : "/"
   .nav-right-actions {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 18px;
+  }
+  .dashboard-link {
+    display: inline-flex;
+    align-items: center;
+    min-height: 36px;
+    padding: 0 4px;
+    color: var(--body);
+    font-size: 13px;
+    font-weight: 500;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: color 120ms ease-out;
+  }
+  .dashboard-link:hover {
+    color: var(--ink);
   }
 
   /* Mobile menu trigger */
@@ -380,12 +405,25 @@ const wordmarkHref = isLandingPage ? "#top" : "/"
     border-radius: var(--r-pill);
     align-self: center;
   }
-  .mobile-menu-cta {
+  .mobile-menu-actions {
     margin-top: auto;
-    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .mobile-dashboard-link {
+    min-height: 52px;
+    padding: 0 8px;
+    font-size: 14px;
+    justify-content: center;
+  }
+  .mobile-menu-cta {
+    flex: 1;
     justify-content: center;
     height: 52px;
-    font-size: 15px;
+    padding: 0 10px;
+    font-size: 14px;
+    gap: 6px;
   }
 
   /* Top nav — tighten height & wordmark on phone. `.wordmark` is owned by

@@ -16,7 +16,6 @@ type Plan = {
   caption?: string
   includesLabel: string
   bullets: string[]
-  footnote?: string
   buttonLabel: string
   buttonStyle: "primary" | "secondary"
   onClick: () => void
@@ -30,7 +29,7 @@ type Plan = {
 // ad-spend ceiling, NOT an app allowance: neither tier caps how many apps a
 // customer brings. Don't write copy that implies a metered app count.
 const FOOTNOTE =
-  "Ad spend and optional creative-AI fees billed directly by those platforms."
+  "Ad spend is billed directly by the platforms. Ube charges a 5% commission on managed ad spend."
 
 const buildPlans = (billingPeriod: BillingPeriod): Plan[] => [
   {
@@ -50,7 +49,6 @@ const buildPlans = (billingPeriod: BillingPeriod): Plan[] => [
       "A/B test recommendations and deployment",
       "Scholarship access (Amplitude, AppsFlyer)",
     ],
-    footnote: FOOTNOTE,
     buttonLabel: "Join waitlist",
     buttonStyle: "secondary",
     onClick: () =>
@@ -72,7 +70,6 @@ const buildPlans = (billingPeriod: BillingPeriod): Plan[] => [
       "Portfolio view — cross-app analytics, shared audiences, portfolio-level attribution",
       "Dedicated support",
     ],
-    footnote: FOOTNOTE,
     buttonLabel: "Join waitlist",
     buttonStyle: "primary",
     onClick: () =>
@@ -256,9 +253,6 @@ export const Plans = () => {
                     </li>
                   ))}
                 </ul>
-                {plan.footnote && (
-                  <p className={styles["plan-footnote"]}>{plan.footnote}</p>
-                )}
               </div>
 
               <button
@@ -271,6 +265,7 @@ export const Plans = () => {
             </article>
           ))}
         </div>
+        <p className={styles["plans-footnote"]}>{FOOTNOTE}</p>
       </div>
     </section>
   )
