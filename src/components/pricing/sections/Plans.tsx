@@ -35,9 +35,9 @@ const FOOTNOTE =
 const buildPlans = (billingPeriod: BillingPeriod): Plan[] => [
   {
     name: "Solo",
-    monthlyPrice: 200,
-    yearlyMonthlyPrice: 160,
-    yearlySavings: "Save $480/yr",
+    monthlyPrice: 150,
+    yearlyMonthlyPrice: 120,
+    yearlySavings: "Save $360/yr",
     unit: "/app/mo",
     includesLabel: "Includes:",
     bullets: [

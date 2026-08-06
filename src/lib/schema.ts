@@ -194,12 +194,12 @@ export const buildUbeSchema = (
       "@type": "Offer",
       name: "Ube Solo early access",
       url: absoluteUrl(site, "/pricing/"),
-      price: "200",
+      price: "150",
       priceCurrency: "USD",
       availability: "https://schema.org/PreOrder",
       priceSpecification: {
         "@type": "UnitPriceSpecification",
-        price: "200",
+        price: "150",
         priceCurrency: "USD",
         unitText: "per app per month",
       },
@@ -245,8 +245,8 @@ export const buildPricingOffers = (site: SiteUrl): JsonLd[] => {
   })
 
   return [
-    tierOffer("Solo", "200", false),
-    tierOffer("Solo yearly", "160", true),
+    tierOffer("Solo", "150", false),
+    tierOffer("Solo yearly", "120", true),
     tierOffer("Team", "500", false),
     tierOffer("Team yearly", "400", true),
     {
