@@ -16,3 +16,4 @@ The Request Access modal is the site's only conversion mechanism — every page'
 - Terms and Privacy ship the React + nano-store + modal bundle (~25–35KB gzipped estimated) even though their content is static prose. This is the price of preserving the conversion path uniformly.
 - Any future page added under `src/pages/` inherits the modal automatically — no per-page wiring required.
 - The "source" analytics label (`nav`, `hero`, `final_cta`) stays coarse; page context comes from Amplitude's auto-captured URL.
+- Any route can be opened with the bare `request-access` query flag (for example, `/?request-access` or `/maintainer/?request-access`) to open the form automatically. These opens use the `direct_link` analytics source, and the flag composes with attribution parameters such as `utm_source`.

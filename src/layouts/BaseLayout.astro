@@ -7,7 +7,7 @@
 // pages stringify their schema and pass the result through here.
 //
 // The Request Access modal is mounted at the bottom (ADR 0002) and
-// hydrates during browser idle time on every route so any island's
+// hydrates on page load on every route so any island's
 // `openRequestAccess(source)` call wires through the nano store to a
 // shared modal instance.
 // The modal is closed by default and opens via the nanostore from vanilla
@@ -177,7 +177,11 @@ const jsonLdBlocks = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : []
     <div class="footer-curtain" aria-hidden="true">
       <span class="footer-curtain-text">ube</span>
     </div>
-    <RequestAccessIsland client:idle />
+    <!-- The direct-link bootstrap runs before hydration and opens the shared
+         store for URLs such as `/?request-access`. Loading the island eagerly
+         makes the requested form appear as soon as its bundle is ready. -->
+    <script src="../components/modals/request-access.client.ts"></script>
+    <RequestAccessIsland client:load />
     {
       // Dev-only tweaks panel — self-mounts via its own React root. The
       // script element is omitted entirely in production builds, so no

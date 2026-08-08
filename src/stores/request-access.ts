@@ -23,6 +23,7 @@ import { track } from "@/lib/analytics"
 // CTA; the need signal measures the same growth-vs-maintenance question
 // before and after the rename, so its series must stay continuous.
 export type ModalSource =
+  | "direct_link"
   | "nav"
   | "maintainer_hero"
   | "home_hero"
