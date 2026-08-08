@@ -43,6 +43,7 @@ const sectionHref = (anchor: string) =>
     : `${sectionBasePath}#${anchor}`
 const pricingActive = isPricingPage
 const wordmarkHref = isLandingPage ? "#top" : "/"
+const showDashboardLink = false
 ---
 
 <nav class="topnav" data-nav>
@@ -68,7 +69,11 @@ const wordmarkHref = isLandingPage ? "#top" : "/"
     </div>
 
     <div class="nav-right-actions">
-      <a href="https://app.ube.dev" class="dashboard-link">Dashboard</a>
+      {
+        showDashboardLink && (
+          <a href="https://app.ube.dev" class="dashboard-link">Dashboard</a>
+        )
+      }
       <button type="button" class="btn btn-primary btn-sm" data-nav-cta>
         Request access
       </button>
@@ -130,13 +135,17 @@ const wordmarkHref = isLandingPage ? "#top" : "/"
     </a>
   </div>
   <div class="mobile-menu-actions">
-    <a
-      href="https://app.ube.dev"
-      class="dashboard-link mobile-dashboard-link"
-      data-nav-menu-link
-    >
-      Dashboard
-    </a>
+    {
+      showDashboardLink && (
+        <a
+          href="https://app.ube.dev"
+          class="dashboard-link mobile-dashboard-link"
+          data-nav-menu-link
+        >
+          Dashboard
+        </a>
+      )
+    }
     <button
       type="button"
       class="btn btn-primary mobile-menu-cta"
