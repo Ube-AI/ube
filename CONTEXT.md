@@ -1,6 +1,6 @@
 # Ube landing
 
-The marketing site at [ube.dev](https://ube.dev). Its sole job is to measure interest in Ube (a software product not yet released). The Request Access modal's **need signal** — growth-and-distribution versus maintenance-and-fixes — is the central signal the site is designed to collect.
+The marketing site at [ube.dev](https://ube.dev). Its sole job is to measure interest in Ube (a software product not yet released). The Request Access modal's **need signal** — the concrete growth jobs prospective customers select — is the central signal the site is designed to collect.
 
 ## Language
 
@@ -19,8 +19,8 @@ _Avoid_: "the modal" (ambiguous — see Detail modal)
 A parameter passed alongside the modal-open call. `default` is the standard waitlist framing; `enterprise` is the B2B framing reached from Pricing → "Contact sales" — title and subtitle shift to a sales conversation, the email field is labelled "Work email". Same component, no fork.
 
 **Need signal**:
-The Conversion modal's required "What do you need most?" answer. Two choices — growth-and-distribution or maintenance-and-fixes — submitted as the values `publisher` and `maintainer`. The question is phrased by *need* rather than by product name, so a reader never has to choose between **Ube** and its own sub-product; the stored values keep their original names so the measurement series stays continuous across the rename.
-_Avoid_: "product radio", "product interest" as user-facing wording — those names predate the reframe.
+The Conversion modal's required, multi-select "What do you need most?" answer. Six choices cover paid-campaign efficiency, attribution, retention and monetization, user-acquisition funding, creative sourcing, and experimentation. Choices are shuffled on every open to reduce position bias, and both the selected values and displayed order are submitted. "AI brain to grow my app" is deliberately absent: it overlaps every concrete job and would produce a weak signal.
+_Avoid_: "product radio", "product interest" — those names belong to the superseded growth-versus-maintenance question (ADR 0007).
 
 **Pricing tier**:
 One of `Solo` / `Team` / `Enterprise`. Solo and Team are billed per app, where **one app = one repo** (cross-platform projects shipping iOS + Android from one codebase count as one app); Enterprise is custom-priced. Every tier sells **Ube** only — no tier mentions **Ube Maintainer**. Solo and Team route to the default Conversion modal; Enterprise routes to the enterprise variant.

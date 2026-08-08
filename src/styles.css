@@ -827,14 +827,19 @@ select.input {
   padding-right: 40px;
 }
 
-.radio-group {
-  display: flex;
-  flex-direction: column;
+.choice-group {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 8px;
 }
-.radio-item {
+.choice-fieldset {
+  min-width: 0;
+  padding: 0;
+  border: 0;
+}
+.choice-item {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 10px;
   padding: 12px 14px;
   background: var(--surface-elevated);
@@ -847,29 +852,27 @@ select.input {
   text-align: left;
   transition: border-color 120ms ease-out;
 }
-.radio-item:hover {
+.choice-item:hover {
   border-color: #3a3a48;
 }
-.radio-item.selected {
+.choice-item.selected {
   border-color: var(--accent);
 }
-.radio-dot {
+.choice-check {
   width: 16px;
   height: 16px;
-  border-radius: 50%;
+  border-radius: 4px;
   border: 1.5px solid var(--muted);
   flex-shrink: 0;
-  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 2px;
 }
-.radio-item.selected .radio-dot {
+.choice-item.selected .choice-check {
   border-color: var(--accent);
-}
-.radio-item.selected .radio-dot::after {
-  content: "";
-  position: absolute;
-  inset: 3px;
-  border-radius: 50%;
   background: var(--accent);
+  color: white;
 }
 
 /* =====================================================================
@@ -919,6 +922,11 @@ dialog.modal-backdrop::backdrop {
   position: relative;
   animation: modalIn 220ms cubic-bezier(0.22, 0.61, 0.36, 1);
 }
+.request-access-panel {
+  max-width: 720px;
+  max-height: calc(100vh - 48px);
+  overflow-y: auto;
+}
 @keyframes modalIn {
   from {
     opacity: 0;
@@ -961,6 +969,9 @@ dialog.modal-backdrop::backdrop {
     padding: 24px 20px;
     max-height: calc(100vh - 32px);
     overflow-y: auto;
+  }
+  .choice-group {
+    grid-template-columns: 1fr;
   }
   .input {
     font-size: 16px; /* keep 16px to prevent iOS auto-zoom */

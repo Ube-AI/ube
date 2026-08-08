@@ -48,17 +48,79 @@ const loadRecaptcha = (): Promise<void> => {
 
 type RequestAccessModalProps = { open: boolean; onClose: () => void }
 
+type NeedOption = {
+  id:
+    | "lower_cac"
+    | "attribution"
+    | "retention_monetization"
+    | "ua_funding"
+    | "creative_sourcing"
+    | "experimentation"
+  label: string
+  sub: string
+}
+
+const NEED_OPTIONS: readonly NeedOption[] = [
+  {
+    id: "lower_cac",
+    label: "Lower customer acquisition cost",
+    sub: "Run and optimize ad campaigns, shifting budget toward what performs best.",
+  },
+  {
+    id: "attribution",
+    label: "Set up attribution",
+    sub: "Find your high-value users and the creatives that bring them.",
+  },
+  {
+    id: "retention_monetization",
+    label: "Understand retention & monetization",
+    sub: "Track retention, revenue, and funnel performance in one clear dashboard.",
+  },
+  {
+    id: "ua_funding",
+    label: "Find user-acquisition funding",
+    sub: "Find financing to scale campaigns once the unit economics work.",
+  },
+  {
+    id: "creative_sourcing",
+    label: "Keep ad creatives flowing",
+    sub: "Source fresh ad creatives and maintain a steady testing pipeline.",
+  },
+  {
+    id: "experimentation",
+    label: "Decide what to test next",
+    sub: "Use industry benchmarks to recommend and execute A/B tests.",
+  },
+]
+
+const shuffleNeedOptions = (): NeedOption[] => {
+  const options = [...NEED_OPTIONS]
+  for (let i = options.length - 1; i > 0; i -= 1) {
+    const j = Math.floor(Math.random() * (i + 1))
+    const current = options[i]
+    const replacement = options[j]
+    if (!current || !replacement) continue
+    options[i] = replacement
+    options[j] = current
+  }
+  return options
+}
+
 export const RequestAccessModal = ({
   open,
   onClose,
 }: RequestAccessModalProps) => {
   const [step, setStep] = React.useState("form") // form | submitting | success
   const [email, setEmail] = React.useState("")
+  const [projectName, setProjectName] = React.useState("")
   const [stack, setStack] = React.useState("")
   const [stackOther, setStackOther] = React.useState("")
-  const [product, setProduct] = React.useState("")
+  const [needs, setNeeds] = React.useState<NeedOption["id"][]>([])
+  const [needOptions, setNeedOptions] = React.useState<NeedOption[]>([
+    ...NEED_OPTIONS,
+  ])
   const [teamSize, setTeamSize] = React.useState("")
-  const [productError, setProductError] = React.useState(false)
+  const [needsError, setNeedsError] = React.useState(false)
   const [submitError, setSubmitError] = React.useState("")
   // One lead id per form-fill, reused across retries (reset on close, below) so
   // a failed-then-resubmitted lead keeps the same id instead of double-counting.
@@ -74,15 +136,24 @@ export const RequestAccessModal = ({
   }, [open])
 
   const prevOpenRef = React.useRef(open)
+  const shuffledForOpenRef = React.useRef(false)
   React.useEffect(() => {
+    if (open && !shuffledForOpenRef.current) {
+      setNeedOptions(shuffleNeedOptions())
+      shuffledForOpenRef.current = true
+    }
+    if (!open) {
+      shuffledForOpenRef.current = false
+    }
     if (prevOpenRef.current && !open && step !== "success") {
       track("request_access_modal_closed", {
         source,
         variant,
         fields_filled: {
           email: Boolean(email),
+          project_name: Boolean(projectName),
           stack: Boolean(stack),
-          product: Boolean(product),
+          needs: needs.length > 0,
           team_size: Boolean(teamSize),
         },
       })
@@ -91,7 +162,7 @@ export const RequestAccessModal = ({
       requestAccessSource.set(null)
     }
     prevOpenRef.current = open
-  }, [open, step, source, variant, email, stack, product, teamSize])
+  }, [open, step, source, variant, email, projectName, stack, needs, teamSize])
 
   // Reset to form when re-opened after success
   React.useEffect(() => {
@@ -100,26 +171,29 @@ export const RequestAccessModal = ({
     }
     if (!open) {
       // small delay to avoid flash mid-close
-      setTimeout(() => {
+      const resetTimer = window.setTimeout(() => {
         setStep("form")
         setEmail("")
+        setProjectName("")
         setStack("")
         setStackOther("")
-        setProduct("")
+        setNeeds([])
         setTeamSize("")
-        setProductError(false)
+        setNeedsError(false)
         setSubmitError("")
         eventIdRef.current = null
       }, 280)
+      return () => window.clearTimeout(resetTimer)
     }
+    return
   }, [open, step])
   const onSubmit = async (e: SubmitEvent<HTMLFormElement>) => {
     e.preventDefault()
-    if (!product) {
-      setProductError(true)
+    if (needs.length === 0) {
+      setNeedsError(true)
       return
     }
-    setProductError(false)
+    setNeedsError(false)
     setSubmitError("")
     // One id per form-fill (held in a ref) and reused across retries, so a
     // failed-then-resubmitted lead keeps the SAME id — shared by the Zaraz
@@ -129,9 +203,11 @@ export const RequestAccessModal = ({
     const eventId = eventIdRef.current
     track("request_access_submitted", {
       email,
-      product_interest: product,
+      project_name: projectName,
       stack,
       stack_other: stackOther,
+      needs,
+      needs_order: needOptions.map((option) => option.id),
       team_size: teamSize,
       variant,
       event_id: eventId,
@@ -210,7 +286,7 @@ export const RequestAccessModal = ({
       open={open}
       onClose={onClose}
       className="modal-backdrop"
-      panelClassName="modal-panel"
+      panelClassName="modal-panel request-access-panel"
     >
       {step !== "success" ? (
         <>
@@ -254,6 +330,21 @@ export const RequestAccessModal = ({
             </div>
 
             <div className="field">
+              <label className="field-label" htmlFor="ra-project-name">
+                Project / app name
+              </label>
+              <input
+                id="ra-project-name"
+                type="text"
+                name="project_name"
+                placeholder="Your app or project"
+                className="input"
+                value={projectName}
+                onChange={(e) => setProjectName(e.target.value)}
+              />
+            </div>
+
+            <div className="field">
               <label className="field-label" htmlFor="ra-stack">
                 What are you building with? <span className="req-dot" />
               </label>
@@ -286,16 +377,24 @@ export const RequestAccessModal = ({
               )}
             </div>
 
-            <div className="field">
-              <span id="ra-product-label" className="field-label">
+            <fieldset
+              className="field choice-fieldset"
+              aria-describedby="ra-needs-hint"
+            >
+              <legend className="field-label">
                 What do you need most? <span className="req-dot" />
-              </span>
+              </legend>
               <div
-                className="radio-group"
-                role="radiogroup"
-                aria-labelledby="ra-product-label"
+                id="ra-needs-hint"
+                className="t-caption muted"
+                style={{ marginTop: -2, marginBottom: 10 }}
+              >
+                Pick as many as you want.
+              </div>
+              <div
+                className="choice-group"
                 style={
-                  productError
+                  needsError
                     ? {
                         borderRadius: 12,
                         outline: "1px solid #c0392b",
@@ -304,82 +403,64 @@ export const RequestAccessModal = ({
                     : undefined
                 }
               >
-                {/* This is the need signal — the central measurement the
-                    whole site exists to collect. The question is phrased by
-                    need rather than by product name so a reader never has to
-                    choose between Ube and its own sub-product.
-
-                    The submitted `id`s stay `publisher` / `maintainer` even
-                    though no label says either word any more. That is
-                    deliberate (ADR 0006): the question measures the same
-                    underlying thing — growth versus maintenance — before and
-                    after the rename, so renaming the values would split the
-                    series at exactly the moment we most want to compare
-                    across it. Do not "finish the rename" here. */}
-                {[
-                  {
-                    id: "publisher",
-                    label: "Growth & distribution",
-                    sub: "Get more users, spend smarter.",
-                  },
-                  {
-                    id: "maintainer",
-                    label: "Maintenance & fixes",
-                    sub: "Automated triage and pull requests (PRs) for production issues.",
-                  },
-                ].map((opt) => (
-                  <button
-                    type="button"
-                    key={opt.id}
-                    className={`radio-item ${product === opt.id ? "selected" : ""}`}
-                    aria-pressed={product === opt.id}
-                    onClick={() => {
-                      setProduct(opt.id)
-                      setProductError(false)
-                    }}
-                  >
-                    <span className="radio-dot" />
-                    <div>
-                      <div style={{ color: "var(--ink)", fontWeight: 500 }}>
-                        {opt.label}
-                      </div>
-                      {opt.sub && (
-                        <div
-                          className="t-caption muted"
-                          style={{ marginTop: 2 }}
-                        >
-                          {opt.sub}
+                {needOptions.map((opt) => {
+                  const selected = needs.includes(opt.id)
+                  return (
+                    <button
+                      type="button"
+                      key={opt.id}
+                      className={`choice-item ${selected ? "selected" : ""}`}
+                      aria-pressed={selected}
+                      onClick={() => {
+                        setNeeds((current) =>
+                          current.includes(opt.id)
+                            ? current.filter((id) => id !== opt.id)
+                            : [...current, opt.id],
+                        )
+                        setNeedsError(false)
+                      }}
+                    >
+                      <span className="choice-check" aria-hidden="true">
+                        {selected && <CheckIcon size={12} weight="bold" />}
+                      </span>
+                      <div>
+                        <div style={{ color: "var(--ink)", fontWeight: 500 }}>
+                          {opt.label}
                         </div>
-                      )}
-                    </div>
-                  </button>
-                ))}
+                        {opt.sub && (
+                          <div
+                            className="t-caption muted"
+                            style={{ marginTop: 2 }}
+                          >
+                            {opt.sub}
+                          </div>
+                        )}
+                      </div>
+                    </button>
+                  )
+                })}
               </div>
-              <input type="hidden" name="product_interest" value={product} />
-              {productError && (
+              {needs.map((need) => (
+                <input key={need} type="hidden" name="needs" value={need} />
+              ))}
+              <input
+                type="hidden"
+                name="needs_order"
+                value={needOptions.map((option) => option.id).join(",")}
+              />
+              {needsError && (
                 <div
                   className="t-caption"
                   style={{ marginTop: 8, color: "#c0392b" }}
                 >
-                  Please pick one.
+                  Please pick at least one.
                 </div>
               )}
-            </div>
+            </fieldset>
 
             <div className="field">
               <label className="field-label" htmlFor="ra-team-size">
-                Team size{" "}
-                <span
-                  className="muted"
-                  style={{
-                    textTransform: "none",
-                    letterSpacing: 0,
-                    fontWeight: 400,
-                    fontFamily: "var(--font-sans)",
-                  }}
-                >
-                  (optional)
-                </span>
+                Team size
               </label>
               <select
                 id="ra-team-size"
