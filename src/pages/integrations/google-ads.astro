@@ -1,0 +1,90 @@
+---
+// =====================================================================
+//  Google Ads API integration disclosure (/integrations/google-ads)
+// =====================================================================
+// Linked as the "Application home page" on the Google Ads API OAuth
+// consent screen, so a Google reviewer (and end users) can see what the
+// app is and what it does with their Google Ads data. Not a marketing
+// page — plain, static `.astro` reusing the legal-page prose system so
+// it ships with near-zero JS, same as /privacy-policy/ and
+// /terms-of-service/. Deliberately excluded from the main nav (reachable
+// only by direct URL) but left indexable — nothing here is sensitive.
+//
+// The wordmark is spelled lowercase "ube" everywhere on this page,
+// including <title> and the meta description, to match the app name
+// configured on the OAuth consent screen exactly.
+import IntegrationsSidebar from "@/components/sections/IntegrationsSidebar.astro"
+import { CONTACT_EMAIL } from "@/constants"
+import BaseLayout from "@/layouts/BaseLayout.astro"
+
+const title = "ube — Google Ads Integration"
+const description =
+  "How ube connects to your Google Ads account, what access it requests, and how that data is used."
+---
+
+<BaseLayout title={title} description={description}>
+  <main class="legal-page">
+    <div class="container legal-layout">
+      <IntegrationsSidebar active="google-ads" />
+
+      <article class="legal-content">
+        <h1>ube</h1>
+        <p class="legal-meta">
+          Google Ads API integration disclosure · Last updated August 9, 2026
+        </p>
+
+        <p>
+          <strong>ube</strong> is a mobile app growth platform for indie
+          studios. It brings analytics, attribution, ad campaign management,
+          and creative testing into one place, so app teams can understand
+          what's working and act on it.
+        </p>
+
+        <h2>What we connect to, and why</h2>
+
+        <p>
+          ube connects to your Google Ads account through the Google Ads API
+          so it can manage and report on your ad campaigns from inside ube.
+          Specifically, ube requests access to:
+        </p>
+
+        <ul>
+          <li>
+            Create, edit, and manage ad campaigns and ad groups on your
+            behalf
+          </li>
+          <li>
+            Read and monitor campaign performance metrics, including
+            impressions, clicks, conversions, cost, and ROAS
+          </li>
+          <li>Track and analyze ad creative performance across formats</li>
+          <li>
+            Use AI-driven automation to adjust budgets and shift spend across
+            ad sets and campaigns to optimize for performance — for example,
+            the lowest CAC or the best ROAS
+          </li>
+        </ul>
+
+        <h2>How we use this data</h2>
+
+        <p>
+          Data from your Google Ads account is used solely to power your own
+          dashboards, recommendations, and automated optimizations inside
+          ube. We do not sell this data, share it with unrelated third
+          parties, or use it to advertise to you.
+        </p>
+
+        <p class="contact-line">
+          <strong>Questions about this integration?</strong> Email us at{" "}
+          <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>.
+        </p>
+      </article>
+    </div>
+  </main>
+</BaseLayout>
+
+<style>
+  .contact-line {
+    margin-top: 56px;
+  }
+</style>

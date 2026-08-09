@@ -1,0 +1,68 @@
+---
+// =====================================================================
+//  IntegrationsSidebar — left-side index for /integrations/* pages
+// =====================================================================
+// Mirrors LegalSidebar.astro's look and behavior (same scoped styles),
+// but lists pages from the growing INTEGRATION_PAGES registry instead of
+// two hardcoded links, since this list is expected to grow as more OAuth
+// consent-screen disclosure pages are added under /integrations/.
+import { INTEGRATION_PAGES } from "@/data/integration-pages"
+
+export interface Props {
+  active: string
+}
+
+const { active } = Astro.props
+---
+
+<aside class="legal-sidebar">
+  <nav class="legal-nav" aria-label="Integrations">
+    {
+      INTEGRATION_PAGES.map((page) => (
+        <a
+          href={`/integrations/${page.slug}/`}
+          class:list={[{ active: active === page.slug }]}
+        >
+          {page.label}
+        </a>
+      ))
+    }
+  </nav>
+</aside>
+
+<style>
+  .legal-sidebar {
+    position: sticky;
+    top: 96px;
+  }
+  .legal-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .legal-nav a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 15px;
+    font-weight: 450;
+    transition: color 120ms ease-out;
+  }
+  .legal-nav a:hover {
+    color: var(--body);
+  }
+  .legal-nav a.active {
+    color: var(--ink);
+  }
+  @media (max-width: 900px) {
+    .legal-sidebar {
+      position: static;
+      top: auto;
+    }
+    .legal-nav {
+      flex-direction: row;
+      gap: 24px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--hairline-soft);
+    }
+  }
+</style>
