@@ -11,9 +11,7 @@
 import { ArrowRightIcon } from "@phosphor-icons/react"
 ---
 
-<section class="cta-band">
-  <div class="cta-band-bg"></div>
-  <div class="cta-band-grid"></div>
+<section class="cta-band paper-shader" data-warp-shader>
   <div class="container cta-band-inner">
     <h2 class="t-display-lg cta-band-headline">
       Stop shipping fixes.
@@ -38,45 +36,7 @@ import { ArrowRightIcon } from "@phosphor-icons/react"
     position: relative;
     padding: 160px 0;
     overflow: hidden;
-    border-top: 1px solid var(--hairline-soft);
-    border-bottom: 1px solid var(--hairline-soft);
     isolation: isolate;
-  }
-  .cta-band-bg {
-    position: absolute;
-    inset: 0;
-    background:
-      radial-gradient(
-        ellipse at center,
-        rgba(107, 63, 160, 0.32) 0%,
-        rgba(107, 63, 160, 0.08) 35%,
-        transparent 70%
-      ),
-      var(--canvas);
-    z-index: -2;
-  }
-  .cta-band-grid {
-    position: absolute;
-    inset: 0;
-    background-image: radial-gradient(
-      rgba(255, 255, 255, 0.14) 1px,
-      transparent 1px
-    );
-    background-size: 32px 32px;
-    opacity: 0.5;
-    mask-image: radial-gradient(
-      ellipse at center,
-      rgba(0, 0, 0, 1) 0%,
-      rgba(0, 0, 0, 0.4) 50%,
-      transparent 80%
-    );
-    -webkit-mask-image: radial-gradient(
-      ellipse at center,
-      rgba(0, 0, 0, 1) 0%,
-      rgba(0, 0, 0, 0.4) 50%,
-      transparent 80%
-    );
-    z-index: -1;
   }
   .cta-band-inner {
     position: relative;

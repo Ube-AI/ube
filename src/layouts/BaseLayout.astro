@@ -192,6 +192,8 @@ const jsonLdBlocks = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : []
       )
     }
     <script src="./page-tracking.client.ts"></script>
+    <!-- Lazily mounts Paper Warp canvases on opted-in decorative surfaces. -->
+    <script src="./warp-shader.client.ts"></script>
     <!-- Global tap-to-toggle for inline glossary terms (<Term>). One
          delegated handler covers Astro- and React-rendered instances. -->
     <script src="./terms.client.ts"></script>

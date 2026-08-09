@@ -532,7 +532,8 @@ export const RequestAccessModal = ({
               height: 56,
               borderRadius: "50%",
               background: "var(--accent-tint)",
-              border: "1px solid rgba(107, 63, 160, 0.4)",
+              border:
+                "var(--translucent-border-width) solid rgba(107, 63, 160, 0.4)",
               display: "inline-flex",
               alignItems: "center",
               justifyContent: "center",

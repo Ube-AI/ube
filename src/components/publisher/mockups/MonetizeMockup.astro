@@ -1,6 +1,8 @@
 ---
 import { CheckIcon, SparkleIcon } from "@phosphor-icons/react"
+import { Image } from "astro:assets"
 import Term from "@/components/Term.astro"
+import pixelBuddy from "@/assets/customers/pixel-buddy.webp"
 import { integrationLogos } from "@/lib/integration-logos"
 ---
 
@@ -34,7 +36,14 @@ import { integrationLogos } from "@/lib/integration-logos"
           </div>
           <div class="phone-screen">
             <div class="phone-icon">
-              <span>U</span>
+              <Image
+                src={pixelBuddy}
+                alt=""
+                width={42}
+                height={42}
+                densities={[2, 3]}
+                loading="lazy"
+              />
             </div>
             <div class="phone-title">Unlock Pro</div>
             <ul class="phone-features">
@@ -83,7 +92,14 @@ import { integrationLogos } from "@/lib/integration-logos"
           </div>
           <div class="phone-screen">
             <div class="phone-icon">
-              <span>U</span>
+              <Image
+                src={pixelBuddy}
+                alt=""
+                width={42}
+                height={42}
+                densities={[2, 3]}
+                loading="lazy"
+              />
             </div>
             <div class="phone-badge mono">3-day free trial</div>
             <div class="phone-title">Try Pro free</div>
@@ -155,6 +171,7 @@ import { integrationLogos } from "@/lib/integration-logos"
     min-width: 0;
   }
   .paywall-variant.winner {
+    border-width: var(--translucent-border-width);
     border-color: color-mix(in oklab, var(--accent) 60%, transparent);
   }
   .paywall-variant .lbl {
@@ -169,7 +186,7 @@ import { integrationLogos } from "@/lib/integration-logos"
     max-width: 100%;
     aspect-ratio: 9 / 16.8;
     margin: 10px auto 0;
-    border: 1px solid color-mix(in oklab, var(--ink) 14%, transparent);
+    border: var(--translucent-border-width) solid color-mix(in oklab, var(--ink) 14%, transparent);
     border-radius: 28px;
     background: #101014;
     padding: 5px;
@@ -243,17 +260,14 @@ import { integrationLogos } from "@/lib/integration-logos"
     width: 42px;
     height: 42px;
     border-radius: 12px;
-    background: linear-gradient(
-      135deg,
-      color-mix(in oklab, var(--accent) 65%, var(--ink)),
-      color-mix(in oklab, var(--accent) 30%, var(--canvas))
-    );
-    display: grid;
-    place-items: center;
-    color: var(--ink);
-    font-size: 18px;
-    font-weight: 700;
+    overflow: hidden;
     box-shadow: 0 8px 18px rgb(0 0 0 / 0.22);
+  }
+  .phone-icon img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
   }
   .phone-badge {
     font-size: 8px;

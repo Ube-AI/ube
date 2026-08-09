@@ -15,8 +15,7 @@
 
 <section class="founder-band" aria-labelledby="founder-band-title">
   <div class="container">
-    <div class="founder-panel">
-      <div class="founder-panel-grid" aria-hidden="true"></div>
+    <div class="founder-panel paper-shader" data-warp-shader>
       <div class="founder-panel-inner">
         <div class="founder-lead">
           <div class="eyebrow founder-eyebrow">First cohort only</div>
@@ -49,43 +48,8 @@
     overflow: hidden;
     padding: 36px 44px;
     border-radius: var(--r-xl);
-    background: linear-gradient(135deg, var(--accent-tint), var(--card-bg) 62%);
     border: 1px solid var(--card-border);
     isolation: isolate;
-  }
-  .founder-panel::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(
-      ellipse 55% 130% at 0% 0%,
-      var(--accent-tint),
-      transparent 62%
-    );
-    pointer-events: none;
-    z-index: -1;
-  }
-  .founder-panel-grid {
-    position: absolute;
-    inset: 0;
-    background-image: radial-gradient(
-      rgba(255, 255, 255, 0.12) 1px,
-      transparent 1px
-    );
-    background-size: 30px 30px;
-    opacity: 0.4;
-    pointer-events: none;
-    z-index: -1;
-    mask-image: radial-gradient(
-      ellipse 50% 110% at 0% 0%,
-      #000 0%,
-      transparent 70%
-    );
-    -webkit-mask-image: radial-gradient(
-      ellipse 50% 110% at 0% 0%,
-      #000 0%,
-      transparent 70%
-    );
   }
   .founder-panel-inner {
     position: relative;

@@ -25,6 +25,7 @@
   --hairline: #25252e;
   --hairline-soft: #1c1c24;
   --hairline-strong: #2e2e38;
+  --translucent-border-width: 2px;
 
   /* Landing-page card surface — warm tone (rgb(29, 27, 21)) */
   --card-bg: #1d1b15;
@@ -94,6 +95,52 @@ body[data-accent-mode="split"] {
   --mark: var(--accent-2);
   --mark-soft: var(--accent-2-soft);
   --mark-tint: var(--accent-2-tint);
+}
+
+/* WebGL Warp fallback: stays visible while the shader loads and whenever
+   WebGL, dynamic imports, or texture decoding are unavailable. */
+.paper-shader {
+  position: relative;
+  isolation: isolate;
+  background:
+    radial-gradient(
+      ellipse at center,
+      rgba(107, 63, 160, 0.32) 0%,
+      rgba(107, 63, 160, 0.08) 35%,
+      transparent 70%
+    ),
+    var(--canvas);
+}
+.paper-shader > canvas {
+  z-index: 0;
+  opacity: 0;
+  transition: opacity 360ms ease-out;
+}
+.paper-shader[data-warp-mounted="true"] > canvas {
+  opacity: 1;
+}
+.paper-shader > :not(canvas) {
+  position: relative;
+  z-index: 1;
+}
+/* Softens the shader's top/bottom edges into the surrounding sections — an
+   inset shadow reads as a gradual vignette rather than a hard rectangular
+   cutoff. Lives on ::after (above the canvas, which is opaque once mounted
+   and would otherwise paint over a shadow placed on .paper-shader itself). */
+.paper-shader::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  box-shadow:
+    inset 0 48px 40px -40px var(--canvas),
+    inset 0 -48px 40px -40px var(--canvas);
+}
+@media (prefers-reduced-motion: reduce) {
+  .paper-shader > canvas {
+    transition: none;
+  }
 }
 
 /* Heading reset — every heading in this codebase is laid out by an
@@ -504,22 +551,22 @@ section[id] {
 .pill-accent {
   background: var(--accent-tint);
   color: var(--accent);
-  border: 1px solid rgba(107, 63, 160, 0.3);
+  border: var(--translucent-border-width) solid rgba(107, 63, 160, 0.3);
 }
 .pill-success {
   background: rgba(59, 182, 122, 0.12);
   color: var(--success);
-  border: 1px solid rgba(59, 182, 122, 0.3);
+  border: var(--translucent-border-width) solid rgba(59, 182, 122, 0.3);
 }
 .pill-error {
   background: rgba(225, 95, 107, 0.12);
   color: var(--error);
-  border: 1px solid rgba(225, 95, 107, 0.3);
+  border: var(--translucent-border-width) solid rgba(225, 95, 107, 0.3);
 }
 .pill-warning {
   background: rgba(216, 162, 75, 0.12);
   color: var(--warning);
-  border: 1px solid rgba(216, 162, 75, 0.3);
+  border: var(--translucent-border-width) solid rgba(216, 162, 75, 0.3);
 }
 .pill-muted {
   background: var(--surface-elevated);

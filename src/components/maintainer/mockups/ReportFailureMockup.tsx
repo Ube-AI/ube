@@ -20,7 +20,7 @@ const GhOpenBadge = ({
       padding: "2px 9px 2px 8px",
       borderRadius: 9999,
       background: `color-mix(in oklab, ${color} 14%, transparent)`,
-      border: `1px solid color-mix(in oklab, ${color} 35%, transparent)`,
+      border: `var(--translucent-border-width) solid color-mix(in oklab, ${color} 35%, transparent)`,
       color: color,
       fontSize: 10.5,
       fontWeight: 600,

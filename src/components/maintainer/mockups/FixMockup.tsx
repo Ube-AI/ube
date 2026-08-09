@@ -207,7 +207,8 @@ export const FixMockup = () => (
                     gap: 7,
                     padding: "6px 7px",
                     background: "rgba(255,255,255,0.03)",
-                    border: "1px solid rgba(255,255,255,0.04)",
+                    border:
+                      "var(--translucent-border-width) solid rgba(255,255,255,0.04)",
                     borderRadius: 7,
                   }}
                 >
@@ -253,7 +254,8 @@ export const FixMockup = () => (
               <div
                 style={{
                   background: "rgba(225, 95, 107, 0.15)",
-                  border: "1px solid rgba(225, 95, 107, 0.35)",
+                  border:
+                    "var(--translucent-border-width) solid rgba(225, 95, 107, 0.35)",
                   borderRadius: 6,
                   padding: "6px 8px",
                   display: "flex",
@@ -325,7 +327,8 @@ export const FixMockup = () => (
               height: 22,
               borderRadius: "50%",
               background: "rgba(59, 182, 122, 0.15)",
-              border: "1px solid rgba(59, 182, 122, 0.4)",
+              border:
+                "var(--translucent-border-width) solid rgba(59, 182, 122, 0.4)",
               display: "inline-flex",
               alignItems: "center",
               justifyContent: "center",

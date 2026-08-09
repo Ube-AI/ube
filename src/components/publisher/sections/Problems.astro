@@ -87,7 +87,7 @@ const row2: Card[] = [
         row1.map(({ Icon, title, body }) => (
           <div class="card card-hover publisher-problem-card">
             <div class="publisher-problem-card-icon">
-              <Icon size={26} aria-hidden="true" />
+              <Icon size={26} weight="fill" aria-hidden="true" />
             </div>
             <h3 class="t-title-md ink publisher-problem-card-title">{title}</h3>
             <p class="t-body-sm body publisher-problem-card-body">
@@ -111,7 +111,7 @@ const row2: Card[] = [
         row2.map(({ Icon, title, body }) => (
           <div class="card card-hover publisher-problem-card">
             <div class="publisher-problem-card-icon">
-              <Icon size={26} aria-hidden="true" />
+              <Icon size={26} weight="fill" aria-hidden="true" />
             </div>
             <h3 class="t-title-md ink publisher-problem-card-title">{title}</h3>
             <p class="t-body-sm body publisher-problem-card-body">
@@ -184,16 +184,9 @@ const row2: Card[] = [
     padding: 32px;
   }
   .publisher-problem-card-icon {
-    width: 50px;
-    height: 50px;
-    border-radius: 10px;
-    background: var(--mark-tint);
     color: var(--mark);
     display: inline-flex;
-    align-items: center;
-    justify-content: center;
     margin-bottom: 22px;
-    border: 1px solid color-mix(in oklab, var(--mark) 25%, transparent);
   }
   .publisher-problem-card-title {
     margin-bottom: 10px;

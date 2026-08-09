@@ -179,7 +179,7 @@ const deltaTone = (metric: string, delta: string): "good" | "bad" => {
   .weekly-rec-tag {
     background: var(--accent-tint);
     color: var(--accent);
-    border: 1px solid color-mix(in oklab, var(--accent) 35%, transparent);
+    border: var(--translucent-border-width) solid color-mix(in oklab, var(--accent) 35%, transparent);
     border-radius: var(--r-pill);
     padding: 6px 12px;
     font-size: 9.5px;
@@ -211,7 +211,7 @@ const deltaTone = (metric: string, delta: string): "good" | "bad" => {
     display: flex;
     align-items: center;
     padding: 0 12px;
-    border: 1px solid color-mix(in oklab, var(--accent) 30%, transparent);
+    border: var(--translucent-border-width) solid color-mix(in oklab, var(--accent) 30%, transparent);
     border-radius: 6px;
     background: linear-gradient(
       90deg,

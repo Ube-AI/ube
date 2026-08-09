@@ -2,8 +2,7 @@
 import { ArrowRightIcon } from "@phosphor-icons/react"
 ---
 
-<section class="pricing-final">
-  <div class="pricing-final-grid" aria-hidden="true"></div>
+<section class="pricing-final paper-shader" data-warp-shader>
   <div class="container pricing-final-inner">
     <h2 class="t-display-lg">Get started with Ube.</h2>
     <button type="button" class="btn btn-primary" data-pricing-final-cta>
@@ -21,42 +20,6 @@ import { ArrowRightIcon } from "@phosphor-icons/react"
     overflow: hidden;
     padding: 136px 0;
     text-align: center;
-    border-top: 1px solid var(--hairline-soft);
-    background: var(--canvas);
-  }
-
-  .pricing-final::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(
-      ellipse at center,
-      rgba(107, 63, 160, 0.28),
-      transparent 62%
-    );
-    pointer-events: none;
-  }
-
-  .pricing-final-grid {
-    position: absolute;
-    inset: 0;
-    background-image: radial-gradient(
-      rgba(255, 255, 255, 0.14) 1px,
-      transparent 1px
-    );
-    background-size: 32px 32px;
-    opacity: 0.5;
-    pointer-events: none;
-    mask-image: radial-gradient(
-      ellipse 80% 62% at 50% 28%,
-      #000 0%,
-      transparent 76%
-    );
-    -webkit-mask-image: radial-gradient(
-      ellipse 80% 62% at 50% 28%,
-      #000 0%,
-      transparent 76%
-    );
   }
 
   .pricing-final-inner {
