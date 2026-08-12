@@ -417,17 +417,19 @@ const showDashboardLink = true
   .mobile-menu-actions {
     margin-top: auto;
     display: flex;
-    align-items: center;
-    gap: 16px;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
   }
   .mobile-dashboard-link {
     min-height: 52px;
     padding: 0 8px;
     font-size: 14px;
     justify-content: center;
+    border: 1px solid var(--hairline-strong);
+    border-radius: var(--r-md);
   }
   .mobile-menu-cta {
-    flex: 1;
     justify-content: center;
     height: 52px;
     padding: 0 10px;
