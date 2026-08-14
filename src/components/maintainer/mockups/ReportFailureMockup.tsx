@@ -50,7 +50,7 @@ export const ReportFailureMockup = () => (
     >
       <Logo name="github" size={14} />
       <span className="mono" style={{ fontSize: 11.5, color: "var(--ink)" }}>
-        chunkytofu/cookcam
+        Ube-AI/cookcam
       </span>
       <span className="mono" style={{ fontSize: 11.5, color: "var(--muted)" }}>
         #312

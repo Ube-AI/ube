@@ -1,14 +1,8 @@
 ---
 // Site footer — rendered on every route by BaseLayout (spec 0003).
 //
-// Entity naming is deliberately split (ADR 0006): the copyright line is the
-// ONE place that says "Ube, Inc.", the brand name we present as the company.
-// Ube, Inc. is not yet incorporated, so every surface that makes a legal
-// assertion — Terms, Privacy, schema.org `legalName`, llms.txt — names
-// Chunky Tofu Studios, LLC instead. Because this footer renders on the legal
-// pages too, "© Ube, Inc." sits below copy naming Chunky Tofu Studios, LLC.
-// That mismatch is known and accepted; don't propagate either name over the
-// other to make them agree.
+// Ube, Inc. is the incorporated company. The LinkedIn link alone retains the
+// legacy Chunky Tofu Studios identity until Ube has its own company page.
 import Wordmark from "@/components/Wordmark.astro"
 import { CONTACT_EMAIL, GITHUB_URL, LINKEDIN_URL } from "@/constants"
 import { EnvelopeIcon } from "@phosphor-icons/react"

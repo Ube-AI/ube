@@ -52,10 +52,7 @@ export const buildOrganizationSchema = (
     "@type": "Organization",
     "@id": ids.orgId,
     name: "Ube",
-    // `legalName` is a factual claim about a registered entity, and
-    // Ube, Inc. is not one yet — Chunky Tofu Studios, LLC is the operating
-    // company (ADR 0006). Only the footer copyright says "Ube, Inc.".
-    legalName: "Chunky Tofu Studios, LLC",
+    legalName: "Ube, Inc.",
     url: ids.siteUrl,
     logo: absoluteUrl(site, "/assets/favicons/logo-512.png"),
     description:

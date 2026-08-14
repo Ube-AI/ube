@@ -4,7 +4,7 @@
 
 ## Key facts
 
-- **Company**: Chunky Tofu Studios, LLC.
+- **Company**: Ube, Inc., a Delaware C corporation.
 - **Status**: Pre-launch. The site is a demand probe and accepts early-access requests at https://ube.dev.
 - **Products**: Ube (flagship, growth and distribution) and Ube Maintainer (secondary, automated maintenance).
 - **Pricing**: Three tiers, all selling Ube. Solo is $150/app/month or $120/app/month billed yearly, with managed ad spend up to $1k/month. Team is $500/app/month or $400/app/month billed yearly, with managed ad spend up to $15k/month, team seats, several campaign refreshes per week, and a portfolio view across apps. Enterprise is custom. Neither Solo nor Team caps how many apps a customer brings — the managed ad-spend ceiling is what separates them. Ad spend and optional creative-generation fees are paid directly to those platforms. Ube Maintainer is not sold from a pricing tier.

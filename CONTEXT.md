@@ -52,11 +52,8 @@ A top-level page region (Hero, Problems, HowItWorks, Benefits, FAQ, FinalCTA, et
 An in-page visual representation of the Ube product (IntakeMockup, TriageMockup, FixMockup, ReportSuccessMockup, ReportFailureMockup, and the Hero mockup variants). Mockups are visual, not functional product surfaces.
 
 **Ube, Inc.**:
-The brand name the site presents as the company, carried only by the footer copyright line. **Not yet incorporated** — it names an intended future entity, not an existing one, so it must not appear anywhere that makes a legal assertion.
-
-**Chunky Tofu Studios, LLC**:
-The actual operating entity: the party to the Terms, the controller of personal data, the `legalName` in structured data, and the company named in `llms.txt`. Every legal or contractual surface names it and only it. The footer's `© Ube, Inc.` and the legal pages' `Chunky Tofu Studios, LLC` therefore appear on the same screen — the footer renders on every route, legal pages included. That is a known, accepted mismatch for as long as Ube, Inc. is unformed; it is not a bug for a future agent to "fix" by propagating either name over the other.
-_Avoid_: naming **Ube, Inc.** in Terms, Privacy, `schema.org` `legalName`, or `llms.txt` until it is actually formed.
+The incorporated Delaware C corporation and legal entity behind Ube: the party to the Terms, the controller of personal data, and the company named on every legal and contractual surface. Its LinkedIn presence remains the legacy Chunky Tofu Studios profile until Ube has its own.
+_Avoid_: **Chunky Tofu Studios, LLC**, except when identifying or linking to the legacy LinkedIn profile.
 
 **Source** (analytics):
 A coarse label identifying which CTA fired an analytics event — `"nav"`, `"home_hero"`, `"pricing_solo"`, `"pricing_final_cta"`, and so on. Page-level breakdown comes from Amplitude's auto-captured URL, not from the source label. Labels track user-facing copy: when a CTA is renamed, its label is renamed with it, accepting the break in the series rather than carrying a name that no longer describes what it points at. The **need signal** values are the deliberate exception.
