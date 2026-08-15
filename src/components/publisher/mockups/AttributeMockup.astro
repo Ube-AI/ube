@@ -1,6 +1,5 @@
 ---
 import {
-  ArrowRightIcon,
   CurrencyDollarIcon,
   DownloadSimpleIcon,
   HandTapIcon,
@@ -20,19 +19,41 @@ const stages: Stage[] = [
   { Icon: HandTapIcon, num: "03", label: "Engagement" },
   { Icon: CurrencyDollarIcon, num: "04", label: "Purchase" },
 ]
+
+/* The caption's outcome clause rolls to the next one each time the pulse
+   closes the loop. */
+const clauses = [
+  "ad targeting improves",
+  "cost per install drops",
+  "roas signal sharpens",
+]
 ---
 
-<div class="mockup-chrome">
+{/*
+  The four stages are nodes on one orthogonal circuit rail — straight runs,
+  6px corners, hairline weight — and direction is carried by a signal pulse
+  travelling the rail rather than by arrowheads. The rail passes behind the
+  cards, so the pulse visibly enters a stage, the stage fires, the pulse
+  leaves. Its geometry is measured at runtime by the client script, so it
+  adapts to whatever width the column gives it.
+*/}
+<div class="mockup-chrome" data-attribute-mockup>
   <div class="mockup-header">
     <span class="mono header-label">
       Attribution Loop · iOS · <Term term="skadnetwork" />
     </span>
   </div>
-  <div class="loop-mockup">
-    <div class="stage-row">
-      {
-        stages.map((s, i) => (
-          <>
+  <div class="loop-body">
+    <div class="loop-diagram is-idle" data-loop-diagram>
+      <svg class="loop-svg" aria-hidden="true" data-loop-svg>
+        <path class="loop-rail" data-rail></path>
+        <path class="loop-trail" data-trail></path>
+        <path class="loop-head" data-head></path>
+      </svg>
+
+      <div class="stage-row" data-stage-row>
+        {
+          stages.map((s) => (
             <div class="loop-stage">
               <span class="icon">
                 <s.Icon size={18} aria-hidden="true" />
@@ -40,65 +61,85 @@ const stages: Stage[] = [
               <span class="num">{s.num}</span>
               <span class="lbl">{s.label}</span>
             </div>
-            {i < stages.length - 1 && (
-              <span class="arrow-between" aria-hidden="true">
-                <ArrowRightIcon size={14} weight="bold" />
-              </span>
-            )}
-          </>
-        ))
-      }
+          ))
+        }
+      </div>
+
+      <div class="loop-lane" aria-hidden="true"></div>
     </div>
-    <div class="loop-back" aria-hidden="true">
-      <svg
-        class="loop-back-svg"
-        viewBox="0 0 600 60"
-        preserveAspectRatio="none"
-      >
-        <defs>
-          <marker
-            id="loop-back-arrow"
-            viewBox="0 0 10 10"
-            refX="9"
-            refY="3"
-            markerWidth="7"
-            markerHeight="7"
-            orient="auto-start-reverse"
-          >
-            <path d="M0 0 L10 5 L0 10 Z" fill="var(--accent)"></path>
-          </marker>
-        </defs>
-        <path
-          d="M540 0 Q540 60 300 60 Q60 60 60 0"
-          fill="none"
-          stroke="var(--accent)"
-          stroke-width="1.4"
-          stroke-dasharray="5 4"
-          marker-end="url(#loop-back-arrow)"
-          opacity="0.85"></path>
-      </svg>
+
+    <div class="loop-caption" data-loop-caption>
+      <span class="cap-sq" aria-hidden="true"></span>
+      <span>loop closes</span>
+      <span class="cap-sep" aria-hidden="true">·</span>
+      <span class="cap-reel" data-cap-reel>
+        <span class="cap-track">
+          {clauses.map((c) => <span class="cap-cell">{c}</span>)}
+        </span>
+      </span>
     </div>
-    <div class="loop-caption mono">loop closes · ad targeting improves</div>
   </div>
 </div>
+
+<script src="./attribute-mockup.client.ts"></script>
 
 <style>
   .header-label {
     font-size: 11px;
     color: var(--muted);
   }
-  .loop-mockup {
+  .loop-body {
     position: relative;
-    padding: 40px 32px 28px;
+    padding: 32px 26px 20px;
     background: var(--canvas);
     overflow: hidden;
     display: flex;
     flex-direction: column;
   }
+  .loop-diagram {
+    position: relative;
+  }
+  .loop-svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+  }
+  .loop-rail {
+    fill: none;
+    stroke: var(--hairline-strong);
+    stroke-width: 1;
+  }
+  /* Head plus a longer, dimmer wake behind it. Two dashes on the same
+     path, so they cannot drift apart. */
+  .loop-trail,
+  .loop-head {
+    fill: none;
+    stroke: var(--accent);
+    stroke-linecap: round;
+  }
+  .loop-trail {
+    stroke-width: 1.5;
+    opacity: 0.26;
+  }
+  .loop-head {
+    stroke-width: 2;
+  }
+  .loop-diagram.is-idle .loop-trail,
+  .loop-diagram.is-idle .loop-head {
+    opacity: 0;
+  }
   .stage-row {
     display: flex;
     align-items: stretch;
-    gap: 6px;
+    gap: 22px;
+    position: relative;
+    z-index: 1;
+  }
+  /* The return lane runs under the cards; this reserves its height. */
+  .loop-lane {
+    height: 44px;
   }
   .loop-stage {
     background: var(--surface-card);
@@ -111,6 +152,9 @@ const stages: Stage[] = [
     display: flex;
     flex-direction: column;
     align-items: center;
+    transition:
+      border-color 0.24s ease,
+      background-color 0.24s ease;
   }
   .loop-stage .icon {
     width: 32px;
@@ -118,11 +162,15 @@ const stages: Stage[] = [
     background: var(--mark-tint);
     color: var(--mark);
     border: var(--translucent-border-width) solid color-mix(in oklab, var(--mark) 25%, transparent);
-    border-radius: 6px;
+    border-radius: var(--r-sm);
     display: inline-flex;
     align-items: center;
     justify-content: center;
     margin-bottom: 10px;
+    transition:
+      color 0.24s ease,
+      background-color 0.24s ease,
+      border-color 0.24s ease;
   }
   .loop-stage .num {
     font-family: var(--font-mono);
@@ -131,6 +179,7 @@ const stages: Stage[] = [
     letter-spacing: 0.5px;
     text-transform: uppercase;
     display: block;
+    transition: color 0.24s ease;
   }
   .loop-stage .lbl {
     font-family: var(--font-mono);
@@ -141,57 +190,131 @@ const stages: Stage[] = [
     overflow: hidden;
     text-overflow: ellipsis;
   }
-  .arrow-between {
-    display: inline-flex;
-    align-items: center;
-    color: var(--accent);
-    flex: 0 0 auto;
-    opacity: 0.85;
+  /* The highlight: enlarge, hold long enough to read, return. */
+  @keyframes stage-pop {
+    0% {
+      transform: scale(1);
+    }
+    34% {
+      transform: scale(1.075);
+    }
+    62% {
+      transform: scale(1.075);
+    }
+    100% {
+      transform: scale(1);
+    }
   }
-  .loop-back {
+  .loop-stage.is-hot {
+    animation: stage-pop var(--pop-dur, 460ms) var(--ease-out) both;
+    border-color: color-mix(in oklab, var(--accent) 45%, transparent);
+    background-color: color-mix(in oklab, var(--accent) 6%, var(--surface-card));
     position: relative;
-    height: 34px;
-    margin-top: 0;
-    overflow: visible;
+    z-index: 2;
   }
-  .loop-back-svg {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
+  .loop-stage.is-hot .icon {
+    color: var(--accent);
+    background: var(--accent-tint);
+    border-color: color-mix(in oklab, var(--accent) 40%, transparent);
   }
+  .loop-stage.is-hot .num {
+    color: var(--body);
+  }
+
+  /* Caption. Not a static label: when the pulse lands back on stage 01 the
+     pill marks the close and the outcome rolls to the next one. No fill, no
+     counter - the roll is the whole gesture. */
   .loop-caption {
-    margin: 16px auto 0;
+    align-self: center;
+    margin: 18px auto 0;
+    width: fit-content;
     display: inline-flex;
     align-items: center;
-    align-self: center;
-    width: fit-content;
-    font-size: 10px;
-    color: var(--ink);
-    letter-spacing: 0.6px;
-    text-transform: uppercase;
-    background: var(--surface-card);
-    padding: 5px 12px;
+    gap: 8px;
+    padding: 6px 14px;
     border: 1px solid var(--hairline);
     border-radius: var(--r-pill);
+    background-color: var(--surface-card);
+    font-family: var(--font-mono);
+    font-size: 10px;
+    line-height: 14px;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    color: var(--muted);
+    transition:
+      border-color 0.32s ease,
+      color 0.32s ease;
   }
+  .loop-caption.is-closed {
+    color: var(--ink);
+    border-color: color-mix(in oklab, var(--accent) 45%, transparent);
+  }
+  .cap-sq {
+    width: 6px;
+    height: 6px;
+    flex: none;
+    background: var(--muted-soft);
+    transition: background-color 0.32s ease;
+  }
+  .loop-caption.is-closed .cap-sq {
+    background: var(--accent);
+  }
+  .cap-sep {
+    color: var(--muted-soft);
+  }
+
+  /* Rolling clause. The reel is locked to the widest clause so the pill
+     keeps one size and the roll is purely vertical. */
+  .cap-reel {
+    display: inline-block;
+    height: 14px;
+    overflow: hidden;
+    width: var(--cap-w, auto);
+  }
+  .cap-track {
+    display: block;
+    width: max-content;
+    transition: transform 0.42s var(--ease-spring);
+  }
+  .cap-cell {
+    display: block;
+    width: max-content;
+    height: 14px;
+    line-height: 14px;
+    white-space: nowrap;
+  }
+
   @media (max-width: 760px) {
-    .loop-mockup {
+    .loop-body {
       padding: 28px 20px 22px;
     }
     .stage-row {
       flex-wrap: wrap;
       justify-content: center;
-      gap: 10px;
-    }
-    .arrow-between {
-      display: none;
+      gap: 12px;
     }
     .loop-stage {
-      flex: 0 0 calc(50% - 10px);
+      flex: 0 0 calc(50% - 12px);
     }
-    .loop-back {
+    /* Wrapped into two rows, the single-row rail no longer describes the
+       layout, so it and its lane come out. */
+    .loop-svg,
+    .loop-lane {
       display: none;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    /* The loop stands still: rail drawn, no pulse, no pops, no roll. */
+    .loop-stage.is-hot {
+      animation: none;
+    }
+    .loop-trail,
+    .loop-head {
+      display: none;
+    }
+    .cap-reel,
+    .cap-track {
+      transition: none;
     }
   }
 </style>

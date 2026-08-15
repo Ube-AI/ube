@@ -80,6 +80,14 @@
   --r-xl: 16px;
   --r-pill: 9999px;
 
+  /* Easing — the two curves every mockup animation is timed against.
+     --ease-out decelerates into place; --ease-spring overshoots slightly
+     and settles. Both are load-bearing: a transition that references an
+     undefined custom property is invalid at computed-value time, which
+     drops the transition entirely and makes the motion snap. */
+  --ease-out: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
+
   /* Fonts — self-hosted via @fontsource-variable (imported in
      BaseLayout.astro). The "Variable" family names are what
      @fontsource-variable registers via @font-face. */
@@ -1060,6 +1068,189 @@ dialog.modal-backdrop::backdrop {
     font-size: 10.5px;
     padding: 10px 12px;
     overflow-x: auto;
+  }
+}
+
+/* =====================================================================
+   Mockup animation primitives — shared by the publisher mockups. These
+   stay global for two reasons: the entrance utilities and the virtual
+   pointer are used by several mockups, and the reel parts are built at
+   runtime by each mockup's client script, so Astro's scoped styles (which
+   stamp their attribute at build time) would never reach them.
+
+   Per-mockup animation lives in that mockup's own scoped <style>.
+   ===================================================================== */
+
+/* Generic entrance: fade up */
+.a-rise {
+  opacity: 0;
+  transform: translateY(16px);
+  transition:
+    opacity 0.55s var(--ease-out),
+    transform 0.6s var(--ease-spring);
+}
+.a-rise.is-in {
+  opacity: 1;
+  transform: none;
+}
+
+/* Entrance: fade + slide from the left */
+.a-slide {
+  opacity: 0;
+  transform: translateX(-18px);
+  transition:
+    opacity 0.6s var(--ease-out),
+    transform 0.7s var(--ease-spring);
+}
+.a-slide.is-in {
+  opacity: 1;
+  transform: none;
+}
+
+/* Number / word reels — built by the client scripts, so global. */
+.reel {
+  --cell: 1em;
+  display: inline-block;
+  height: var(--cell);
+  overflow: hidden;
+  vertical-align: bottom;
+}
+.reel-track {
+  display: flex;
+  flex-direction: column;
+  transform: translateY(0);
+  will-change: transform;
+}
+.reel-cell {
+  height: var(--cell);
+  line-height: var(--cell);
+  display: block;
+}
+/* Literals ($ , . % and the space before it) are not on reels, but they
+   have to share the reel's box or they sit on the text baseline while the
+   digits sit centred in a 1em cell, and the whole number looks kerned by
+   hand. Same height, same line-height, same bottom alignment. */
+.reel-lit {
+  --cell: 1em;
+  display: inline-block;
+  height: var(--cell);
+  line-height: var(--cell);
+  vertical-align: bottom;
+  white-space: pre;
+}
+/* Digits: tabular so each reel is exactly one glyph wide, no drift mid-spin */
+.reel--digit {
+  font-variant-numeric: tabular-nums;
+}
+/* Words need room for ascenders/descenders or neighbouring cells peek through */
+.reel--word {
+  --cell: 1.35em;
+  text-align: left;
+}
+
+/* Stamp — a value landing slightly oversized and settling. No rotation, no
+   bounce: at 9.5px anything louder than this reads as a gimmick. Shared by
+   the dashboard deltas, the action-board count and the A/B winner pill. */
+@keyframes delta-stamp {
+  0% {
+    opacity: 0;
+    transform: scale(1.28);
+    filter: blur(1.2px);
+  }
+  58% {
+    opacity: 1;
+  }
+  76% {
+    transform: scale(0.99);
+    filter: blur(0);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+    filter: blur(0);
+  }
+}
+
+/* Virtual pointer — the cursor that walks a mockup to show an interaction.
+   Used by the creative brief and the funnel. Deliberately not an arrow: a
+   ring with a dot cannot be mistaken for the reader's own cursor at a
+   glance, which an accent-tinted arrow absolutely could. */
+.vcursor {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 22px;
+  height: 22px;
+  margin: -11px 0 0 -11px;
+  z-index: 6;
+  pointer-events: none;
+  opacity: 0;
+  transition:
+    transform var(--move-dur, 700ms) var(--ease-out),
+    opacity 0.3s linear;
+}
+.vcursor.is-shown {
+  opacity: 1;
+}
+.vcursor-ring,
+.vcursor-dot,
+.vcursor-pulse {
+  position: absolute;
+  border-radius: 50%;
+  inset: 0;
+}
+.vcursor-ring {
+  border: 1.5px solid var(--accent);
+  background: color-mix(in oklab, var(--accent) 18%, transparent);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
+  transition: transform 0.22s var(--ease-out);
+}
+.vcursor-dot {
+  inset: 8px;
+  background: var(--accent);
+}
+/* The click ripple. Sits behind the ring and is only ever visible for the
+   length of one press. */
+.vcursor-pulse {
+  border: 1.5px solid var(--accent);
+  opacity: 0;
+}
+@keyframes vcursor-press {
+  0% {
+    transform: scale(1);
+  }
+  38% {
+    transform: scale(0.78);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+@keyframes vcursor-ripple {
+  0% {
+    transform: scale(0.7);
+    opacity: 0.6;
+  }
+  100% {
+    transform: scale(2.3);
+    opacity: 0;
+  }
+}
+.vcursor.is-clicking .vcursor-ring {
+  animation: vcursor-press 0.42s var(--ease-out);
+}
+.vcursor.is-clicking .vcursor-pulse {
+  animation: vcursor-ripple 0.52s var(--ease-out);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .a-rise,
+  .a-slide,
+  .reel-track {
+    transition: none;
+  }
+  .vcursor {
+    display: none;
   }
 }
 

@@ -19,13 +19,15 @@ const kpis: Kpi[] = [
 ]
 ---
 
-<div class="mockup-chrome">
+<div class="mockup-chrome dash-shell" data-measure-mockup>
   <div class="mockup-header">
-    <span class="mono header-label">
+    <span class="mono header-label a-rise" data-dash-head>
       Dashboard · <span class="ink">Top-line Metrics</span><span class="header-label-extra"> · Last 30 days</span>
     </span>
     <span class="spacer"></span>
     <img
+      class="dash-logo a-rise"
+      data-dash-head
       src={integrationLogos.amplitude.src}
       alt="Amplitude"
       width="14"
@@ -37,17 +39,21 @@ const kpis: Kpi[] = [
     <div class="dash-kpi-row">
       {
         kpis.map((k) => (
-          <div class="dash-kpi">
+          <div class="dash-kpi a-rise" data-dash-kpi>
             <div class="l mono">
               <Term term={k.term} label={k.label} />
             </div>
-            <div class="v mono">{k.value}</div>
-            <div class={`d mono ${k.up ? "up" : "down"}`}>{k.delta}</div>
+            <div class="v mono">
+              <span data-dash-roll={k.value} />
+            </div>
+            <div class={`d mono ${k.up ? "up" : "down"}`} data-dash-delta>
+              {k.delta}
+            </div>
           </div>
         ))
       }
     </div>
-    <div class="dash-chart">
+    <div class="dash-chart a-rise" data-dash-chart>
       <div class="dash-chart-head">
         <span class="mono dash-chart-title">D7 retention by cohort</span>
         <span class="spacer"></span>
@@ -58,39 +64,58 @@ const kpis: Kpi[] = [
           <span class="legend-swatch"></span> variant B
         </span>
       </div>
+      {/* The presentation attributes moved into classes so the animation
+          layer has something to hang transitions off. */}
       <svg viewBox="0 0 540 130" width="100%" height="130" aria-hidden="true">
-        <line x1="0" y1="30" x2="540" y2="30" stroke="var(--hairline)" stroke-width="0.5"></line>
-        <line x1="0" y1="60" x2="540" y2="60" stroke="var(--hairline)" stroke-width="0.5"></line>
-        <line x1="0" y1="90" x2="540" y2="90" stroke="var(--hairline)" stroke-width="0.5"></line>
-        <line x1="0" y1="120" x2="540" y2="120" stroke="var(--hairline)" stroke-width="0.5"></line>
-        <path
-          d="M10 100 L80 90 L150 84 L220 78 L290 76 L360 72 L430 71 L510 70"
-          fill="none"
-          stroke="var(--accent)"
-          stroke-width="1.5"
-          stroke-linecap="round"></path>
-        <path
-          d="M10 100 L80 84 L150 70 L220 60 L290 50 L360 42 L430 36 L510 30"
-          fill="none"
-          stroke="var(--success)"
-          stroke-width="1.5"
-          stroke-linecap="round"></path>
-        <circle cx="510" cy="70" r="3" fill="var(--accent)"></circle>
-        <circle cx="510" cy="30" r="3" fill="var(--success)"></circle>
-        <text x="10" y="125" fill="var(--muted)" font-size="9" font-family="var(--font-mono)">D0</text>
-        <text x="81" y="125" fill="var(--muted)" font-size="9" font-family="var(--font-mono)">D1</text>
-        <text x="152" y="125" fill="var(--muted)" font-size="9" font-family="var(--font-mono)">D2</text>
-        <text x="223" y="125" fill="var(--muted)" font-size="9" font-family="var(--font-mono)">D3</text>
-        <text x="294" y="125" fill="var(--muted)" font-size="9" font-family="var(--font-mono)">D4</text>
-        <text x="365" y="125" fill="var(--muted)" font-size="9" font-family="var(--font-mono)">D5</text>
-        <text x="436" y="125" fill="var(--muted)" font-size="9" font-family="var(--font-mono)">D6</text>
-        <text x="507" y="125" fill="var(--muted)" font-size="9" font-family="var(--font-mono)">D7</text>
+        <line class="dash-grid" x1="0" y1="30" x2="540" y2="30"></line>
+        <line class="dash-grid" x1="0" y1="60" x2="540" y2="60"></line>
+        <line class="dash-grid" x1="0" y1="90" x2="540" y2="90"></line>
+        <line class="dash-grid" x1="0" y1="120" x2="540" y2="120"></line>
+
+        {/* One group per cohort so the two can be staggered. The empty rect
+            only exists to pin the group's bounding box to the viewBox; see
+            .dash-draw. */}
+        <g class="dash-draw" data-dash-draw>
+          <rect x="0" y="0" width="540" height="130" fill="none"></rect>
+          <path
+            class="dash-line dash-line-control"
+            d="M10 100 L80 90 L150 84 L220 78 L290 76 L360 72 L430 71 L510 70"
+          ></path>
+        </g>
+        <g class="dash-draw" data-dash-draw>
+          <rect x="0" y="0" width="540" height="130" fill="none"></rect>
+          <path
+            class="dash-line dash-line-variant"
+            d="M10 100 L80 84 L150 70 L220 60 L290 50 L360 42 L430 36 L510 30"
+          ></path>
+        </g>
+
+        <circle class="dash-dot dash-dot-control" data-dash-dot cx="510" cy="70" r="3"></circle>
+        <circle class="dash-dot dash-dot-variant" data-dash-dot cx="510" cy="30" r="3"></circle>
+
+        <text class="dash-axis" x="10" y="125">D0</text>
+        <text class="dash-axis" x="81" y="125">D1</text>
+        <text class="dash-axis" x="152" y="125">D2</text>
+        <text class="dash-axis" x="223" y="125">D3</text>
+        <text class="dash-axis" x="294" y="125">D4</text>
+        <text class="dash-axis" x="365" y="125">D5</text>
+        <text class="dash-axis" x="436" y="125">D6</text>
+        <text class="dash-axis" x="507" y="125">D7</text>
       </svg>
     </div>
   </div>
 </div>
 
+<script src="./measure-mockup.client.ts"></script>
+
 <style>
+  /* The draw curve. Holds a beat on D0, builds through midweek, then
+     settles into D7 rather than slamming into it. Both control points sit
+     right of centre in x, which keeps the peak late and the run reading as
+     growth; the flat exit tangent is the landing. */
+  .dash-shell {
+    --draw-ease: cubic-bezier(0.72, 0.02, 0.55, 1);
+  }
   .header-label {
     font-size: 11px;
     color: var(--muted);
@@ -177,6 +202,120 @@ const kpis: Kpi[] = [
   .dash-legend.variant .legend-swatch {
     background: var(--success);
   }
+  .mockup-header .dash-logo {
+    object-fit: contain;
+    flex-shrink: 0;
+    display: block;
+    width: 14px;
+    height: 14px;
+  }
+
+  /* ----- animation layer ----------------------------------------- */
+
+  .dash-grid {
+    stroke: var(--hairline);
+    stroke-width: 0.5;
+  }
+  .dash-axis {
+    fill: var(--muted);
+    font-family: var(--font-mono);
+    font-size: 9px;
+  }
+  .dash-dot-control {
+    fill: var(--accent);
+  }
+  .dash-dot-variant {
+    fill: var(--success);
+  }
+
+  .dash-kpi .d[data-dash-delta] {
+    opacity: 0;
+    transform-origin: left center;
+  }
+  .dash-kpi .d.is-stamped {
+    animation: delta-stamp 340ms var(--ease-out) both;
+  }
+
+  .dash-line {
+    fill: none;
+    stroke-width: 1.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .dash-line-control {
+    stroke: var(--accent);
+  }
+  .dash-line-variant {
+    stroke: var(--success);
+  }
+
+  /* The draw is a wipe, not a dash. stroke-dashoffset advances by arc
+     length, and variant B climbs a good deal further than control does, so
+     mid-draw the two cohorts sat on different days - the green line
+     visibly behind the purple one in x, for no reason a reader could name.
+     A clip edge sweeping D0 to D7 puts both on the one time axis, which is
+     also what lets --draw-ease mean anything: it now shapes progress
+     across the week rather than progress along two unequal strings.
+
+     Insets are in the SVG's own user units, so they are the same numbers as
+     the path data: 540 - 10 parks the edge on D0, 540 - 510 on D7. The
+     full-viewBox rect inside each group is what makes that true - it pins
+     the group's bounding box to the viewBox, so the clip has room for the
+     stroke and round caps above and below the paths. */
+  .dash-draw {
+    clip-path: inset(0 530px 0 0);
+  }
+  .dash-draw.is-drawn {
+    clip-path: inset(0 30px 0 0);
+    transition: clip-path var(--draw-dur, 1400ms) var(--draw-ease)
+      var(--draw-delay, 0ms);
+  }
+
+  @keyframes dot-land {
+    0% {
+      opacity: 0;
+      transform: scale(0.2);
+    }
+    60% {
+      opacity: 1;
+      transform: scale(1.16);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+  .dash-dot {
+    opacity: 0;
+    transform-box: fill-box;
+    transform-origin: center;
+  }
+  .dash-dot.is-in {
+    animation: dot-land 260ms var(--ease-out) both;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    /* The dashboard reads as the finished state: numbers set, deltas
+       stamped, both cohort lines drawn end to end. */
+    .dash-kpi .d[data-dash-delta] {
+      opacity: 1;
+    }
+    .dash-kpi .d.is-stamped {
+      animation: none;
+    }
+    .dash-draw,
+    .dash-draw.is-drawn {
+      clip-path: inset(0 30px 0 0);
+      transition: none;
+    }
+    .dash-dot {
+      opacity: 1;
+    }
+    .dash-dot.is-in {
+      animation: none;
+    }
+  }
+
   @media (max-width: 640px) {
     .dash-kpi-row {
       grid-template-columns: repeat(2, minmax(0, 1fr));

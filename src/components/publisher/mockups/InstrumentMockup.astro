@@ -3,7 +3,7 @@ import { SparkleIcon } from "@phosphor-icons/react"
 import { integrationLogos } from "@/lib/integration-logos"
 ---
 
-<div class="mockup-chrome sdk-mockup">
+<div class="mockup-chrome sdk-mockup" data-instrument-mockup>
   <div class="mockup-header">
     <span class="mono header-label">
       Diff · <span class="ink">lib/analytics/setup.dart</span>
@@ -13,24 +13,28 @@ import { integrationLogos } from "@/lib/integration-logos"
       <SparkleIcon size={9} aria-hidden="true" /> AGENT CREATED PR
     </span>
   </div>
-  <div class="code">
-    <span class="diff-add">{"+ final trace = FirebasePerformance.instance"}</span>
-    <span class="diff-add">{"+     .newTrace("}<span class="tok-str">{"'appStartup'"}</span>{")..start();"}</span>
-    <span class="diff-add">{"+ trace.putAttribute("}<span class="tok-str">{"'first_open'"}</span>{", firstOpen ? "}<span class="tok-str">{"'true'"}</span>{" : "}<span class="tok-str">{"'false'"}</span>{");"}</span>
-    <span class="diff-add">{"+ "}</span>
-    <span class="diff-add">{"+ await AnalyticsConfig.init("}</span>
-    <span class="diff-add">{"+   amplitudeApiKey: env.amplitudeKey,"}</span>
-    <span class="diff-add">{"+   appsFlyerConfig: env.appsFlyer,"}</span>
-    <span class="diff-add">{"+   clarityConfig: runningInBackground ? null : env.clarity,"}</span>
-    <span class="diff-add">{"+   startupTrace: trace,"}</span>
-    <span class="diff-add">{"+ );"}</span>
-    <span class="diff-add">{"+ "}</span>
-    <span class="diff-add">{"+ await Analytics.setConsent("}</span>
-    <span class="diff-add">{"+   isPlaceholderValues: true,"}</span>
-    <span class="diff-add">{"+   underAOC: true,"}</span>
-    <span class="diff-add">{"+   hasConsent: false,"}</span>
-    <span class="diff-add">{"+   requiresConsent: true,"}</span>
-    <span class="diff-add">{"+ );"}</span>
+  {/* Each line is wrapped in .line-inner so the reveal animation has
+      something to fade that is not the caret sitting beside it. */}
+  <div class="code" data-code>
+    <span class="diff-add"><span class="line-inner">{"+ final trace = FirebasePerformance.instance"}</span><span class="line-caret"></span></span>
+    <span class="diff-add"><span class="line-inner">{"+     .newTrace("}<span class="tok-str">{"'appStartup'"}</span>{")..start();"}</span><span class="line-caret"></span></span>
+    <span class="diff-add"><span class="line-inner">{"+ trace.putAttribute("}<span class="tok-str">{"'first_open'"}</span>{", firstOpen ? "}<span class="tok-str">{"'true'"}</span>{" : "}<span class="tok-str">{"'false'"}</span>{");"}</span><span class="line-caret"></span></span>
+    <span class="diff-add"><span class="line-inner">{"+ "}</span><span class="line-caret"></span></span>
+    <span class="diff-add"><span class="line-inner">{"+ await AnalyticsConfig.init("}</span><span class="line-caret"></span></span>
+    <span class="diff-add"><span class="line-inner">{"+   amplitudeApiKey: env.amplitudeKey,"}</span><span class="line-caret"></span></span>
+    <span class="diff-add"><span class="line-inner">{"+   appsFlyerConfig: env.appsFlyer,"}</span><span class="line-caret"></span></span>
+    <span class="diff-add"><span class="line-inner">{"+   clarityConfig: runningInBackground ? null : env.clarity,"}</span><span class="line-caret"></span></span>
+    <span class="diff-add"><span class="line-inner">{"+   startupTrace: trace,"}</span><span class="line-caret"></span></span>
+    <span class="diff-add"><span class="line-inner">{"+ );"}</span><span class="line-caret"></span></span>
+    <span class="diff-add"><span class="line-inner">{"+ "}</span><span class="line-caret"></span></span>
+    <span class="diff-add"><span class="line-inner">{"+ await Analytics.setConsent("}</span><span class="line-caret"></span></span>
+    <span class="diff-add"><span class="line-inner">{"+   isPlaceholderValues: true,"}</span><span class="line-caret"></span></span>
+    <span class="diff-add"><span class="line-inner">{"+   underAOC: true,"}</span><span class="line-caret"></span></span>
+    <span class="diff-add"><span class="line-inner">{"+   hasConsent: false,"}</span><span class="line-caret"></span></span>
+    <span class="diff-add"><span class="line-inner">{"+   requiresConsent: true,"}</span><span class="line-caret"></span></span>
+    <span class="diff-add"><span class="line-inner">{"+ );"}</span><span class="line-caret"></span></span>
+    {/* Idle caret: the agent is done and waiting for the next task. */}
+    <span class="code-idle"><span class="line-caret"></span></span>
   </div>
   <div class="instrument-footer">
     <span class="mono footer-label">IDs synced across</span>
@@ -72,6 +76,8 @@ import { integrationLogos } from "@/lib/integration-logos"
     <span class="spacer"></span>
   </div>
 </div>
+
+<script src="./instrument-mockup.client.ts"></script>
 
 <style>
   .sdk-mockup {
@@ -117,6 +123,143 @@ import { integrationLogos } from "@/lib/integration-logos"
   }
   .instrument-footer :global(.pill) {
     margin-left: auto;
+  }
+
+  /* ----- animation layer ----------------------------------------- */
+
+  /* Lines land whole, one after another - no per-character typing. Each
+     line gets the same short beat, which is what makes it read as
+     machine-fast rather than as a person at a keyboard. */
+  .line-inner {
+    display: inline-block;
+    white-space: pre;
+    vertical-align: bottom;
+  }
+  @keyframes reveal-line {
+    from {
+      opacity: 0;
+      transform: translateY(2px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  .is-typing .line-inner {
+    opacity: 0;
+    animation: reveal-line var(--line-dur) ease-out var(--delay) forwards;
+  }
+
+  /* The caret marks the line being written, then moves down with it. */
+  .line-caret {
+    display: inline-block;
+    width: 0.62em;
+    height: 1.05em;
+    background: var(--accent);
+    vertical-align: bottom;
+    transform: translateY(-0.12em);
+    opacity: 0;
+  }
+  @keyframes caret-hold {
+    0%,
+    99% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0;
+    }
+  }
+  .is-typing .line-caret {
+    animation: caret-hold var(--caret-dur) linear var(--delay) forwards;
+  }
+
+  /* Idle caret: the agent is done and waiting for the next task. */
+  .code-idle {
+    display: block;
+    padding-top: 2px;
+  }
+  .code-idle .line-caret {
+    opacity: 0;
+    animation: none;
+  }
+  @keyframes caret-blink {
+    0%,
+    49% {
+      opacity: 1;
+    }
+    50%,
+    100% {
+      opacity: 0;
+    }
+  }
+  .is-ready .code-idle .line-caret {
+    animation: caret-blink 1.06s steps(1, end) infinite;
+  }
+
+  /* Logos acknowledge the change one at a time: grow, wobble while held
+     at size, then settle back. Slow enough to follow each one. */
+  @keyframes logo-pop {
+    0% {
+      transform: scale(1) rotate(0deg);
+    }
+    24% {
+      transform: scale(1.82) rotate(0deg);
+    }
+    38% {
+      transform: scale(1.82) rotate(-6deg);
+    }
+    50% {
+      transform: scale(1.82) rotate(5deg);
+    }
+    62% {
+      transform: scale(1.82) rotate(-3.5deg);
+    }
+    72% {
+      transform: scale(1.82) rotate(2deg);
+    }
+    80% {
+      transform: scale(1.82) rotate(0deg);
+    }
+    100% {
+      transform: scale(1) rotate(0deg);
+    }
+  }
+  .is-syncing .instrument-footer img {
+    animation: logo-pop 0.9s ease-in-out var(--pop-delay) both;
+  }
+  /* One logo at a time: 0.9s animation, then a 0.12s rest before the
+     next one starts, so the step between logos is 1.02s. */
+  .instrument-footer img:nth-of-type(1) {
+    --pop-delay: 0s;
+  }
+  .instrument-footer img:nth-of-type(2) {
+    --pop-delay: 1.02s;
+  }
+  .instrument-footer img:nth-of-type(3) {
+    --pop-delay: 2.04s;
+  }
+  .instrument-footer img:nth-of-type(4) {
+    --pop-delay: 3.06s;
+  }
+  .instrument-footer img:nth-of-type(5) {
+    --pop-delay: 4.08s;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .is-typing .line-inner {
+      animation: none;
+      opacity: 1;
+    }
+    .is-typing .line-caret {
+      animation: none;
+    }
+    .is-ready .code-idle .line-caret {
+      animation: none;
+      opacity: 1;
+    }
+    .is-syncing .instrument-footer img {
+      animation: none;
+    }
   }
   @media (max-width: 640px) {
     .code {
