@@ -40,5 +40,5 @@
 ## Contact
 
 - Email: hello@ube.dev
-- GitHub: https://github.com/Ube-AI/ube
+- GitHub: https://github.com/Ube-AI
 - LinkedIn: https://www.linkedin.com/company/ube-ai
