@@ -41,4 +41,4 @@
 
 - Email: hello@ube.dev
 - GitHub: https://github.com/Ube-AI/ube
-- LinkedIn: https://www.linkedin.com/company/chunky-tofu-studios/
+- LinkedIn: https://www.linkedin.com/company/ube-ai

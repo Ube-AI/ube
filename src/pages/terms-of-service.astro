@@ -20,7 +20,7 @@ import {
 
 const pageUrl = new URL("/terms-of-service/", Astro.site).href
 const siteUrl = new URL("/", Astro.site).href
-const dateModified = "2026-08-14"
+const dateModified = "2026-08-15"
 const title = "Terms of Service — Ube"
 const description =
   "Terms of Service for Ube, a software platform by Ube, Inc."
@@ -51,7 +51,7 @@ const jsonLd = buildJsonLdGraph([
 
       <article class="legal-content">
         <h1>Terms of Service</h1>
-        <p class="legal-meta">Last updated August 14, 2026</p>
+        <p class="legal-meta">Last updated August 15, 2026</p>
 
         <p>
           Welcome, and thank you for your interest in Ube, Inc. (
@@ -60,8 +60,8 @@ const jsonLd = buildJsonLdGraph([
           Terms of Service (<strong>"Terms"</strong>) govern your access to and
           use of our software, platform, APIs, documentation, and related tools,
           including the website <a href="https://ube.dev">ube.dev</a> and all
-          related software made available by Ube to maintain,
-          build, deploy, host, and manage software projects (collectively, the{" "}
+          related software made available by Ube to build, maintain, distribute,
+          market, analyze, and monetize software products (collectively, the{" "}
           <strong>"Service"</strong>). By using the Service, you agree to these
           Terms.
         </p>
@@ -87,13 +87,11 @@ const jsonLd = buildJsonLdGraph([
         <h2 id="access">1. Access and Use</h2>
 
         <p>
-          <strong>1.1. Provision of Access.</strong> Ube is an
-          applied research company working on autonomous software maintenance.
-          The Service offers a suite of agentic coding tools driven by machine
-          learning that listen to crash feeds, error dashboards, app reviews,
-          and dependency releases, and that triage, reproduce, and propose fixes
-          against your repositories. Subject to your compliance with these
-          Terms, Ube grants you a limited, non-exclusive,
+          <strong>1.1. Provision of Access.</strong> The Service helps customers
+          set up and operate the tools used to build, maintain, measure, market,
+          and grow software products. It may analyze connected services,
+          recommend actions, and carry out actions that you authorize. Subject
+          to your compliance with these Terms, Ube grants you a limited, non-exclusive,
           non-transferable, non-sublicensable, and revocable right to access and
           use the Service for your internal business or personal use.
         </p>
@@ -110,34 +108,33 @@ const jsonLd = buildJsonLdGraph([
         </p>
 
         <p>
-          <strong>1.3. Inputs, Outputs, and Suggestions.</strong> The Service
-          accepts content you provide or that the Service collects on your
-          behalf — including source code, repository contents, crash reports,
-          user feedback, configuration data, and prompts (collectively,{" "}
-          <strong>"Inputs"</strong>) — and generates outputs such as proposed
-          code changes, pull requests, summaries, and other materials
-          (collectively, <strong>"Suggestions"</strong>). You authorize us to
-          use Inputs and Suggestions as necessary to operate, maintain, and
-          improve the Service.
+          <strong>1.3. Customer Data and Outputs.</strong> The Service processes
+          content and data that you submit or authorize us to collect from
+          connected services, including source code, product analytics,
+          advertising account and campaign data, configuration data, feedback,
+          and prompts (collectively, <strong>"Customer Data"</strong>). It may
+          generate reports, recommendations, campaign changes, proposed code,
+          and other materials (collectively, <strong>"Outputs"</strong>). You
+          authorize us to process Customer Data and Outputs as needed to provide
+          the Service and carry out your instructions.
         </p>
 
         <p>
-          <strong>1.4. No Training on Your Content.</strong> We do not use
-          Inputs or Suggestions to train our or any third party's machine
-          learning models, unless: (1) they are flagged for security or abuse
-          review (in which case we may analyze them to detect and enforce these
-          Terms); (2) you explicitly report them to us (for example, as
-          Feedback); or (3) you have explicitly agreed to such use.
+          <strong>1.4. No Training on Your Content.</strong> We never use Meta
+          Platform Data to train machine-learning models. We do not use other
+          Customer Data or Outputs to train our or any third party's models
+          unless you explicitly agree. We may review content you report or that
+          is flagged for security or abuse.
         </p>
 
         <p>
-          <strong>1.5. Limitations of AI Suggestions.</strong> Suggestions
+          <strong>1.5. Limitations of AI Outputs.</strong> Outputs
           generated by the Service are produced by machine learning systems and
           may be inaccurate, incomplete, biased, or otherwise inappropriate. You
-          are responsible for reviewing all Suggestions before merging,
+          are responsible for reviewing all Outputs before merging,
           deploying, or otherwise acting on them. The Service is not a
           substitute for human judgment, professional code review, security
-          testing, or legal advice. We make no representation that Suggestions
+          testing, or legal advice. We make no representation that Outputs
           are correct, secure, or fit for any particular purpose.
         </p>
 
@@ -158,10 +155,9 @@ const jsonLd = buildJsonLdGraph([
         </p>
 
         <p>
-          <strong>1.7. Automated Execution.</strong> Where the Service executes
-          commands, runs code, or takes other automated actions on your behalf
-          (for example, opening pull requests, running tests, or interacting
-          with third-party systems you have connected), you authorize those
+          <strong>1.7. Automated Execution.</strong> Where the Service takes
+          actions on your behalf, such as changing advertising campaigns,
+          budgets, analytics settings, or code in connected systems, you authorize those
           actions and accept full responsibility for their consequences. You are
           responsible for configuring appropriate branch protections, review
           requirements, sandboxing, and other guardrails. We are not liable for
@@ -244,7 +240,7 @@ const jsonLd = buildJsonLdGraph([
         <p>
           <strong>5.1. Our Intellectual Property.</strong> The Service,
           including all software, models, designs, text, graphics, logos, and
-          other content (excluding Inputs and Suggestions you own under Section
+          other content (excluding Customer Data and Outputs you own under Section
           5.3) is owned by Ube or its licensors and is protected
           by intellectual property and other laws. Except for the limited rights
           expressly granted in these Terms, no rights are granted to you.
@@ -259,20 +255,21 @@ const jsonLd = buildJsonLdGraph([
         </p>
 
         <p>
-          <strong>5.3. Your Inputs and Suggestions.</strong> As between you and
-          us, you retain all rights you have in your Inputs. Subject to your
+          <strong>5.3. Your Customer Data and Outputs.</strong> As between you and
+          us, you retain all rights you have in Customer Data. Subject to your
           compliance with these Terms, we assign to you all rights we may have
-          in the Suggestions generated for you, to the extent those rights are
+          in the Outputs generated for you, to the extent those rights are
           assignable. You are solely responsible for ensuring that you have the
-          rights necessary to provide your Inputs and to use the Suggestions.
+          rights necessary to provide Customer Data, authorize our access to
+          connected services, and use the Outputs.
         </p>
 
         <p>
           <strong>5.4. Usage Data.</strong> We may collect and use aggregated,
           anonymized, or de-identified data about use of the Service (<strong>"Usage Data"</strong>)
           for any lawful business purpose, including improving the Service.
-          Usage Data does not include the content of your Inputs or Suggestions
-          in identifiable form.
+          Usage Data does not include Meta Platform Data. It does not include
+          other Customer Data or Outputs in identifiable form.
         </p>
 
         <h2 id="third-parties">6. Third-Party Services</h2>
@@ -280,12 +277,24 @@ const jsonLd = buildJsonLdGraph([
         <p>
           The Service may integrate with or rely on third-party products,
           services, or content (<strong>"Third-Party Services"</strong>),
-          including repository hosts, dependency registries, crash reporting
-          tools, and authentication providers. Third-Party Services are governed
+          including analytics providers, advertising platforms, app stores,
+          repository hosts, and authentication providers. Third-Party Services are governed
           by their own terms and privacy policies. We do not control and are not
           responsible for Third-Party Services or the consequences of their use.
           Your interactions with Third-Party Services are solely between you and
           the provider.
+        </p>
+
+        <p>
+          When you connect Meta, you direct Ube to access and process Meta
+          Platform Data solely to provide the Service to your business. Ube will
+          keep each customer's Meta Platform Data separate, use and share it
+          only as permitted by Meta's terms and your instructions, and stop
+          processing and delete it when required. You must comply with Meta's
+          terms, maintain authority over the accounts you connect, and not
+          direct Ube to use Meta products or data unlawfully. Ube may suspend or
+          terminate Meta access if Meta requests it or if continued access could
+          violate applicable terms or law.
         </p>
 
         <h2 id="communications">7. Communications</h2>
@@ -364,8 +373,8 @@ const jsonLd = buildJsonLdGraph([
           directors, employees, contractors, agents, and licensors from and
           against any claims, damages, losses, liabilities, costs, and expenses
           (including reasonable attorneys' fees) arising out of or relating to:
-          (a) your use of the Service; (b) your Inputs or actions taken in
-          reliance on Suggestions; (c) your violation of these Terms; or (d)
+          (a) your use of the Service; (b) Customer Data or actions taken in
+          reliance on Outputs; (c) your violation of these Terms; or (d)
           your violation of any law or any right of any third party.
         </p>
 
@@ -378,7 +387,7 @@ const jsonLd = buildJsonLdGraph([
           INCLUDING WITHOUT LIMITATION ANY WARRANTIES OF MERCHANTABILITY,
           FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, ACCURACY,
           RELIABILITY, AND UNINTERRUPTED OR ERROR-FREE OPERATION. WE DO NOT
-          WARRANT THAT THE SERVICE WILL MEET YOUR REQUIREMENTS, THAT SUGGESTIONS
+          WARRANT THAT THE SERVICE WILL MEET YOUR REQUIREMENTS, THAT OUTPUTS
           WILL BE ACCURATE OR SECURE, OR THAT THE SERVICE WILL BE AVAILABLE AT
           ANY PARTICULAR TIME OR LOCATION.
         </p>

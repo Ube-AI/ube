@@ -52,8 +52,8 @@ A top-level page region (Hero, Problems, HowItWorks, Benefits, FAQ, FinalCTA, et
 An in-page visual representation of the Ube product (IntakeMockup, TriageMockup, FixMockup, ReportSuccessMockup, ReportFailureMockup, and the Hero mockup variants). Mockups are visual, not functional product surfaces.
 
 **Ube, Inc.**:
-The incorporated Delaware C corporation and legal entity behind Ube: the party to the Terms, the controller of personal data, and the company named on every legal and contractual surface. Its LinkedIn presence remains the legacy Chunky Tofu Studios profile until Ube has its own.
-_Avoid_: **Chunky Tofu Studios, LLC**, except when identifying or linking to the legacy LinkedIn profile.
+The incorporated Delaware C corporation and legal entity behind Ube: the party to the Terms, the controller of personal data, and the company named on every legal and contractual surface, including its LinkedIn company page.
+_Avoid_: **Chunky Tofu Studios, LLC**.
 
 **Source** (analytics):
 A coarse label identifying which CTA fired an analytics event — `"nav"`, `"home_hero"`, `"pricing_solo"`, `"pricing_final_cta"`, and so on. Page-level breakdown comes from Amplitude's auto-captured URL, not from the source label. Labels track user-facing copy: when a CTA is renamed, its label is renamed with it, accepting the break in the series rather than carrying a name that no longer describes what it points at. The **need signal** values are the deliberate exception.

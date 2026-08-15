@@ -20,7 +20,7 @@ import {
 
 const pageUrl = new URL("/privacy-policy/", Astro.site).href
 const siteUrl = new URL("/", Astro.site).href
-const dateModified = "2026-08-14"
+const dateModified = "2026-08-15"
 const title = "Privacy Policy — Ube"
 const description =
   "Privacy Policy for Ube, a software platform by Ube, Inc."
@@ -51,25 +51,24 @@ const jsonLd = buildJsonLdGraph([
 
       <article class="legal-content">
         <h1>Privacy Policy</h1>
-        <p class="legal-meta">Last updated August 14, 2026</p>
+        <p class="legal-meta">Last updated August 15, 2026</p>
 
         <p>
           Ube, Inc. (<strong>"Ube,"</strong>
           <strong>"we,"</strong> or <strong>"us"</strong>) is the maker of the
           Ube software platform. This Privacy Policy explains how personal data
-          is collected, used, disclosed, and processed when you use our
+          and Meta Platform Data are collected, used, disclosed, and processed when you use our
           software, platform, APIs, documentation, and related tools, including
           the website <a href="https://ube.dev">ube.dev</a> and related software
-          for maintaining, building, deploying, hosting, and managing software
-          projects (the <strong>"Service"</strong>).
+          for building, maintaining, distributing, marketing, analyzing, and
+          monetizing software products (the <strong>"Service"</strong>).
         </p>
 
         <p>
-          This Privacy Policy does not apply where Ube acts as a
-          data processor for commercial customers (for example,
-          employer-provisioned accounts under a Master Services Agreement). In
-          those cases, our use of personal data is governed by our customer
-          agreements covering access to and use of those offerings.
+          Where Ube acts as a data processor for a commercial customer, the
+          applicable customer agreement also governs our processing. This
+          policy's description of Meta Platform Data applies whenever a customer
+          connects Meta to the Service.
         </p>
 
         <p>
@@ -79,7 +78,7 @@ const jsonLd = buildJsonLdGraph([
           <a href="/terms-of-service/">Terms of Service</a>.
         </p>
 
-        <h2 id="collect">1. Personal Data We Collect</h2>
+        <h2 id="collect">1. Data We Collect</h2>
 
         <h3>A. Personal Data You Provide Directly</h3>
 
@@ -108,14 +107,27 @@ const jsonLd = buildJsonLdGraph([
         </p>
 
         <p>
-          <strong>Inputs and Suggestions.</strong> When you use the Service, we
-          may process content you submit or that the Service collects on your
-          behalf, including source code, repository contents, crash reports,
-          user feedback, configuration data, and prompts (<strong>"Inputs"</strong>),
-          and the resulting outputs such as proposed code changes and pull
-          requests (<strong>"Suggestions"</strong>). If your Inputs include
-          personal data — yours or someone else's — we will process that
-          information as part of providing the Service.
+          <strong>Customer and Connected-Service Data.</strong> When you use the
+          Service, we may process content you submit and data you authorize us
+          to collect from services you connect. This can include source code,
+          product analytics, advertising and attribution data, app-store data,
+          configuration data, feedback, and prompts (<strong>"Customer Data"</strong>),
+          as well as reports, recommendations, campaign changes, proposed code,
+          and other outputs (<strong>"Outputs"</strong>). If Customer Data
+          includes personal data, we process it to provide the Service.
+        </p>
+
+        <p>
+          <strong>Meta Platform Data.</strong> "Meta Platform Data" means
+          information we obtain from Meta through the integration and
+          information derived from it. If you connect Meta, we receive the identifiers and connection credentials
+          needed to access the business portfolio and ad accounts you select. We may also receive ad
+          account details, permissions, campaigns, ad sets, ads, creative and
+          audience settings, and performance data such as spend, delivery,
+          impressions, clicks, conversions, and results. We retrieve this data
+          through Meta's APIs, display and analyze it for you, prepare reports
+          and recommendations, and create or update campaigns at your direction.
+          We do not ask for or store your Facebook password.
         </p>
 
         <p>
@@ -226,7 +238,7 @@ const jsonLd = buildJsonLdGraph([
           age of 18.
         </p>
 
-        <h2 id="use">2. How We Use Personal Data</h2>
+        <h2 id="use">2. How We Use Data</h2>
 
         <p>We use personal data to:</p>
 
@@ -272,23 +284,29 @@ const jsonLd = buildJsonLdGraph([
         </ul>
 
         <p>
-          <strong>Model Training Limitations.</strong> We do not use Inputs or
-          Suggestions to train our or any third party's machine learning models,
-          unless: (1) they are flagged for security or abuse review (in which
-          case we may analyze them to detect and enforce our{" "}
-          <a href="/terms-of-service/">Terms of Service</a>); (2) you explicitly
-          report them to us (for example, as Feedback); or (3) you have
-          explicitly agreed to such use.
+          <strong>Model Training Limitations.</strong> We never use Meta
+          Platform Data to train machine-learning models. We do not use other
+          Customer Data or Outputs to train our or any third party's models
+          unless you explicitly agree. We may review content you report or that
+          is flagged for security or abuse.
         </p>
 
         <p>
           <strong>De-identification.</strong> We may aggregate or de-identify
-          personal data for analytics, research, and improvement of the Service.
-          Aggregated or de-identified data is not treated as personal data under
-          this Privacy Policy.
+          personal data other than Meta Platform Data for analytics, research,
+          and improvement of the Service. Aggregated or de-identified data is
+          not treated as personal data under this Privacy Policy.
         </p>
 
-        <h2 id="share">3. How We Share Personal Data</h2>
+        <p>
+          <strong>Limits on Meta Platform Data.</strong> We process Meta
+          Platform Data only on behalf of and at the direction of the customer
+          whose account supplied it. We keep each customer's data separate and
+          do not use it for Ube's own advertising, for another customer, or to
+          train machine-learning models.
+        </p>
+
+        <h2 id="share">3. How We Share Data</h2>
 
         <p>
           <strong>Service Providers.</strong> We share personal data with
@@ -429,6 +447,15 @@ const jsonLd = buildJsonLdGraph([
         </p>
 
         <p>
+          <strong>Meta Platform Data.</strong> Notwithstanding the other
+          disclosures in this section, we share Meta Platform Data only with
+          the customer it belongs to, contracted service providers that
+          need it to provide the Service for that customer, a customer's service
+          provider at the customer's express direction, or when required by law.
+          We do not sell Meta Platform Data.
+        </p>
+
+        <p>
           <strong>Advertising Partners.</strong> We share certain online
           identifiers and activity — including cookies and similar identifiers
           (such as the Meta "_fbp" and "_fbc" identifiers), advertising click
@@ -436,8 +463,8 @@ const jsonLd = buildJsonLdGraph([
           advertising platforms and the tools that manage our advertising tags,
           so that we can measure the performance of our advertising, attribute
           sign-ups to the ads that drove them, and show you relevant ads on
-          other services. We do not share the content of your Inputs or
-          Suggestions for advertising. Depending on your jurisdiction, this
+          other services. We do not share Customer Data, Outputs, or Meta
+          Platform Data for advertising. Depending on your jurisdiction, this
           activity may be considered "targeted advertising," "cross-context
           behavioral advertising," or a "sale" or "sharing" of personal data
           under applicable law. See <a href="#rights">Your Rights and Choices</a>
@@ -456,12 +483,22 @@ const jsonLd = buildJsonLdGraph([
           erase, de-identify, or anonymize it in accordance with applicable law.
         </p>
 
+        <p>
+          We delete Meta Platform Data when the customer disconnects Meta,
+          closes its Ube account, asks us to delete it, when Meta asks us to
+          delete it, or when it is no longer needed to provide the Service,
+          unless the law requires us to retain it. Data in backups is deleted as
+          those backups expire under our retention schedule.
+        </p>
+
         <h2 id="security">5. Security</h2>
 
         <p>
-          We implement commercially reasonable technical and organizational
-          measures designed to protect personal data from loss, misuse, and
-          unauthorized access, disclosure, alteration, or destruction. However,
+          We maintain administrative, technical, and organizational safeguards
+          appropriate to the sensitivity of the data and designed to protect it
+          from loss, misuse, and unauthorized access, disclosure, alteration, or
+          destruction. Report suspected security vulnerabilities to{" "}
+          <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>. However,
           no method of transmission over the internet or storage is completely
           secure. You are responsible for protecting your credentials and using
           the Service in a secure environment. We are not responsible for any
@@ -519,6 +556,14 @@ const jsonLd = buildJsonLdGraph([
           you to verify your identity before responding. We will not
           discriminate against you for exercising any privacy right available to
           you under applicable law.
+        </p>
+
+        <p>
+          To delete Meta Platform Data, disconnect Meta in Ube or email{" "}
+          <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>. Disconnecting
+          removes the Meta business integration and its associated ad account
+          connections. We also process valid deletion requests sent to us by
+          Meta.
         </p>
 
         <p>
