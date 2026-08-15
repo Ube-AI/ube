@@ -18,6 +18,7 @@ const funnel: FunnelStep[] = [
 /* The word reel spins through these and settles on the last one, so the
    resting state stays "Finals week". */
 const bestCreatives = ["Study hall", "Late night", "Exam prep", "Finals week"]
+const restingCreative = bestCreatives[bestCreatives.length - 1]
 
 type Customer = {
   src: ImageMetadata
@@ -43,20 +44,22 @@ const deltaTone = (metric: string, delta: string): "good" | "bad" => {
     <div class="weekly-kpi-row">
       <div class="weekly-kpi a-rise" data-kpi>
         <div class="lbl mono">Learning budget</div>
+        {/* The reel builders clear their host first, so the literal value
+            here is what shows until (or if) the script runs. */}
         <div class="val">
-          <span data-roll="20" data-prefix="$"></span><span class="unit"
+          <span data-roll="20" data-prefix="$">$20</span><span class="unit"
             >/day</span
           >
         </div>
       </div>
       <div class="weekly-kpi a-rise" data-kpi>
         <div class="lbl mono">Installs this week</div>
-        <div class="val"><span data-roll="312"></span></div>
+        <div class="val"><span data-roll="312">312</span></div>
       </div>
       <div class="weekly-kpi a-rise" data-kpi>
         <div class="lbl mono">Best creative</div>
         <div class="val val-text">
-          <span data-roll-words={bestCreatives.join("|")}></span>
+          <span data-roll-words={bestCreatives.join("|")}>{restingCreative}</span>
         </div>
       </div>
     </div>

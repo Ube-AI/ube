@@ -35,7 +35,9 @@ if (mockup) {
 
   // It sits well below the fold, so wait until it is actually on screen.
   const start = () => {
-    if (!("IntersectionObserver" in window)) {
+    // Reduced motion gets the still, right away: no scroll gate, since there
+    // is no motion to wait for and nothing to reveal.
+    if (reduced) {
       play()
       return
     }

@@ -43,8 +43,10 @@ const kpis: Kpi[] = [
             <div class="l mono">
               <Term term={k.term} label={k.label} />
             </div>
+            {/* buildReels clears its host first, so the literal value here
+                is what shows until (or if) the script runs. */}
             <div class="v mono">
-              <span data-dash-roll={k.value} />
+              <span data-dash-roll={k.value}>{k.value}</span>
             </div>
             <div class={`d mono ${k.up ? "up" : "down"}`} data-dash-delta>
               {k.delta}

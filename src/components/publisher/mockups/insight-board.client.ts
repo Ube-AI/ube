@@ -83,6 +83,12 @@ function setup(root: HTMLElement, head: HTMLElement, pill: HTMLElement) {
   // Bottom of the page, so hold until it is actually on screen - and let the
   // walk idle whenever the board is scrolled away from.
   const start = () => {
+    // Reduced motion gets the still, right away: no scroll gate, since there
+    // is no motion to wait for and nothing to reveal.
+    if (reduced) {
+      play()
+      return
+    }
     let played = false
     const io = new IntersectionObserver(
       (entries) => {
