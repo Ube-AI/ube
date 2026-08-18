@@ -3,40 +3,51 @@ import { SparkleIcon } from "@phosphor-icons/react"
 import Term from "@/components/Term.astro"
 ---
 
-<div class="insight-board mockup-chrome">
+<div class="insight-board mockup-chrome" data-insight-board>
   <div class="mockup-header">
-    <span class="mono header-label">
+    <span class="mono header-label a-rise" data-ins-head>
       <span class="ink">Lumin · iOS · last 7 d</span>
     </span>
     <span class="spacer"></span>
-    <span class="pill pill-accent">
+    <span class="pill pill-accent ins-pill" data-ins-pill>
       <SparkleIcon size={9} aria-hidden="true" /> 4 ACTIONS
     </span>
   </div>
+  {/*
+    The board arrives unranked, all four rows reading alike. The highlight
+    only sets off once they are all in, and then walks the rows forever:
+    this is a queue of work, not a ranking with a single winner.
+  */}
   <div class="insight-board-body">
-    <div class="insight-row high">
-      <span>01</span>
+    <div class="insight-row a-rise" data-ins-row>
+      <span class="mono">01</span>
       <div>
         <strong>Onboarding asks for too much too early.</strong>
-        <p>42% of paid users leave before sign up. Test guest mode.</p>
+        <p>
+          <span class="stat stat-bad">42%</span> of paid users leave before sign
+          up. Test guest mode.
+        </p>
       </div>
     </div>
-    <div class="insight-row">
-      <span>02</span>
+    <div class="insight-row a-rise" data-ins-row>
+      <span class="mono">02</span>
       <div>
         <strong>Best users come from the study-session creative.</strong>
-        <p><Term term="d7" /> retention is 18% higher than generic productivity ads.</p>
+        <p>
+          <Term term="d7" /> retention is <span class="stat stat-good">18%</span>
+           higher than generic productivity ads.
+        </p>
       </div>
     </div>
-    <div class="insight-row">
-      <span>03</span>
+    <div class="insight-row a-rise" data-ins-row>
+      <span class="mono">03</span>
       <div>
         <strong>Paywall is too early for ad-acquired users.</strong>
         <p>Move the trial offer after first completed project.</p>
       </div>
     </div>
-    <div class="insight-row">
-      <span>04</span>
+    <div class="insight-row a-rise" data-ins-row>
+      <span class="mono">04</span>
       <div>
         <strong>Do not raise spend yet.</strong>
         <p><Term term="cac" /> is promising, but <Term term="d30" /> is still below competitive baseline.</p>
@@ -44,6 +55,8 @@ import Term from "@/components/Term.astro"
     </div>
   </div>
 </div>
+
+<script src="./insight-board.client.ts"></script>
 
 <style>
   .insight-board {
@@ -70,14 +83,70 @@ import Term from "@/components/Term.astro"
     border: 1px solid var(--hairline);
     border-radius: var(--r-lg);
   }
-  .insight-row.high {
-    border-color: color-mix(in oklab, var(--accent) 38%, var(--hairline));
-    background: color-mix(in oklab, var(--accent) 10%, var(--canvas));
-  }
-  .insight-row span {
+  /* Direct child, so the ordinal colour does not leak onto the .stat and
+     glossary spans nested in the paragraph. */
+  .insight-row > span {
     color: var(--accent-2);
     font-family: var(--font-mono);
     font-size: 13px;
+  }
+  /* Figures inside a finding read as data rather than prose: semantic
+     colour, plus a half step of weight so they hold their own against the
+     bold title above without competing with it.
+
+     Good and bad, not up and down. 42% of users leaving is a rise and it is
+     the bad news; 18% higher retention is a rise and it is the good news. */
+  .insight-row .stat {
+    font-weight: 500;
+  }
+  .insight-row .stat-good {
+    color: var(--success);
+  }
+  .insight-row .stat-bad {
+    color: var(--error);
+  }
+
+  /* ----- animation layer ----------------------------------------- */
+
+  /* Stated on .insight-row.a-rise rather than on .insight-row so it does
+     not replace the entrance transition. The border and background
+     durations are what produce the crossfade between one card and the
+     next: both change at the same instant, so the highlight reads as
+     moving rather than blinking. */
+  .insight-row.a-rise {
+    transition:
+      opacity 0.55s var(--ease-out),
+      transform 0.6s var(--ease-spring),
+      border-color 0.42s var(--ease-out),
+      background-color 0.42s var(--ease-out);
+  }
+  .insight-row.is-high {
+    border-color: color-mix(in oklab, var(--accent) 38%, var(--hairline));
+    background: color-mix(in oklab, var(--accent) 10%, var(--canvas));
+  }
+
+  /* The count is a result, so it lands once the rows are all in. Same stamp
+     the KPI deltas use, anchored right so it does not grow back across the
+     header label. */
+  .ins-pill {
+    opacity: 0;
+    transform-origin: right center;
+  }
+  .ins-pill.is-stamped {
+    animation: delta-stamp 380ms var(--ease-out) both;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    /* The board reads as ranked and counted, with nothing in motion. */
+    .insight-row.a-rise {
+      transition: none;
+    }
+    .ins-pill {
+      opacity: 1;
+    }
+    .ins-pill.is-stamped {
+      animation: none;
+    }
   }
   .insight-row strong {
     display: block;
