@@ -440,9 +440,9 @@ export const RequestAccessModal = ({
                   )
                 })}
               </div>
-              {needs.map((need) => (
-                <input key={need} type="hidden" name="needs" value={need} />
-              ))}
+              {/* Single comma-separated field: Basin keeps only one value for
+                  repeated field names, so per-selection inputs lose data. */}
+              <input type="hidden" name="needs" value={needs.join(",")} />
               <input
                 type="hidden"
                 name="needs_order"
