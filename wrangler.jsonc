@@ -1,6 +1,6 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "ube",
+  "name": "ube-landing",
   "compatibility_date": "2026-08-05",
   "workers_dev": false,
   "preview_urls": false,
