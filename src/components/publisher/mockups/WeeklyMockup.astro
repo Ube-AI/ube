@@ -15,6 +15,11 @@ const funnel: FunnelStep[] = [
   { step: "Onboard", value: 118, pct: 38 },
 ]
 
+/* The word reel spins through these and settles on the last one, so the
+   resting state stays "Finals week". */
+const bestCreatives = ["Study hall", "Late night", "Exam prep", "Finals week"]
+const restingCreative = bestCreatives[bestCreatives.length - 1]
+
 type Customer = {
   src: ImageMetadata
   name: string
@@ -34,35 +39,43 @@ const deltaTone = (metric: string, delta: string): "good" | "bad" => {
 }
 ---
 
-<div class="weekly-mockup" aria-label="Ube weekly brief mockup">
+<div class="weekly-mockup" aria-label="Ube weekly brief mockup" data-weekly-mockup>
   <div class="mockup-chrome weekly-chrome">
     <div class="weekly-kpi-row">
-      <div class="weekly-kpi">
+      <div class="weekly-kpi a-rise" data-kpi>
         <div class="lbl mono">Learning budget</div>
-        <div class="val">$20<span class="unit">/day</span></div>
+        {/* The reel builders clear their host first, so the literal value
+            here is what shows until (or if) the script runs. */}
+        <div class="val">
+          <span data-roll="20" data-prefix="$">$20</span><span class="unit"
+            >/day</span
+          >
+        </div>
       </div>
-      <div class="weekly-kpi">
+      <div class="weekly-kpi a-rise" data-kpi>
         <div class="lbl mono">Installs this week</div>
-        <div class="val">312</div>
+        <div class="val"><span data-roll="312">312</span></div>
       </div>
-      <div class="weekly-kpi">
+      <div class="weekly-kpi a-rise" data-kpi>
         <div class="lbl mono">Best creative</div>
-        <div class="val val-text">Finals week</div>
+        <div class="val val-text">
+          <span data-roll-words={bestCreatives.join("|")}>{restingCreative}</span>
+        </div>
       </div>
     </div>
 
-    <div class="weekly-rec">
+    <div class="weekly-rec a-rise" data-rec>
       <div class="weekly-rec-head">
-        <span class="lbl">Recommended next move</span>
-        <span class="weekly-rec-tag mono">A/B TEST</span>
+        <span class="lbl a-slide" data-rec-line>Recommended next move</span>
+        <span class="weekly-rec-tag mono a-slide" data-rec-line>A/B TEST</span>
       </div>
-      <div class="weekly-rec-title">
+      <div class="weekly-rec-title a-slide" data-rec-line>
         Make sign up optional for the first session.
       </div>
       <div class="weekly-funnel">
         {
           funnel.map((f) => (
-            <div class="weekly-funnel-row" style={`width: ${f.pct}%`}>
+            <div class="weekly-funnel-row a-bar" style={`--w: ${f.pct}%`}>
               <span class="step mono">{f.step}</span>
               <span class="val mono">{f.value}</span>
             </div>
@@ -71,7 +84,7 @@ const deltaTone = (metric: string, delta: string): "good" | "bad" => {
       </div>
     </div>
 
-    <div class="weekly-approve">
+    <div class="weekly-approve a-rise" data-approve>
       <span class="approve-dot" aria-hidden="true"></span>
       <span class="approve-text">
         Approve campaign launch on Google Ads + Meta?
@@ -106,6 +119,8 @@ const deltaTone = (metric: string, delta: string): "good" | "bad" => {
     }
   </div>
 </div>
+
+<script src="./weekly-mockup.client.ts"></script>
 
 <style>
   .weekly-mockup {
@@ -227,6 +242,99 @@ const deltaTone = (metric: string, delta: string): "good" | "bad" => {
     margin-left: auto;
     color: var(--ink);
     font-weight: 500;
+  }
+
+  /* Card body starts hidden so its children can be revealed in sequence */
+  .weekly-rec.a-rise {
+    transition-duration: 0.6s;
+  }
+
+  /* Funnel bars grow sideways. The resting width lives in --w, set per row,
+     so the bar has somewhere to grow to. */
+  .weekly-funnel-row.a-bar {
+    width: 0;
+    min-width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    opacity: 0;
+    transition:
+      width 0.75s var(--ease-spring),
+      opacity 0.25s linear;
+  }
+  .weekly-funnel-row.a-bar.is-in {
+    width: var(--w);
+    min-width: 110px;
+    opacity: 1;
+  }
+  .weekly-funnel-row.a-bar .step,
+  .weekly-funnel-row.a-bar .val {
+    opacity: 0;
+    transform: translateY(3px);
+    transition:
+      opacity 0.35s var(--ease-out) 0.3s,
+      transform 0.35s var(--ease-out) 0.3s;
+  }
+  .weekly-funnel-row.a-bar.is-in .step,
+  .weekly-funnel-row.a-bar.is-in .val {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* Approve button "click" */
+  @keyframes btn-press {
+    0% {
+      transform: scale(1);
+    }
+    30% {
+      transform: scale(1.13);
+    }
+    52% {
+      transform: scale(0.94);
+    }
+    72% {
+      transform: scale(1.04);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+  @keyframes btn-flash {
+    0% {
+      box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.35);
+    }
+    100% {
+      box-shadow: 0 0 0 14px rgba(255, 255, 255, 0);
+    }
+  }
+  .approve-btn.is-pressed {
+    animation:
+      btn-press 0.55s var(--ease-spring),
+      btn-flash 0.55s ease-out;
+  }
+
+  /* Amber dot gets a soft pulse once the approval bar lands */
+  @keyframes dot-pulse {
+    0% {
+      box-shadow: 0 0 0 0 color-mix(in oklab, var(--warning) 55%, transparent);
+    }
+    100% {
+      box-shadow: 0 0 0 9px rgba(216, 162, 75, 0);
+    }
+  }
+  .approve-dot.is-pulsing {
+    animation: dot-pulse 1.4s ease-out 2;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .weekly-funnel-row.a-bar,
+    .weekly-funnel-row.a-bar .step,
+    .weekly-funnel-row.a-bar .val {
+      transition: none;
+    }
+    .approve-btn.is-pressed,
+    .approve-dot.is-pulsing {
+      animation: none;
+    }
   }
 
   .weekly-approve {

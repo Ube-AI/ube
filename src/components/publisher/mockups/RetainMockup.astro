@@ -19,22 +19,34 @@ const funnel: FunnelRow[] = [
 ]
 ---
 
-<div class="mockup-chrome">
+{/*
+  The funnel fills top to bottom, the drop is flagged once its bar has
+  settled, then a pointer toggles from control to variant so the two D1
+  numbers are read against each other and B is called. The winner styling
+  is applied by the client script, so the result reads as a verdict rather
+  than as something the table shipped with.
+*/}
+<div class="mockup-chrome" data-retain-mockup>
   <div class="mockup-header">
-    <span class="mono header-label"><span class="header-label-prefix">Retention · </span>Onboarding Funnel</span>
+    <span class="mono header-label a-rise" data-fn-head
+      ><span class="header-label-prefix">Retention · </span>Onboarding Funnel</span
+    >
     <span class="spacer"></span>
-    <span class="pill pill-error">37 % DROP</span>
+    <span class="pill pill-error a-rise" data-fn-head>37 % DROP</span>
   </div>
   <div class="funnel-mockup">
     {
       funnel.map((f) => (
-        <div class={`funnel-row ${f.flag ? "flagged" : ""}`}>
+        <div
+          class={`funnel-row ${f.flag ? "flagged" : ""}`}
+          data-fn-row
+          data-fn-flag={f.flag ? "" : undefined}
+          style={`--w: ${f.width}%${f.flagWidth ? `; --fw: ${f.flagWidth}%` : ""}`}
+        >
           <span class="step mono">{f.step}</span>
           <span class="bar">
-            <span class="fill" style={`width: ${f.width}%`} />
-            {f.flag && f.flagWidth && (
-              <span class="flag-outline" style={`width: ${f.flagWidth}%`} />
-            )}
+            <span class="fill" />
+            {f.flag && f.flagWidth && <span class="flag-outline" />}
           </span>
           <span class="pct mono">{f.pct}</span>
           <span class={`delta mono ${f.flag ? "down" : ""}`}>{f.delta}</span>
@@ -43,20 +55,20 @@ const funnel: FunnelRow[] = [
     }
 
     <div class="ab-mockup">
-      <div class="ab-head">
+      <div class="ab-head a-rise" data-fn-abhead>
         <span class="eyebrow ab-eyebrow">A/B TEST · OPTIONAL SIGN-UP</span>
         <span class="spacer"></span>
         <span class="mono ab-meta">n=4,218 · 95 % conf</span>
       </div>
-      <div class="ab-grid">
-        <div class="ab-variant">
+      <div class="ab-grid" data-fn-abgrid>
+        <div class="ab-variant" data-fn-variant>
           <span class="lbl mono">A · control</span>
           <span class="name mono">required signup</span>
           <div class="pct">21 %</div>
           <span class="sub mono"><Term term="d1" /> retention</span>
         </div>
-        <div class="ab-variant winner">
-          <span class="winner-pill mono">WINNER · +14 %</span>
+        <div class="ab-variant" data-fn-variant>
+          <span class="winner-pill mono" data-fn-pill>WINNER · +14 %</span>
           <span class="lbl mono">B · variant</span>
           <span class="name mono">signup optional</span>
           <div class="pct">24 %</div>
@@ -65,7 +77,15 @@ const funnel: FunnelRow[] = [
       </div>
     </div>
   </div>
+
+  <div class="vcursor" data-fn-cursor aria-hidden="true">
+    <span class="vcursor-pulse"></span>
+    <span class="vcursor-ring"></span>
+    <span class="vcursor-dot"></span>
+  </div>
 </div>
+
+<script src="./retain-mockup.client.ts"></script>
 
 <style>
   .header-label {
@@ -93,17 +113,23 @@ const funnel: FunnelRow[] = [
     white-space: nowrap;
   }
   .funnel-row .bar {
-    height: 14px;
+    height: 22px;
     background: var(--canvas-soft);
     border: 1px solid var(--hairline);
-    border-radius: 4px;
+    border-radius: 6px;
     overflow: hidden;
     position: relative;
   }
   .funnel-row .bar > .fill {
     display: block;
     height: 100%;
-    background: linear-gradient(90deg, var(--accent), var(--accent-soft));
+    border: var(--translucent-border-width) solid color-mix(in oklab, var(--accent) 30%, transparent);
+    border-radius: 6px;
+    background: linear-gradient(
+      90deg,
+      color-mix(in oklab, var(--accent) 24%, transparent) 0%,
+      color-mix(in oklab, var(--accent) 10%, transparent) 100%
+    );
   }
   .funnel-row .pct {
     font-size: 11px;
@@ -119,13 +145,15 @@ const funnel: FunnelRow[] = [
   .funnel-row .delta.down {
     color: var(--error);
   }
+  /* Where the row should have landed. Drawn to the previous step's width,
+     so the gap between outline and fill is the drop. */
   .funnel-row .bar > .flag-outline {
     position: absolute;
     top: 0;
     bottom: 0;
     left: 0;
     box-shadow: inset 0 0 0 1px var(--error);
-    border-radius: 4px;
+    border-radius: 6px;
     pointer-events: none;
   }
   .funnel-row.flagged .step {
@@ -160,8 +188,10 @@ const funnel: FunnelRow[] = [
     gap: 10px;
     margin-top: 14px;
   }
+  /* Both cards carry the wider border so it does not jump when the winner
+     is called. */
   .ab-variant {
-    border: 1px solid var(--hairline);
+    border: var(--translucent-border-width) solid var(--hairline);
     border-radius: var(--r-md);
     padding: 14px;
     background: var(--canvas);
@@ -170,11 +200,6 @@ const funnel: FunnelRow[] = [
     flex-direction: column;
     gap: 4px;
     min-width: 0;
-  }
-  .ab-variant.winner {
-    border-width: var(--translucent-border-width);
-    border-color: color-mix(in oklab, var(--success) 50%, transparent);
-    background: color-mix(in oklab, var(--success) 5%, var(--canvas));
   }
   .ab-variant .lbl {
     font-size: 9.5px;
@@ -194,9 +219,6 @@ const funnel: FunnelRow[] = [
     margin-top: 10px;
     font-weight: 500;
   }
-  .ab-variant.winner .pct {
-    color: var(--success);
-  }
   .ab-variant .sub {
     font-size: 10px;
     color: var(--muted);
@@ -212,6 +234,109 @@ const funnel: FunnelRow[] = [
     font-size: 8.5px;
     letter-spacing: 0.7px;
     border-radius: 4px;
+    opacity: 0;
+  }
+
+  /* ----- animation layer ----------------------------------------- */
+
+  /* Bars grow sideways on the same spring the weekly funnel uses. */
+  .funnel-row .bar > .fill {
+    width: 0;
+    transition: width 0.75s var(--ease-spring);
+  }
+  .funnel-row.is-in .bar > .fill {
+    width: var(--w);
+  }
+
+  /* The outline arrives after the bar has settled, so the drop reads as a
+     verdict on the bar rather than as part of it. Until then the row is
+     just another number, which is why the red is held back too. */
+  .funnel-row .bar > .flag-outline {
+    width: var(--fw);
+    opacity: 0;
+    transition: opacity 0.4s var(--ease-out);
+  }
+  .funnel-row.is-flagged .bar > .flag-outline {
+    opacity: 1;
+  }
+  .funnel-row .step,
+  .funnel-row .delta {
+    transition: color 0.4s var(--ease-out);
+  }
+  .funnel-row.flagged:not(.is-flagged) .step {
+    color: var(--body);
+  }
+  .funnel-row.flagged:not(.is-flagged) .delta.down {
+    color: var(--muted);
+  }
+
+  /* The cards carry their own entrance rather than borrowing .a-rise. Two
+     things want this element's opacity - the rise, and the dimming of
+     whichever variant is not being read - and .a-rise cannot arbitrate
+     between them: it sits earlier in the sheet at equal specificity, so
+     whichever rule came second silently won and the rise was lost. Both
+     jobs are stated here instead, in the order they happen.
+
+     The dim waits on .is-picking so the cards arrive at full strength like
+     every other row in this library; receding is a later beat, not part of
+     how they land. */
+  .ab-variant {
+    opacity: 0;
+    transform: translateY(16px);
+    transition:
+      opacity 0.55s var(--ease-out),
+      transform 0.6s var(--ease-spring),
+      border-color 0.4s var(--ease-out),
+      background-color 0.4s var(--ease-out);
+  }
+  .ab-variant.is-in {
+    opacity: 1;
+    transform: none;
+  }
+  /* Recedes rather than disappears: the whole point of the toggle is
+     reading 21 % against 24 %, so the unselected card stays legible. */
+  .ab-grid.is-picking .ab-variant.is-in:not(.is-active) {
+    opacity: 0.62;
+  }
+  .ab-variant.is-active {
+    border-color: var(--hairline-strong);
+  }
+  .ab-variant.is-winner {
+    border-color: color-mix(in oklab, var(--success) 50%, transparent);
+    background: color-mix(in oklab, var(--success) 5%, var(--canvas));
+  }
+  .ab-variant .pct {
+    transition: color 0.4s var(--ease-out);
+  }
+  .ab-variant.is-winner .pct {
+    color: var(--success);
+  }
+  .ab-variant .winner-pill.is-stamped {
+    animation: delta-stamp 380ms var(--ease-out) both;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    /* The funnel rests on its result: bars out, drop flagged, B carried. */
+    .funnel-row .bar > .fill {
+      width: var(--w);
+      transition: none;
+    }
+    .funnel-row .bar > .flag-outline {
+      opacity: 1;
+    }
+    .funnel-row .step,
+    .funnel-row .delta {
+      transition: none;
+    }
+    .ab-variant {
+      transition: none;
+    }
+    .ab-variant .winner-pill {
+      opacity: 1;
+    }
+    .ab-variant .winner-pill.is-stamped {
+      animation: none;
+    }
   }
   @media (max-width: 540px) {
     .funnel-row {
