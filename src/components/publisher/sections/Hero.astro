@@ -102,6 +102,9 @@ import WeeklyMockup from "@/components/publisher/mockups/WeeklyMockup.astro"
   .publisher-hero-inner > * {
     min-width: 0;
   }
+  .publisher-hero-copy {
+    container-type: inline-size;
+  }
   .publisher-hero-eyebrow {
     margin-bottom: 28px;
   }
@@ -181,13 +184,19 @@ import WeeklyMockup from "@/components/publisher/mockups/WeeklyMockup.astro"
     .publisher-hero {
       padding: 104px 0 112px;
     }
+    .publisher-hero-title {
+      /* Size both phrases to the copy column while preserving two lines. */
+      font-size: min(52px, 10cqi);
+      letter-spacing: -0.03em;
+      white-space: nowrap;
+    }
   }
   @media (max-width: 640px) {
     .publisher-hero {
       padding: 80px 0 88px;
     }
-    .publisher-hero-title br {
-      display: none;
+    .publisher-hero-title {
+      font-size: min(44px, 10cqi);
     }
   }
 </style>
