@@ -53,23 +53,30 @@ const rows: CreativeRow[] = [
 ---
 
 <div class="camp-mockup">
-  <div class="mockup-chrome">
+  <div class="mockup-chrome" data-acquire-mockup>
     <div class="mockup-header">
-      <span class="mono header-label">
+      <span class="mono header-label a-rise" data-camp-head-el>
         Campaigns · <span class="ink">iOS Install</span>
       </span>
       <span class="spacer"></span>
-      <span class="pill pill-success">$124 / DAY</span>
+      <span class="pill pill-success a-rise" data-camp-head-el>$124 / DAY</span>
     </div>
+    {/*
+      The four creatives land in order, all reading alike, and only then
+      does the table say which one is working. If V1 arrived already
+      banded, the table would look sorted rather than judged, and the point
+      is that Ube reached a verdict — so the winner styling is applied by
+      the client script, not baked into the markup.
+    */}
     <div class="camp-rows">
-      <span class="head">Creative</span>
-      <span class="head">Spend</span>
-      <span class="head"><Term term="cac" /></span>
-      <span class="head"><Term term="d7roas" /></span>
+      <span class="head a-rise" data-camp-headcell>Creative</span>
+      <span class="head a-rise" data-camp-headcell>Spend</span>
+      <span class="head a-rise" data-camp-headcell><Term term="cac" /></span>
+      <span class="head a-rise" data-camp-headcell><Term term="d7roas" /></span>
       {
-        rows.map((r) => (
+        rows.map((r, i) => (
           <>
-            <span class={`cell ${r.winner ? "winner" : ""}`}>
+            <span class="cell a-rise" data-camp-cell data-camp-row={i}>
               <span class={`creative-thumb ${r.thumb}`} aria-hidden="true">
                 {r.thumb.toUpperCase()}
               </span>
@@ -79,15 +86,33 @@ const rows: CreativeRow[] = [
               </span>
               <span class="camp-network">{r.network}</span>
             </span>
-            <span class="cell num">{r.spend}</span>
-            <span class={`cell num ${r.winner ? "good" : ""}`}>{r.cac}</span>
-            <span class={`cell num ${r.winner ? "good" : ""}`}>{r.roas}</span>
+            <span class="cell num a-rise" data-camp-cell data-camp-row={i}>
+              {r.spend}
+            </span>
+            <span
+              class="cell num a-rise"
+              data-camp-cell
+              data-camp-row={i}
+              data-camp-good={r.winner ? "" : undefined}
+            >
+              {r.cac}
+            </span>
+            <span
+              class="cell num a-rise"
+              data-camp-cell
+              data-camp-row={i}
+              data-camp-good={r.winner ? "" : undefined}
+            >
+              {r.roas}
+            </span>
           </>
         ))
       }
     </div>
   </div>
 </div>
+
+<script src="./acquire-mockup.client.ts"></script>
 
 <style>
   .header-label {
@@ -127,15 +152,29 @@ const rows: CreativeRow[] = [
     min-width: 0;
     color: var(--body);
   }
-  .camp-rows .cell.winner {
-    color: var(--ink);
-  }
   .camp-rows .cell.num {
     justify-content: flex-end;
     color: var(--ink);
   }
-  .camp-rows .cell.num.good {
+
+  /* The verdict. Not invented here: the A/B card already marks a winner
+     this way - a success-tinted band, a same-hue border, the metrics in
+     success. Reused rather than restyled so a winner looks like a winner
+     everywhere in the system. */
+  .camp-rows .cell.is-winner {
+    color: var(--ink);
+    background: color-mix(in oklab, var(--success) 8%, transparent);
+    border-top-color: color-mix(in oklab, var(--success) 38%, transparent);
+    border-bottom-color: color-mix(in oklab, var(--success) 38%, transparent);
+  }
+  .camp-rows .cell.num.is-good {
     color: var(--success);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    /* The table rests on its verdict: rows in, V1 banded and green. */
+    .camp-rows .cell {
+      transition: none;
+    }
   }
   .camp-rows .cell:nth-last-child(-n + 4) {
     border-bottom: none;
