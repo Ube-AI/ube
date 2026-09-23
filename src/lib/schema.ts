@@ -252,10 +252,10 @@ export const buildPricingOffers = (site: SiteUrl): JsonLd[] => {
       url: pricingUrl,
       priceCurrency: "USD",
       availability: "https://schema.org/PreOrder",
-      itemOffered: {
-        "@type": "Product",
-        name: "Ube Enterprise",
-      },
+      // Reference the Ube node, not a standalone `Product`: Google validates
+      // any Product as a Product snippet and flags it invalid without its own
+      // offers/review/aggregateRating. Enterprise sells Ube like every tier.
+      itemOffered: ubeItemOffered,
       priceSpecification: {
         "@type": "PriceSpecification",
         priceCurrency: "USD",
