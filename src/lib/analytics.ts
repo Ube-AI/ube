@@ -12,7 +12,7 @@
 //
 // `track()` is the single dispatch point for every event in the app. It fans
 // each call out to two sinks: Amplitude (product analytics) and Cloudflare
-// Zaraz (ad platforms — Reddit today, Meta / Google Ads / LinkedIn later). The
+// Zaraz (ad platforms — LinkedIn and Reddit today, Meta / Google Ads later). The
 // Zaraz mapping lives in `lib/conversions.ts`; keeping the fan-out inside
 // `track()` means no call site has to know the ad layer exists.
 import { pushConversion } from "@/lib/conversions"

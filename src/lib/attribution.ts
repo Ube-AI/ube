@@ -6,8 +6,9 @@
 // multi-page hops between landing and the Request-access form. We also derive
 // Meta's `_fbp` / `_fbc` identifiers first-party (see below). The full set is
 // then surfaced two ways: as fields on the Basin submission, and on every Zaraz
-// conversion event — so attribution and retargeting work without loading any
-// third-party pixel.
+// conversion event — so attribution and retargeting work without shipping any
+// pixel script (the Zaraz tools still call their ad endpoints from the browser;
+// see conversions.ts).
 //
 // Scope note — who consumes what:
 //   - Amplitude's Browser SDK already auto-captures every URL param below as
@@ -16,19 +17,20 @@
 //     docs.
 //   - Basin records nothing on its own, so the Request-access form sends the
 //     full set (getAttribution) for retargeting.
-//   - Zaraz gets the same set on each conversion event so its tools can do
-//     advanced matching. Pixels normally self-capture the click ID from the
-//     landing URL, but ad blockers and deeper-page navigation break that — the
-//     persisted copy is what survives.
+//   - Zaraz gets the same set on each conversion event, but a tool only sees
+//     the fields its action explicitly maps — sent verbatim, never hashed (see
+//     conversions.ts). Pixels normally self-capture the click ID from the
+//     landing URL, but deeper-page navigation breaks that — the persisted copy
+//     is what survives.
 //
 // Meta `_fbp` / `_fbc`: the identifiers Meta's tools match on. We generate them
 // ourselves, first-party, so we never load Meta's pixel script (which ad
 // blockers target): `_fbc` encodes the `fbclid` from the landing URL, `_fbp` is
 // a durable random browser id. Stored as real cookies under the names Meta's
 // tooling looks for (`_fbp` / `_fbc`) and also echoed in the event payload —
-// intended for Zaraz's Meta tool to read; verify in prod that the value it
-// reports matches the cookie (whether a managed component prefers a page-set
-// cookie over its own stored value is its detail).
+// intended for Zaraz's Meta tool (not configured yet) to read; verify in prod
+// that the value it reports matches the cookie (whether a managed component
+// prefers a page-set cookie over its own stored value is its detail).
 
 const STORAGE_PREFIX = "ube_attr_"
 
