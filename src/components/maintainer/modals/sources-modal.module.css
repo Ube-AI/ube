@@ -210,7 +210,6 @@
   font-family: var(--font-mono);
   font-size: 13px;
   font-weight: 600;
-  letter-spacing: -0.02em;
   position: relative;
   z-index: 1;
 }

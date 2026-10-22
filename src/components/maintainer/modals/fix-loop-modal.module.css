@@ -164,7 +164,6 @@
   font-size: 18px;
   font-weight: 500;
   color: var(--ink);
-  letter-spacing: -0.01em;
   margin-top: 2px;
 }
 .fl-agent-act {
@@ -350,7 +349,6 @@
   font-size: 14px;
   font-weight: 500;
   color: var(--ink);
-  letter-spacing: -0.01em;
 }
 .fl-rail-cap {
   margin-top: auto;

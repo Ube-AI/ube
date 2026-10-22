@@ -260,7 +260,6 @@ const jsonLdBlocks = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : []
     display: block;
     font-family: var(--font-sans);
     font-weight: 700;
-    letter-spacing: -0.06em;
     /* Sized to fill most of the viewport WIDTH at common breakpoints
        without dominating the viewport's height when the curtain lifts.
        `ube` is short (3 chars), so a smaller vw multiplier than a longer
@@ -280,11 +279,10 @@ const jsonLdBlocks = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : []
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
-    /* Negative letter-spacing pulls the right side of the trailing "e"
-       past the layout box; `overflow: hidden` on the curtain then clips
-       the glyph. Pad the inline-end to give it room. The 0.04em padding
-       on the bottom is for the descender (no descender in "ube", but
-       protects font swaps). */
+    /* `overflow: hidden` on the curtain clips anything past the layout
+       box; the inline-end padding keeps the trailing "e" clear of that
+       edge. The 0.04em padding on the bottom is for the descender (no
+       descender in "ube", but protects font swaps). */
     padding: 0 0.08em 0.04em 0;
   }
 </style>

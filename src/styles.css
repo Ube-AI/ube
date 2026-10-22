@@ -206,31 +206,26 @@ section[id] {
   font-size: 64px;
   line-height: 1.05;
   font-weight: 400;
-  letter-spacing: -1.92px;
 }
 .t-display-xl {
   font-size: 48px;
   line-height: 1.08;
   font-weight: 400;
-  letter-spacing: -1.44px;
 }
 .t-display-lg {
   font-size: 36px;
   line-height: 1.12;
   font-weight: 450;
-  letter-spacing: -1.08px;
 }
 .t-display-md {
   font-size: 28px;
   line-height: 1.2;
   font-weight: 500;
-  letter-spacing: -0.84px;
 }
 .t-display-sm {
   font-size: 22px;
   line-height: 1.25;
   font-weight: 500;
-  letter-spacing: -0.5px;
 }
 .t-title-md {
   font-size: 18px;
@@ -279,33 +274,29 @@ section[id] {
 @media (max-width: 1024px) {
   .t-display-mega {
     font-size: 52px;
-    letter-spacing: -1.44px;
   }
   .t-display-xl {
     font-size: 40px;
-    letter-spacing: -1.2px;
   }
   .t-display-lg {
     font-size: 32px;
-    letter-spacing: -0.96px;
   }
 }
+/* Phone sizes run a touch smaller than a straight step down: with normal
+   letter-spacing (never negative) the headlines are wider, and these sizes
+   keep their line breaks at 320-414px. */
 @media (max-width: 640px) {
   .t-display-mega {
-    font-size: 44px;
-    letter-spacing: -1.08px;
+    font-size: 43px;
   }
   .t-display-xl {
     font-size: 32px;
-    letter-spacing: -0.96px;
   }
   .t-display-lg {
-    font-size: 28px;
-    letter-spacing: -0.84px;
+    font-size: 26px;
   }
   .t-display-md {
     font-size: 24px;
-    letter-spacing: -0.72px;
   }
 }
 
@@ -807,16 +798,22 @@ section[id] {
   font-size: 28px;
   font-weight: 500;
   color: var(--mark);
-  letter-spacing: -0.5px;
   line-height: 1;
+}
+/* Step titles sit in a narrower column than the page; 26px keeps the long
+   ones ("Close the loop with the customer who reported it.") on one line
+   at tablet widths with normal letter-spacing. */
+@media (max-width: 1024px) {
+  .step-copy .t-display-md {
+    font-size: 26px;
+  }
 }
 @media (max-width: 640px) {
   .step-num {
     font-size: 22px;
   }
   .step-copy .t-display-md {
-    font-size: 22px;
-    letter-spacing: -0.5px;
+    font-size: 21px;
   }
 }
 
@@ -1143,15 +1140,13 @@ dialog.modal-backdrop::backdrop {
 .legal-content h1 {
   font-size: 44px;
   line-height: 1.1;
-  letter-spacing: -1.3px;
   font-weight: 500;
   color: var(--ink);
   margin: 0;
 }
 @media (max-width: 640px) {
   .legal-content h1 {
-    font-size: 36px;
-    letter-spacing: -1.08px;
+    font-size: 34px;
   }
 }
 .legal-meta {

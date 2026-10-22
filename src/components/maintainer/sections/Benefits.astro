@@ -150,7 +150,6 @@ const cards: Card[] = [
     color: var(--accent);
     font-size: clamp(40px, 7vw, 70.4px);
     line-height: 1;
-    letter-spacing: -3px;
     white-space: nowrap;
   }
   .benefits-stat-caption {
@@ -193,14 +192,11 @@ const cards: Card[] = [
       justify-content: flex-end;
       text-align: right;
     }
-    .benefits-stat {
-      letter-spacing: -2px;
-    }
   }
   @media (max-width: 640px) {
     .benefits-stat {
-      font-size: clamp(27px, 10.2vw, 41px);
-      letter-spacing: -1.5px;
+      /* Leaves the caption its full 44vw so it fits its 3-line clamp. */
+      font-size: clamp(27px, 9.8vw, 41px);
       max-width: 50vw;
     }
     .benefits-stat-caption {

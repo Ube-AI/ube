@@ -167,8 +167,7 @@ import WeeklyMockup from "@/components/publisher/mockups/WeeklyMockup.astro"
 
   @media (min-width: 1025px) {
     .publisher-hero-title {
-      font-size: min(clamp(44px, 4.55vw, 58px), 10cqi);
-      letter-spacing: -1.68px;
+      font-size: min(clamp(44px, 4.55vw, 58px), 9.5cqi);
       line-height: 1.05;
     }
   }
@@ -183,9 +182,9 @@ import WeeklyMockup from "@/components/publisher/mockups/WeeklyMockup.astro"
       padding: 104px 0 112px;
     }
     .publisher-hero-title {
-      /* Size both phrases to the copy column while preserving two lines. */
-      font-size: min(52px, 10cqi);
-      letter-spacing: -0.03em;
+      /* Size both phrases to the copy column while preserving two lines;
+         9.5cqi fits "to distribute your app." at normal letter-spacing. */
+      font-size: min(52px, 9.5cqi);
     }
   }
   @media (max-width: 640px) {
@@ -193,7 +192,7 @@ import WeeklyMockup from "@/components/publisher/mockups/WeeklyMockup.astro"
       padding: 80px 0 88px;
     }
     .publisher-hero-title {
-      font-size: min(44px, 10cqi);
+      font-size: min(44px, 9.5cqi);
     }
   }
 </style>
