@@ -22,6 +22,10 @@ const stackLogos: StackLogo[] = [
 
 <div class="stack-map" aria-label="Distribution stack integrations">
   <div class="stack-dotgrid" aria-hidden="true"></div>
+  {/* Spans, not divs, so the nth-of-type node placement below keeps counting from 3. */}
+  <span class="stack-halo" aria-hidden="true"></span>
+  <span class="stack-halo" aria-hidden="true"></span>
+  <span class="stack-halo" aria-hidden="true"></span>
   <div class="stack-core">
     <Wordmark size={32} />
     <strong>company brain</strong>
@@ -65,21 +69,54 @@ const stackLogos: StackLogo[] = [
     -webkit-mask-composite: source-in;
     z-index: 0;
   }
-  .stack-map::before,
-  .stack-map::after {
-    content: "";
+  /* Halo rings. Emitted from behind the core: they start at scale 0.42
+     (~137px, smaller than the 172px core) so they only become visible once
+     they have cleared its edge. These replace the two static rings that
+     used to be drawn as ::before / ::after. */
+  .stack-halo {
     position: absolute;
+    display: block;
     top: 50%;
     left: 50%;
     height: 68%;
     aspect-ratio: 1;
-    transform: translate(-50%, -50%);
-    border: var(--translucent-border-width) solid color-mix(in oklab, var(--accent) 18%, transparent);
+    transform: translate(-50%, -50%) scale(0.42);
+    opacity: 0;
+    border: var(--translucent-border-width) solid color-mix(in oklab, var(--accent) 26%, transparent);
     border-radius: 50%;
     pointer-events: none;
+    z-index: 0;
+    /* Decelerating, so the ring loses energy as it travels out. */
+    animation: halo-emit 5.8s cubic-bezier(0.3, 0.6, 0.4, 1)
+      var(--halo-delay, 0s) infinite;
+    will-change: transform, opacity;
   }
-  .stack-map::after {
-    height: 46%;
+  /* Three rings share one 5.8s lifetime, offset by a third of it, so a new
+     halo leaves the core roughly every 1.9s and two are always in flight. */
+  .stack-halo:nth-of-type(1) {
+    --halo-delay: 0s;
+  }
+  .stack-halo:nth-of-type(2) {
+    --halo-delay: -1.93s;
+  }
+  .stack-halo:nth-of-type(3) {
+    --halo-delay: -3.87s;
+  }
+  @keyframes halo-emit {
+    0% {
+      transform: translate(-50%, -50%) scale(0.42);
+      opacity: 0;
+    }
+    18% {
+      opacity: 1;
+    }
+    70% {
+      opacity: 0.5;
+    }
+    100% {
+      transform: translate(-50%, -50%) scale(1.24);
+      opacity: 0;
+    }
   }
   .stack-core {
     position: absolute;
@@ -97,7 +134,19 @@ const stackLogos: StackLogo[] = [
     gap: 7px;
     background: #18181c;
     border: 1px solid var(--accent);
-    box-shadow: 0 0 60px rgba(107, 63, 160, 0.28);
+    /* Resting value doubles as the reduced-motion state. */
+    box-shadow: 0 0 52px color-mix(in oklab, var(--accent) 18%, transparent);
+    /* The core's glow swells on the same 5.8s cadence the halos leave on. */
+    animation: core-glow 5.8s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+  }
+  @keyframes core-glow {
+    0%,
+    100% {
+      box-shadow: 0 0 52px color-mix(in oklab, var(--accent) 18%, transparent);
+    }
+    50% {
+      box-shadow: 0 0 78px color-mix(in oklab, var(--accent) 30%, transparent);
+    }
   }
   .stack-core strong {
     color: var(--muted);
@@ -119,6 +168,27 @@ const stackLogos: StackLogo[] = [
     color: var(--body);
     font-size: 12px;
     white-space: nowrap;
+    --dx: 6px;
+    --dy: -6px;
+    animation: node-drift var(--dur, 9s) ease-in-out var(--delay, 0s) infinite;
+    will-change: transform;
+  }
+  /* --dx / --dy are set per node (a few px at most); the four-step path
+     keeps it from reading as a mechanical back-and-forth. */
+  @keyframes node-drift {
+    0%,
+    100% {
+      transform: translate(0, 0);
+    }
+    25% {
+      transform: translate(var(--dx), var(--dy));
+    }
+    50% {
+      transform: translate(calc(var(--dx) * 0.35), calc(var(--dy) * -0.85));
+    }
+    75% {
+      transform: translate(calc(var(--dx) * -0.75), calc(var(--dy) * 0.45));
+    }
   }
   .stack-node img {
     width: 20px;
@@ -171,6 +241,35 @@ const stackLogos: StackLogo[] = [
   .stack-node:nth-of-type(13) {
     right: 35%;
     top: 16%;
+  }
+  /* Per-node drift signatures: differing amplitude, direction, period and
+     phase so no two nodes ever line up. */
+  .stack-node:nth-of-type(3) { --dx: 6px; --dy: -8px; --dur: 8.5s; --delay: -0.4s; }
+  .stack-node:nth-of-type(4) { --dx: -8px; --dy: -6px; --dur: 10s; --delay: -3.1s; }
+  .stack-node:nth-of-type(5) { --dx: 8px; --dy: 6px; --dur: 9.6s; --delay: -6.2s; }
+  .stack-node:nth-of-type(6) { --dx: -6px; --dy: 8px; --dur: 8.1s; --delay: -1.8s; }
+  .stack-node:nth-of-type(7) { --dx: 7px; --dy: -6px; --dur: 10.8s; --delay: -8.5s; }
+  .stack-node:nth-of-type(8) { --dx: -8px; --dy: -7px; --dur: 8.8s; --delay: -2.6s; }
+  .stack-node:nth-of-type(9) { --dx: 8px; --dy: -6px; --dur: 9.2s; --delay: -5.4s; }
+  .stack-node:nth-of-type(10) { --dx: -6px; --dy: -8px; --dur: 10.4s; --delay: -9.7s; }
+  .stack-node:nth-of-type(11) { --dx: -7px; --dy: 8px; --dur: 7.7s; --delay: -4.3s; }
+  .stack-node:nth-of-type(12) { --dx: 8px; --dy: 6px; --dur: 9.8s; --delay: -7.1s; }
+  .stack-node:nth-of-type(13) { --dx: -8px; --dy: 7px; --dur: 8.6s; --delay: -0.9s; }
+  @media (prefers-reduced-motion: reduce) {
+    .stack-halo,
+    .stack-core,
+    .stack-node {
+      animation: none;
+    }
+    /* Without the ripple, leave two rings standing so the composition holds. */
+    .stack-halo:nth-of-type(1) {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
+    }
+    .stack-halo:nth-of-type(2) {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(0.68);
+    }
   }
   @media (max-width: 1100px) {
     .stack-map {
