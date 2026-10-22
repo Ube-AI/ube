@@ -33,6 +33,7 @@ export type ModalSource =
   | "pricing_team"
   | "pricing_enterprise"
   | "pricing_final_cta"
+  | "about_final_cta"
 
 export type ModalVariant = "default" | "enterprise"
 

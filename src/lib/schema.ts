@@ -16,6 +16,16 @@ type WebPageSchemaArgs = {
   description: string
   dateModified: string
   aboutId?: string
+  // schema.org WebPage subtype, e.g. "AboutPage" for /about/.
+  pageType?: string
+}
+
+type PersonSchemaArgs = {
+  slug: string
+  name: string
+  jobTitle: string
+  linkedin: string
+  imagePath: string
 }
 
 const requireSite = (site: SiteUrl) => {
@@ -40,11 +50,15 @@ export const schemaIds = (site: SiteUrl) => ({
   // churn it again without a reason as good as the rename itself.
   ubeId: absoluteUrl(site, "/#ube"),
   offerCatalogId: absoluteUrl(site, "/pricing/#offer-catalog"),
+  personId: (slug: string) => absoluteUrl(site, `/about/#${slug}`),
 })
 
 export const buildOrganizationSchema = (
   site: SiteUrl,
   dateModified?: string,
+  // Only /about/ passes these — it is the one page that also emits the
+  // Person nodes they point at, so the references never dangle.
+  founderIds: string[] = [],
 ): JsonLd => {
   const ids = schemaIds(site)
 
@@ -63,6 +77,9 @@ export const buildOrganizationSchema = (
       contactType: "customer support",
     },
     sameAs: [GITHUB_URL, LINKEDIN_URL],
+    ...(founderIds.length > 0
+      ? { founder: founderIds.map((id) => ({ "@id": id })) }
+      : {}),
     knowsAbout: [
       "mobile app maintenance",
       "cross-platform app development",
@@ -283,12 +300,19 @@ export const buildOfferCatalogSchema = (
 
 export const buildWebPageSchema = (
   site: SiteUrl,
-  { pageUrl, title, description, dateModified, aboutId }: WebPageSchemaArgs,
+  {
+    pageUrl,
+    title,
+    description,
+    dateModified,
+    aboutId,
+    pageType = "WebPage",
+  }: WebPageSchemaArgs,
 ): JsonLd => {
   const ids = schemaIds(site)
 
   return {
-    "@type": "WebPage",
+    "@type": pageType,
     "@id": `${pageUrl}#webpage`,
     name: title,
     url: pageUrl,
@@ -297,6 +321,24 @@ export const buildWebPageSchema = (
     isPartOf: { "@id": ids.websiteId },
     publisher: { "@id": ids.orgId },
     ...(aboutId ? { about: { "@id": aboutId } } : {}),
+  }
+}
+
+export const buildPersonSchema = (
+  site: SiteUrl,
+  { slug, name, jobTitle, linkedin, imagePath }: PersonSchemaArgs,
+): JsonLd => {
+  const ids = schemaIds(site)
+
+  return {
+    "@type": "Person",
+    "@id": ids.personId(slug),
+    name,
+    jobTitle,
+    url: ids.personId(slug),
+    image: absoluteUrl(site, imagePath),
+    sameAs: [linkedin],
+    worksFor: { "@id": ids.orgId },
   }
 }
 

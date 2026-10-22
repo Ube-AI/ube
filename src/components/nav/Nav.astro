@@ -22,6 +22,7 @@ const pathname = Astro.url.pathname
 const isLandingPage = pathname === "/"
 const isMaintainerPage = pathname === "/maintainer/"
 const isPricingPage = pathname === "/pricing/"
+const isAboutPage = pathname === "/about/"
 // Each product page gets a local table of contents. Other routes use links
 // into the flagship homepage. Maintainer remains absent from the flagship
 // nav (ADR 0006); these links appear only while already on its page.
@@ -42,6 +43,7 @@ const sectionHref = (anchor: string) =>
     ? `#${anchor}`
     : `${sectionBasePath}#${anchor}`
 const pricingActive = isPricingPage
+const aboutActive = isAboutPage
 const wordmarkHref = isLandingPage ? "#top" : "/"
 const showDashboardLink = true
 ---
@@ -63,8 +65,16 @@ const showDashboardLink = true
       <a
         href="/pricing/"
         class:list={["nav-link", { active: pricingActive }]}
+        aria-current={pricingActive ? "page" : undefined}
       >
         Pricing
+      </a>
+      <a
+        href="/about/"
+        class:list={["nav-link", { active: aboutActive }]}
+        aria-current={aboutActive ? "page" : undefined}
+      >
+        About
       </a>
     </div>
 
@@ -129,9 +139,18 @@ const showDashboardLink = true
     <a
       href="/pricing/"
       class:list={["mobile-menu-link", { active: pricingActive }]}
+      aria-current={pricingActive ? "page" : undefined}
       data-nav-menu-link
     >
       Pricing
+    </a>
+    <a
+      href="/about/"
+      class:list={["mobile-menu-link", { active: aboutActive }]}
+      aria-current={aboutActive ? "page" : undefined}
+      data-nav-menu-link
+    >
+      About
     </a>
   </div>
   <div class="mobile-menu-actions">
@@ -309,7 +328,10 @@ const showDashboardLink = true
     align-items: center;
     justify-content: center;
   }
-  @media (max-width: 768px) {
+  /* `.nav-center` is absolutely centred, so it can't shrink out of the
+     right cluster's way. Hand over to the menu button before the two meet:
+     the longest link set (/maintainer/) clears Dashboard at ~950px. */
+  @media (max-width: 1000px) {
     .nav-center {
       display: none;
     }

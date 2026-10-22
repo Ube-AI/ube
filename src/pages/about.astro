@@ -1,0 +1,105 @@
+---
+// About — the mission and the two founders behind it. Four short sections
+// that read in under a minute: the mission (Hero), the one change Ube is
+// making — anyone can build an app, not yet acquire users (Gap) — the
+// founders (Founders), and the homepage's closing CTA band (FinalCta),
+// reused with its own analytics source.
+//
+// Founder facts live in `src/data/founders.ts` so the cards, the hero byline,
+// and the Person JSON-LD below can't drift apart.
+import Founders from "@/components/about/sections/Founders.astro"
+import Gap from "@/components/about/sections/Gap.astro"
+import Hero from "@/components/about/sections/Hero.astro"
+import FinalCta from "@/components/publisher/sections/FinalCta.astro"
+import { FOUNDERS } from "@/data/founders"
+import { TWEAK_DEFAULTS } from "@/data/tweak-defaults"
+import BaseLayout from "@/layouts/BaseLayout.astro"
+import { CARD_TONES, getUbe } from "@/lib/palette"
+import {
+  buildBreadcrumbSchema,
+  buildJsonLdGraph,
+  buildOrganizationSchema,
+  buildPersonSchema,
+  buildWebPageSchema,
+  buildWebsiteSchema,
+  schemaIds,
+} from "@/lib/schema"
+
+const title = "About Ube — Democratizing Performance Marketing"
+const description =
+  "Ube's mission is to democratize performance marketing. Meet founders Orkun Duman and Alan Krueger, who shipped products at Google and grew their own apps."
+
+const ube = getUbe(TWEAK_DEFAULTS.accent)
+const accent = `oklch(${ube.L} ${ube.C} ${ube.H})`
+const accentHover = `oklch(${Math.min(0.72, ube.L + 0.1)} ${ube.C} ${ube.H})`
+const accentSoft = `oklch(${Math.max(0.18, ube.L - 0.26)} ${Math.max(0.06, ube.C - 0.08)} ${ube.H})`
+const accentTint = `oklch(${ube.L} ${ube.C} ${ube.H} / 0.14)`
+const cardTone = CARD_TONES[TWEAK_DEFAULTS.cardTone] ?? CARD_TONES["warm"]
+const cardBg = cardTone?.bg ?? "#1d1b15"
+const cardBorder = cardTone?.border ?? "#2a2720"
+const accentMode = TWEAK_DEFAULTS.accentStrategy
+
+const dateModified = new Date().toISOString()
+const aboutUrl = new URL("/about/", Astro.site).href
+const siteUrl = new URL("/", Astro.site).href
+const ids = schemaIds(Astro.site)
+
+const people = FOUNDERS.map((founder) =>
+  buildPersonSchema(Astro.site, {
+    slug: founder.slug,
+    name: founder.name,
+    jobTitle: founder.role,
+    linkedin: founder.linkedin,
+    imagePath: founder.photo.src,
+  }),
+)
+
+const jsonLd = buildJsonLdGraph([
+  buildOrganizationSchema(
+    Astro.site,
+    dateModified,
+    FOUNDERS.map((founder) => ids.personId(founder.slug)),
+  ),
+  buildWebsiteSchema(Astro.site),
+  buildWebPageSchema(Astro.site, {
+    pageUrl: aboutUrl,
+    title,
+    description,
+    dateModified,
+    aboutId: ids.orgId,
+    pageType: "AboutPage",
+  }),
+  ...people,
+  buildBreadcrumbSchema(aboutUrl, [
+    { name: "Ube", url: siteUrl },
+    { name: "About", url: aboutUrl },
+  ]),
+])
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  jsonLd={jsonLd}
+  accentMode={accentMode}
+>
+  <style
+    define:vars={{ accent, accentHover, accentSoft, accentTint, cardBg, cardBorder }}
+  >
+    main {
+      --accent-hover: var(--accentHover);
+      --accent-soft: var(--accentSoft);
+      --accent-tint: var(--accentTint);
+      --card-bg: var(--cardBg);
+      --card-border: var(--cardBorder);
+      background: var(--canvas);
+    }
+  </style>
+
+  <main>
+    <Hero />
+    <Gap />
+    <Founders />
+    <FinalCta source="about_final_cta" />
+  </main>
+</BaseLayout>

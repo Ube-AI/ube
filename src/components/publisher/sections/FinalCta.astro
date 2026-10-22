@@ -1,5 +1,15 @@
 ---
+// Shared closing CTA — the homepage's, reused as-is on /about/. Each page
+// passes its own `source` so Request access clicks stay attributed to the
+// page they came from.
 import { ArrowRightIcon } from "@phosphor-icons/react"
+import type { ModalSource } from "@/stores/request-access"
+
+export interface Props {
+  source?: ModalSource
+}
+
+const { source = "home_final_cta" } = Astro.props
 ---
 
 <section class="publisher-final paper-shader" data-warp-shader>
@@ -10,7 +20,11 @@ import { ArrowRightIcon } from "@phosphor-icons/react"
     <p class="t-body-md muted">
       Hand the distribution loop to Ube. Get back to building.
     </p>
-    <button type="button" class="btn btn-primary" data-publisher-final-cta>
+    <button
+      type="button"
+      class="btn btn-primary"
+      data-publisher-final-cta={source}
+    >
       Request access
       <ArrowRightIcon size={14} aria-hidden="true" />
     </button>

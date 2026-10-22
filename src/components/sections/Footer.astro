@@ -33,6 +33,14 @@ import { Logo } from "@/lib/logo"
         </ul>
       </div>
       <div class="footer-col">
+        <h3>Company</h3>
+        <ul>
+          <li>
+            <a href="/about/">About</a>
+          </li>
+        </ul>
+      </div>
+      <div class="footer-col">
         <h3>Legal</h3>
         <ul>
           <li>
@@ -84,8 +92,9 @@ import { Logo } from "@/lib/logo"
   }
   .footer-grid {
     display: grid;
-    grid-template-columns: 1.4fr 1fr 1fr 1fr;
-    gap: 48px;
+    /* Contact gets extra room so the GitHub handle never wraps. */
+    grid-template-columns: 1.4fr 1fr 1fr 1fr 1.3fr;
+    gap: 40px;
   }
   .footer-col h3 {
     font-size: 11px;
@@ -126,6 +135,17 @@ import { Logo } from "@/lib/logo"
     gap: 8px;
   }
 
+  /* Five columns get cramped below laptop width — drop the brand column
+     onto its own row so the four link columns keep readable widths. */
+  @media (max-width: 1024px) {
+    .footer-grid {
+      grid-template-columns: repeat(3, 1fr) 1.4fr;
+      gap: 40px 32px;
+    }
+    .footer-col:first-child {
+      grid-column: 1 / -1;
+    }
+  }
   @media (max-width: 768px) {
     .footer-grid {
       grid-template-columns: 1fr;

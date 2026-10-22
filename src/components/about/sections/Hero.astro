@@ -1,0 +1,314 @@
+---
+// About hero — the mission, set inside a scaled-up pair of the wordmark's
+// [ube] brackets. On load the brackets start near the centre and slide out
+// while the text reveals from the middle: the mission "opens up", which is
+// the whole idea of democratizing it. Layout is reserved from the first frame
+// (only transforms and clip-path animate), so there is no layout shift, and
+// the clip starts from a sliver rather than nothing so the H1 still paints as
+// the LCP element on the first frame.
+//
+// The byline signs the mission with both founders' faces and jumps to their
+// cards below.
+import { Image } from "astro:assets"
+import { FOUNDERS } from "@/data/founders"
+
+---
+
+<section class="about-hero" id="top">
+  <div class="about-hero-grid" aria-hidden="true"></div>
+  <div class="container about-hero-inner">
+    <div class="eyebrow about-hero-eyebrow">Our mission</div>
+    <div class="about-hero-body">
+      <h1 class="mission">
+        <span class="mission-bracket mission-bracket-l" aria-hidden="true"
+        ></span>
+        <span class="mission-text">
+          <span class="mission-line">Democratize</span>{" "}
+          <span class="mission-line">performance</span>{" "}
+          <span class="mission-line">marketing.</span>
+        </span>
+        <span class="mission-bracket mission-bracket-r" aria-hidden="true"
+        ></span>
+      </h1>
+
+      <div class="about-hero-aside">
+        <p class="t-body-md body about-hero-standfirst">
+          Performance marketing decides which apps find their users. Doing it
+          well still takes a studio's team and a studio's budget. Ube turns that
+          team into software, so anyone who can ship an app can grow one.
+        </p>
+        <a class="about-byline" href="#founders">
+          <span class="about-byline-faces" aria-hidden="true">
+            {
+              FOUNDERS.map((founder) => (
+                <Image
+                  src={founder.photo}
+                  alt=""
+                  width={72}
+                  class="about-byline-face"
+                  style={`object-position: ${founder.focal}`}
+                  loading="eager"
+                />
+              ))
+            }
+          </span>
+          <span class="about-byline-text">
+            <span class="about-byline-names">
+              {
+                FOUNDERS.map((founder, index) => (
+                  <>
+                    {index > 0 && " & "}
+                    <span class="nowrap">{founder.name}</span>
+                  </>
+                ))
+              }
+            </span>{" "}
+            <span class="about-byline-role">
+              Co-founders <span class="nowrap">· Oakland, CA</span>
+            </span>
+          </span>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .about-hero {
+    position: relative;
+    overflow: hidden;
+    padding: 112px 0 120px;
+    background: var(--canvas);
+    border-bottom: 1px solid var(--hairline-soft);
+  }
+
+  /* Same 32px dot grid as the home and pricing heroes, pooled behind the
+     mission instead of the page top, over one faint ube glow. */
+  .about-hero-grid {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background:
+      radial-gradient(rgba(255, 255, 255, 0.12) 1px, transparent 1px) 0 0 /
+        32px 32px,
+      radial-gradient(
+        ellipse 45% 55% at 26% 62%,
+        color-mix(in oklab, var(--accent) 14%, transparent),
+        transparent 70%
+      );
+    opacity: 0.7;
+    mask-image: radial-gradient(
+      ellipse 80% 75% at 30% 60%,
+      #000 0%,
+      transparent 75%
+    );
+    -webkit-mask-image: radial-gradient(
+      ellipse 80% 75% at 30% 60%,
+      #000 0%,
+      transparent 75%
+    );
+  }
+
+  .about-hero-inner {
+    position: relative;
+    z-index: 1;
+    /* The H1 is sized in cqi so "[performance]" always fits the container
+       on one line, from 320px phones to wide desktops. */
+    container-type: inline-size;
+  }
+  .about-hero-eyebrow {
+    margin-bottom: 44px;
+  }
+
+  .about-hero-body {
+    display: grid;
+    grid-template-columns: auto minmax(280px, 400px);
+    justify-content: space-between;
+    align-items: end;
+    column-gap: 64px;
+  }
+
+  /* --- Mission ---------------------------------------------------------- */
+  .mission {
+    display: inline-flex;
+    align-items: stretch;
+    gap: 0.14em;
+    margin: 0;
+    font-size: min(104px, 9cqi);
+    font-weight: 400;
+    line-height: 0.96;
+    color: var(--ink);
+  }
+  .mission-text {
+    display: flex;
+    flex-direction: column;
+  }
+  .mission-line {
+    display: block;
+    white-space: nowrap;
+  }
+  /* Built exactly like Wordmark.astro's brackets (open box, square corners),
+     scaled in em. The top meets the cap height of "D"; the bottom drops to
+     the descender of the "g" so the frame holds all three lines. */
+  .mission-bracket {
+    flex: none;
+    width: 0.17em;
+    margin-block: 0.13em -0.1em;
+    border: max(3px, 0.055em) solid var(--accent);
+  }
+  .mission-bracket-l {
+    border-right: none;
+  }
+  .mission-bracket-r {
+    border-left: none;
+  }
+
+  /* --- Aside: standfirst + signed byline -------------------------------- */
+  .about-hero-aside {
+    /* Sit the aside's last line on the mission's last baseline. */
+    padding-bottom: 0.4em;
+  }
+  .about-hero-standfirst {
+    margin: 0;
+    line-height: 1.65;
+    text-wrap: pretty;
+  }
+
+  .about-byline {
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
+    margin-top: 28px;
+    padding: 6px 16px 6px 6px;
+    border: 1px solid var(--hairline-strong);
+    border-radius: var(--r-pill);
+    background: rgba(255, 255, 255, 0.02);
+    color: inherit;
+    text-decoration: none;
+    transition:
+      border-color 160ms ease-out,
+      background 160ms ease-out;
+  }
+  .about-byline:hover {
+    border-color: #3a3a48;
+    background: rgba(255, 255, 255, 0.04);
+  }
+  .about-byline-faces {
+    display: inline-flex;
+  }
+  .about-byline-face {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+    /* A canvas-coloured ring separates the overlapping avatars. */
+    box-shadow: 0 0 0 2px var(--canvas);
+    filter: grayscale(1) contrast(1.05);
+  }
+  .about-byline-face + .about-byline-face {
+    margin-left: -10px;
+  }
+  .about-byline-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    line-height: 1.25;
+  }
+  .about-byline-names {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--ink);
+  }
+  .nowrap {
+    white-space: nowrap;
+  }
+  .about-byline-role {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.88px;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  /* --- Motion: the mission opens ---------------------------------------- */
+  @media (prefers-reduced-motion: no-preference) {
+    .mission-bracket-l {
+      animation: bracket-open-l 1100ms cubic-bezier(0.65, 0, 0.35, 1) both;
+    }
+    .mission-bracket-r {
+      animation: bracket-open-r 1100ms cubic-bezier(0.65, 0, 0.35, 1) both;
+    }
+    .mission-text {
+      animation: mission-open 1100ms cubic-bezier(0.65, 0, 0.35, 1) both;
+    }
+    .about-hero-aside {
+      animation: aside-in 700ms cubic-bezier(0.22, 0.61, 0.36, 1) 650ms both;
+    }
+  }
+  /* ~3.05em is half the width of the "performance" block, so the brackets
+     start almost touching at the centre. */
+  @keyframes bracket-open-l {
+    from {
+      transform: translateX(3.05em);
+    }
+  }
+  @keyframes bracket-open-r {
+    from {
+      transform: translateX(-3.05em);
+    }
+  }
+  @keyframes mission-open {
+    from {
+      clip-path: inset(-0.2em 46% -0.3em 46%);
+    }
+    to {
+      clip-path: inset(-0.2em 0 -0.3em 0);
+    }
+  }
+  @keyframes aside-in {
+    from {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+  }
+
+  /* --- Responsive ------------------------------------------------------- */
+  @media (max-width: 1024px) {
+    .about-hero {
+      padding: 88px 0 96px;
+    }
+    .about-hero-body {
+      grid-template-columns: minmax(0, 1fr);
+      row-gap: 48px;
+    }
+    .mission {
+      font-size: min(104px, 14.4cqi);
+    }
+    .about-hero-aside {
+      max-width: 520px;
+      padding-bottom: 0;
+    }
+  }
+  @media (max-width: 640px) {
+    .about-hero {
+      padding: 56px 0 64px;
+    }
+    .about-hero-eyebrow {
+      margin-bottom: 32px;
+    }
+    .about-hero-body {
+      row-gap: 36px;
+    }
+    .mission {
+      font-size: 14.4cqi;
+    }
+  }
+  /* Below ~360px the byline wraps to two lines per span; a full pill
+     radius would pinch the wrapped text. */
+  @media (max-width: 359px) {
+    .about-byline {
+      border-radius: var(--r-xl);
+    }
+  }
+</style>

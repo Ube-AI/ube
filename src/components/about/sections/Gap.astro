@@ -1,0 +1,369 @@
+---
+// The gap — deck slide 3 rebuilt as two app-icon rows. Row one is true
+// today: a check tile and "Anyone can build an app." Row two arrives false:
+// an X tile and a struck, muted "Anyone can acquire users." As the row
+// scrolls up the page the tile flips over, X on the back, the Ube [u] icon
+// on the front, and the strike erases; scrolling back reverses it. The
+// sentence turns true because Ube stepped in front of it. The short line
+// below names the change: growing an app becomes as easy as building one.
+//
+// Motion is CSS scroll-driven (a named view timeline on row two, no JS).
+// Without support (Firefox, older Safari) or with reduced motion, the row
+// renders its finished state: Ube icon, no strike. The eyebrow and closing
+// line carry the argument on their own.
+//
+// The tiles are built in markup and CSS, not the PNG, so they track the
+// accent token. Geometry is measured off public/assets/favicons/logo-512.png
+// (512 grid, in fractions of the tile side): brackets 69 wide x 380 tall,
+// 49.5 stroke, inset 56 from the sides and 66 from the top; the "u" has a
+// 206 x-height. Brackets are built like Wordmark.astro's (open box, square
+// corners), only thicker, as in the icon. At text size the icon's own
+// margins read cramped, so `.gap-glyph` shrinks brackets + "u" inside the
+// tile without touching that geometry.
+//
+// The visual rows are aria-hidden. The heading's accessible name is the
+// truthful sentence, so a screen reader never hears the struck line, or
+// the turned line, as a claim about today. The build/acquire rows are deck
+// slide 3; the closing line is slide 14 (as building gets easier,
+// distribution becomes the bottleneck).
+---
+
+<section class="about-gap" aria-labelledby="about-gap-title">
+  <div class="container">
+    <div class="eyebrow">Our goal</div>
+
+    <div class="gap-statement">
+      <h2 class="gap-title" id="about-gap-title">
+        <span class="sr-only">
+          Anyone can build an app. Not everyone can acquire users yet.
+        </span>{" "}
+        <span class="gap-rows" aria-hidden="true">
+          <span class="gap-row">
+            <span class="gap-tile gap-face">
+              <span class="gap-check"></span>
+            </span>
+            <span class="gap-line"
+              >Anyone can<br class="gap-br" /> build an app.</span
+            >
+          </span>{" "}
+          <span class="gap-row gap-row-turn">
+            <span class="gap-tile gap-flip">
+              <span class="gap-face gap-face-x">
+                <span class="gap-x"></span>
+              </span>
+              <span class="gap-face gap-face-ube">
+                <span class="gap-glyph">
+                  <span class="gap-bracket gap-bracket-l"></span>
+                  <span class="gap-u"></span>
+                  <span class="gap-bracket gap-bracket-r"></span>
+                </span>
+              </span>
+            </span>
+            <span class="gap-line">
+              <span class="gap-strike"
+                >Anyone can<br class="gap-br" /> acquire users.</span
+              >
+            </span>
+          </span>
+        </span>
+      </h2>
+
+      <p class="t-display-sm gap-close">
+        <span class="gap-close-lead">
+          Building an app has never been easier.
+        </span>{" "}
+        Ube makes growing one just as easy.
+      </p>
+    </div>
+  </div>
+</section>
+
+<style>
+  .about-gap {
+    padding: 128px 0;
+    background: var(--canvas-soft);
+    /* Bottom groove only, like the home Problems section — the hero above
+       already draws the hairline on this section's top edge. */
+    border-bottom: 1px solid var(--hairline-soft);
+  }
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  /* --- Statement -------------------------------------------------------- */
+  /* Sized in cqi so each row (1.2em tile + 0.36em gap + a 12.6em sentence)
+     holds one line up to the 64px cap. */
+  .gap-statement {
+    --gap-fs: min(64px, 6.8cqi);
+    --gap-tile: 1.2em;
+    --gap-col: 0.36em;
+    /* Tile + gap, in the rows' font size (the close sets its own size). */
+    --gap-indent: calc(var(--gap-fs) * 1.56);
+    margin-top: 28px;
+    container-type: inline-size;
+  }
+  .gap-title {
+    margin: 0;
+    font-size: var(--gap-fs);
+    font-weight: 400;
+    line-height: 1.12;
+    color: var(--ink);
+  }
+  .gap-rows {
+    display: flex;
+    flex-direction: column;
+    gap: 0.36em;
+  }
+  /* Centring the tile on the line box also centres it on the cap height
+     (Inter at a 1.12 line height), and on a two-line sentence centres it
+     between the first cap line and the last baseline. */
+  .gap-row {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    column-gap: var(--gap-col);
+    align-items: center;
+  }
+  /* Wraps (balanced) only if a fallback font runs wider than Inter. */
+  .gap-line {
+    text-wrap: balance;
+  }
+  /* Row one is already true, so it sits a step quieter than the row Ube
+     turns: the change should be the brightest line in the section. */
+  .gap-row:first-child .gap-line {
+    color: var(--body);
+  }
+  /* The phone layout breaks each sentence after "Anyone can". */
+  .gap-br {
+    display: none;
+  }
+
+  /* --- Tiles ------------------------------------------------------------ */
+  /* One em is the tile side, so every piece below is in the icon's own
+     proportions. A face is the icon's charcoal (--canvas) surface, set into
+     the section's lighter background like an app icon. */
+  .gap-tile {
+    position: relative;
+    display: block;
+    width: 1em;
+    height: 1em;
+    font-size: var(--gap-tile);
+  }
+  .gap-face {
+    --t: 0.097em;
+    display: block;
+    border-radius: 0.23em;
+    background: var(--canvas);
+    box-shadow: inset 0 0 0 1px var(--hairline-strong);
+  }
+
+  /* Check: an L with the icon's stroke and square ends, turned 45°. */
+  .gap-check {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 0.46em;
+    height: 0.24em;
+    box-sizing: border-box;
+    border-left: var(--t) solid var(--accent-2);
+    border-bottom: var(--t) solid var(--accent-2);
+    transform: translate(-50%, -50%) translateY(-0.07em) rotate(-45deg);
+  }
+
+  /* The flip card: the Ube icon on the front, the X on the back. At rest
+     (and in every fallback) the front faces the reader. */
+  .gap-flip {
+    transform-style: preserve-3d;
+  }
+  .gap-flip .gap-face {
+    position: absolute;
+    inset: 0;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+  }
+  .gap-face-x {
+    transform: rotateY(180deg);
+  }
+  /* X: two bars with the icon's stroke, crossed, in the muted ink. */
+  .gap-x::before,
+  .gap-x::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: var(--t);
+    height: 0.5em;
+    background: var(--muted);
+    transform: translate(-50%, -50%) rotate(45deg);
+  }
+  .gap-x::after {
+    transform: translate(-50%, -50%) rotate(-45deg);
+  }
+
+  /* The lit Ube face: an accent ring plus a soft glow, so it reads as
+     switched on next to the plain check tile. */
+  .gap-face-ube {
+    box-shadow:
+      inset 0 0 0 1px
+        color-mix(in oklab, var(--accent) 50%, var(--hairline-strong)),
+      0 0 0.5em color-mix(in oklab, var(--accent) 24%, transparent);
+  }
+  /* Brackets + "u" as one glyph, scaled down for breathing room inside the
+     tile. Transform only, so the em-based geometry below is unchanged. */
+  .gap-glyph {
+    position: absolute;
+    inset: 0;
+    transform: scale(0.78);
+  }
+  .gap-bracket {
+    position: absolute;
+    top: 0.129em;
+    width: 0.135em;
+    height: 0.742em;
+    box-sizing: border-box;
+    border: var(--t) solid var(--accent);
+  }
+  .gap-bracket-l {
+    left: 0.109em;
+    border-right: none;
+  }
+  .gap-bracket-r {
+    right: 0.109em;
+    border-left: none;
+  }
+  .gap-u {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+  }
+  /* Generated so the heading's text content stays the two sentences. */
+  .gap-u::before {
+    content: "u";
+    font-size: 0.737em;
+    /* logo-512.png's stem is ~0.19 of its x-height: Inter Medium. */
+    font-weight: 500;
+    line-height: 1;
+    color: var(--ink);
+    /* Inter's x-height sits below the em box's middle; lift it to centre. */
+    transform: translateY(-0.09em);
+  }
+
+  /* The strike is a background bar, not text-decoration, so it can be
+     erased by animating its size. Sits at Inter's x-height middle. */
+  .gap-strike {
+    --strike-w: 0.07em;
+    background-image: linear-gradient(var(--body), var(--body));
+    background-repeat: no-repeat;
+    background-position: 100% 60%;
+    background-size: 0% var(--strike-w);
+    -webkit-box-decoration-break: slice;
+    box-decoration-break: slice;
+  }
+
+  /* --- Close ------------------------------------------------------------ */
+  /* Indented to the sentences' text edge, past the tile column, with
+     body-like leading for the two lines. */
+  .gap-close {
+    margin: 72px 0 0;
+    padding-left: var(--gap-indent);
+    max-width: 680px;
+    line-height: 1.5;
+    color: var(--ink);
+    /* Balanced, so the narrow phone column breaks each sentence evenly. */
+    text-wrap: balance;
+  }
+  /* The given on its own line, quieter; the answer in ink under it. */
+  .gap-close-lead {
+    display: block;
+    margin-bottom: 4px;
+    color: var(--body);
+  }
+
+  /* --- Motion: the X flips to Ube ------------------------------------- */
+  /* Scrubbed by scroll, both ways. Row two arrives showing the X; as it
+     rises from ~80% to ~50% down the viewport the card turns over to the
+     Ube icon, then the strike erases left to right and the sentence
+     brightens. Every keyframe's 100% equals the static rules above, so the
+     unsupported and reduced-motion paths need no extra rules. */
+  @media (prefers-reduced-motion: no-preference) {
+    @supports (animation-timeline: view()) {
+      .gap-row-turn {
+        view-timeline: --gap-turn block;
+      }
+      .gap-flip {
+        animation: gap-turn-flip linear both;
+      }
+      .gap-strike {
+        animation: gap-turn-strike linear both;
+      }
+      .gap-flip,
+      .gap-strike {
+        animation-timeline: --gap-turn;
+        animation-range: cover 20% cover 50%;
+      }
+    }
+  }
+  @keyframes gap-turn-flip {
+    0%,
+    25% {
+      transform: perspective(4em) rotateY(180deg);
+      animation-timing-function: cubic-bezier(0.65, 0, 0.35, 1);
+    }
+    65%,
+    100% {
+      transform: perspective(4em) rotateY(0deg);
+    }
+  }
+  @keyframes gap-turn-strike {
+    0%,
+    55% {
+      background-size: 100% var(--strike-w);
+      color: var(--muted);
+    }
+    100% {
+      background-size: 0% var(--strike-w);
+      color: var(--ink);
+    }
+  }
+
+  @media (max-width: 1024px) {
+    .about-gap {
+      padding: 96px 0;
+    }
+  }
+  @media (max-width: 640px) {
+    .about-gap {
+      padding: 72px 0;
+    }
+    /* Phones: an app-list row. Each sentence breaks after "Anyone can" so
+       the words that differ ("build an app." / "acquire users.") line up,
+       and the tile grows to the height of the two lines, which keeps the
+       turn legible at thumb size. 2em tile + 0.4em gap + 6.7em for
+       "acquire users." holds at 10.4cqi down to 320px. */
+    .gap-statement {
+      --gap-fs: min(44px, 10.4cqi);
+      --gap-tile: 2em;
+      --gap-col: 0.4em;
+      --gap-indent: calc(var(--gap-fs) * 2.4);
+      margin-top: 24px;
+    }
+    .gap-rows {
+      gap: 0.5em;
+    }
+    .gap-br {
+      display: inline;
+    }
+    /* The close steps down to body size so it reads under the two-line
+       rows. */
+    .gap-close {
+      margin-top: 40px;
+      font-size: 18px;
+    }
+  }
+</style>

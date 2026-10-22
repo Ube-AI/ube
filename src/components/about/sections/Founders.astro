@@ -1,0 +1,399 @@
+---
+// Founders — the two people behind the mission, shown as gallery prints.
+//
+// Both portraits are black-and-white on bright studio backdrops, which would
+// glare as white boxes on the dark canvas. Each photo is multiplied onto a
+// near-neutral paper tone so the whites sit down to a soft grey and the
+// prints read as one matched pair. On hover (or keyboard focus inside the
+// card) an ube layer is screened over the shadows: an ube-and-coconut
+// duotone, the same pairing the palette is built on. At rest they stay
+// black and white.
+//
+// The CPI proof is the founders' result at their previous studio, never an
+// Ube metric. The pedigree line says "Between us" because the deck doesn't
+// attribute Apple, Zynga or UC Berkeley to one founder — keep it collective.
+import { ArrowUpRightIcon } from "@phosphor-icons/react"
+import { Image } from "astro:assets"
+import { FOUNDERS } from "@/data/founders"
+import { Logo } from "@/lib/logo"
+
+const pedigree = ["Google", "Apple", "Zynga", "Gram Games", "UC Berkeley"]
+---
+
+<section class="about-founders" id="founders" aria-labelledby="founders-title">
+  <div class="container">
+    <div class="eyebrow">Founders</div>
+    <h2 class="t-display-lg founders-title" id="founders-title">
+      We ran growth for our own apps.{" "}
+      <span class="founders-title-accent">Now we're building yours.</span>
+    </h2>
+
+    <div class="founders-grid">
+      <div class="founders-intro">
+        <p class="t-body-md body founders-body">
+          For two years at Chunky Tofu Studios, the studio we co-founded,
+          growing our consumer apps was as much our job as building them. We
+          built a growth engine that is extremely efficient. Ube is that engine
+          made available to you.
+        </p>
+
+        <dl class="founders-proof">
+          <div class="founders-proof-item">
+            <dt>
+              Our cost per install{" "}
+              <span class="founders-proof-scope">
+                US <span class="keep-case">iOS</span>
+              </span>
+            </dt>
+            <dd class="founders-proof-ours">$0.32</dd>
+          </div>
+          <div class="founders-proof-item">
+            <dt>
+              Industry benchmark{" "}
+              <span class="founders-proof-scope">
+                US <span class="keep-case">iOS</span>
+              </span>
+            </dt>
+            <dd class="founders-proof-bench">$2.20</dd>
+          </div>
+        </dl>
+
+        <div class="founders-pedigree">
+          <p class="founders-pedigree-label" id="founders-pedigree-label">
+            Between us
+          </p>
+          <ul aria-labelledby="founders-pedigree-label">
+            {pedigree.map((org) => <li>{org}</li>)}
+          </ul>
+        </div>
+      </div>
+
+      <div class="founders-cards">
+        {
+          FOUNDERS.map((founder) => (
+            <article class="founder" id={founder.slug}>
+              <figure class="founder-print">
+                <Image
+                  src={founder.photo}
+                  alt={founder.name}
+                  widths={[360, 560, 800]}
+                  sizes="(max-width: 640px) 80vw, (max-width: 1024px) 46vw, 372px"
+                  class="founder-photo"
+                  style={`object-position: ${founder.focal}`}
+                  loading="lazy"
+                  decoding="async"
+                />
+              </figure>
+              <div class="founder-meta">
+                <div class="founder-head">
+                  <h3 class="t-display-sm founder-name">{founder.name}</h3>
+                  <a
+                    class="founder-link"
+                    href={founder.linkedin}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={`${founder.name} on LinkedIn (opens in a new tab)`}
+                  >
+                    <Logo name="linkedin" size={13} />
+                    LinkedIn
+                    <ArrowUpRightIcon
+                      size={12}
+                      className="founder-link-arrow"
+                      aria-hidden="true"
+                    />
+                  </a>
+                </div>
+                <p class="founder-role">{founder.role}</p>
+              </div>
+            </article>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .about-founders {
+    padding: 128px 0;
+    background: var(--canvas);
+  }
+
+  /* No max-width: the title holds one line on desktop (~1015px at 36px)
+     and balances its wrap below that. */
+  .founders-title {
+    margin: 18px 0 0;
+    color: var(--ink);
+    text-wrap: balance;
+  }
+  .founders-title-accent {
+    color: var(--accent-2);
+  }
+
+  .founders-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
+    gap: 64px;
+    align-items: start;
+    margin-top: 64px;
+  }
+
+  /* --- Intro column ----------------------------------------------------- */
+  /* The cards run much taller than the intro, so the intro rides along
+     with them instead of leaving a dead column. */
+  .founders-intro {
+    position: sticky;
+    top: 112px;
+  }
+  .founders-body {
+    margin: 0;
+    line-height: 1.65;
+    text-wrap: pretty;
+  }
+
+  .founders-proof {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    margin: 40px 0 0;
+    padding-top: 20px;
+    border-top: 1px solid var(--hairline-strong);
+  }
+  /* column-reverse shows the figure above its label while keeping the
+     semantic dt → dd order in the DOM. */
+  .founders-proof-item {
+    display: flex;
+    flex-direction: column-reverse;
+    justify-content: flex-end;
+    gap: 6px;
+  }
+  .founders-proof-item + .founders-proof-item {
+    padding-left: 24px;
+    border-left: 1px solid var(--hairline-strong);
+  }
+  .founders-proof dt {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.88px;
+    text-transform: uppercase;
+    color: var(--muted);
+    line-height: 1.4;
+  }
+  .founders-proof dd {
+    margin: 0;
+    font-size: 32px;
+    font-weight: 450;
+    line-height: 1.1;
+    font-variant-numeric: tabular-nums;
+  }
+  .founders-proof-ours {
+    color: var(--ink);
+  }
+  .founders-proof-bench {
+    color: var(--muted);
+  }
+  /* Both figures are US iOS installs; the scope sits on its own line under
+     each label so the pair compares like for like. */
+  .founders-proof-scope {
+    display: block;
+  }
+  /* Brand casing survives the uppercase label style. */
+  .keep-case {
+    text-transform: none;
+  }
+
+  /* Plain spaced list rather than dot separators, so a wrapped line never
+     starts or ends on a dangling "·". */
+  .founders-pedigree {
+    margin-top: 40px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.88px;
+    line-height: 1.6;
+    text-transform: uppercase;
+  }
+  .founders-pedigree-label {
+    margin: 0 0 10px;
+    font-weight: 600;
+    color: var(--muted);
+  }
+  .founders-pedigree ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 20px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-weight: 500;
+    color: var(--body);
+  }
+
+  /* --- Founder cards ---------------------------------------------------- */
+  .founders-cards {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 28px;
+  }
+  .founder {
+    display: flex;
+    flex-direction: column;
+    /* Lands /about/#<slug> (the Person @id) below the sticky nav. */
+    scroll-margin-top: 96px;
+  }
+
+  .founder-print {
+    position: relative;
+    margin: 0;
+    aspect-ratio: 4 / 5;
+    overflow: hidden;
+    border-radius: var(--r-lg);
+    isolation: isolate;
+    /* Near-neutral paper: the multiplied whites land here instead of #fff. */
+    background: oklch(0.8 0.012 80);
+    box-shadow: 0 30px 60px -30px rgba(0, 0, 0, 0.7);
+  }
+  .founder-photo {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: grayscale(1) contrast(1.06);
+    mix-blend-mode: multiply;
+    transition: transform 700ms cubic-bezier(0.22, 0.61, 0.36, 1);
+  }
+  /* The ube develop layer — screened over the print, lifting the shadows
+     into deep ube while the paper highlights stay put. */
+  .founder-print::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background: var(--accent-soft);
+    mix-blend-mode: screen;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 500ms ease-out;
+  }
+  /* Hairline inner ring, same as the TrustedBy app icons. */
+  .founder-print::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    border-radius: inherit;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+    pointer-events: none;
+  }
+  @media (hover: hover) {
+    .founder:hover .founder-print::after {
+      opacity: 0.7;
+    }
+    .founder:hover .founder-photo {
+      transform: scale(1.03);
+    }
+  }
+  /* Keyboard focus only — a mouse click also focuses the link, and the
+     tint would otherwise stick after returning from the LinkedIn tab. */
+  .founder:has(.founder-link:focus-visible) .founder-print::after {
+    opacity: 0.7;
+  }
+
+  .founder-meta {
+    margin-top: 20px;
+  }
+  .founder-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .founder-name {
+    color: var(--ink);
+  }
+  .founder-role {
+    margin: 6px 0 0;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.88px;
+    text-transform: uppercase;
+    color: var(--mark);
+  }
+
+  .founder-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    flex: none;
+    height: 32px;
+    padding: 0 12px;
+    border: 1px solid var(--cta-secondary-border);
+    border-radius: var(--r-pill);
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--body);
+    text-decoration: none;
+    transition:
+      color 120ms ease-out,
+      border-color 120ms ease-out,
+      background 120ms ease-out;
+  }
+  .founder-link:hover {
+    color: var(--ink);
+    border-color: #3a3a48;
+    background: rgba(255, 255, 255, 0.02);
+  }
+  .founder-link :global(.founder-link-arrow) {
+    color: var(--muted);
+  }
+
+
+  @media (prefers-reduced-motion: reduce) {
+    .founder-photo,
+    .founder-print::after {
+      transition: none;
+    }
+    .founder:hover .founder-photo {
+      transform: none;
+    }
+  }
+
+  /* --- Responsive ------------------------------------------------------- */
+  @media (max-width: 1024px) {
+    .about-founders {
+      padding: 96px 0;
+    }
+    .founders-grid {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 56px;
+    }
+    .founders-intro {
+      position: static;
+      max-width: 640px;
+    }
+    .founders-cards {
+      gap: 20px;
+    }
+  }
+  @media (max-width: 640px) {
+    .about-founders {
+      padding: 72px 0;
+    }
+    .founders-grid {
+      margin-top: 40px;
+      gap: 48px;
+    }
+    .founders-cards {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 48px;
+    }
+    .founder {
+      scroll-margin-top: 76px;
+    }
+    /* Full-bleed portraits overwhelm a phone screen; cap the photo only, so
+       the name + LinkedIn row keeps the full column and never wraps. */
+    .founder-print {
+      max-width: 80vw;
+    }
+  }
+</style>
