@@ -1,0 +1,832 @@
+---
+import type { ImageMetadata } from "astro"
+import { getImage } from "astro:assets"
+import {
+  HUB_RADIUS,
+  handoffs,
+  landscapeLayout,
+  type MapLayout,
+  type NodeId,
+  type Point,
+  portraitLayout,
+  spines,
+  type ToolId,
+  tools,
+} from "@/data/integrations-map"
+import { marks } from "@/lib/integrations-map-marks"
+
+const WAVE_SECONDS = 5
+const WAVE_TRAVEL = 0.55
+const WAVE_STAGGER = 1.37
+const BAND_LENGTH = 0.5
+const HEAD_STOP = 0.92
+// The share of the cycle at which a wave's head reaches the receiver.
+const HEAD_ARRIVES =
+  (WAVE_TRAVEL * (1 + BAND_LENGTH * (1 - HEAD_STOP))) / (1 + BAND_LENGTH)
+const ARRIVAL_STEPS = [
+  { at: 0, opacity: 0, grow: 0 },
+  { at: HEAD_ARRIVES, opacity: 0, grow: 0 },
+  { at: HEAD_ARRIVES + 0.06, opacity: 0.7, grow: 2 },
+  { at: 0.8, opacity: 0, grow: 7 },
+  { at: 1, opacity: 0, grow: 7 },
+]
+const RIDER_FADE = 0.03
+const BREATH_SECONDS = 4
+const BREATH_STAGGER = 1.1
+const BREATH_REACH = 18
+const HUB_BREATH_REACH = 27
+// Wordmark.astro's proportions at 22px: brackets 5px wide and 0.88em tall,
+// 3px clear of a word about 40px wide, the baseline 0.36em below the centre.
+const WORD_SIZE = 22
+const WORD_HALF_WIDTH = 20
+const WORD_BASELINE = 0.36
+const BRACKET_HEIGHT = 0.88
+// About three times the widest an image mark is drawn.
+const MARK_IMAGE_WIDTH = 96
+
+const linkKinds = ["handoff", "spine"] as const
+type LinkKind = (typeof linkKinds)[number]
+const arrowSize: Record<LinkKind, number> = { handoff: 6, spine: 7 }
+type Link = {
+  source: NodeId
+  target: NodeId
+  kind: LinkKind
+  twoWay: boolean
+}
+type DrawingName = "wide" | "landscape" | "portrait"
+
+const markId = (tool: ToolId) => `imap-mark-${tool}`
+const arrowId = (drawing: DrawingName, kind: LinkKind) =>
+  `imap-${drawing}-${kind}-arrow`
+const waveId = (drawing: DrawingName, kind: LinkKind) =>
+  `imap-${drawing}-${kind}-wave`
+const flowId = (drawing: DrawingName, link: number, back: boolean) =>
+  `imap-${drawing}-wave-${link}${back ? "-back" : ""}`
+const hubGlowId = (drawing: DrawingName) => `imap-${drawing}-hub-glow`
+const href = (id: string) => `#${id}`
+const url = (id: string) => `url(#${id})`
+
+const links: Link[] = [
+  ...handoffs.map((handoff) => ({
+    ...handoff,
+    kind: "handoff" as const,
+    twoWay: false,
+  })),
+  ...spines.map((spine) => ({
+    source: spine.source,
+    target: "ube" as const,
+    kind: "spine" as const,
+    twoWay: spine.twoWay ?? false,
+  })),
+]
+
+const handoffCount = new Map<NodeId, number>()
+for (const { source, target } of handoffs) {
+  handoffCount.set(source, (handoffCount.get(source) ?? 0) + 1)
+  handoffCount.set(target, (handoffCount.get(target) ?? 0) + 1)
+}
+const radiusOf = (id: NodeId) =>
+  id === "ube"
+    ? HUB_RADIUS
+    : 22 + Math.min(10, (handoffCount.get(id) ?? 0) * 2)
+
+const toTenth = (value: number) => Math.round(value * 10) / 10
+const roundPoint = (point: Point): Point => ({
+  x: toTenth(point.x),
+  y: toTenth(point.y),
+})
+const startedAgo = (seconds: number, period: number) =>
+  `-${(seconds % period).toFixed(2)}s`
+const growth = (r: number, by: number) => ((r + by) / r).toFixed(3)
+const waveSlide = (start: number, delta: number) => {
+  const stop = toTenth(start + delta * (1 + BAND_LENGTH))
+  return { from: toTenth(start), values: `${toTenth(start)};${stop};${stop}` }
+}
+
+function towards(point: Point, target: Point, distance: number): Point {
+  const ux = target.x - point.x
+  const uy = target.y - point.y
+  const span = Math.max(1, Math.hypot(ux, uy))
+  return {
+    x: point.x + (ux / span) * distance,
+    y: point.y + (uy / span) * distance,
+  }
+}
+
+const gradientEnds = ["x1", "y1", "x2", "y2"] as const
+type GradientEnd = (typeof gradientEnds)[number]
+
+type Ring = {
+  center: Point
+  r: number
+  className?: string
+  begin: string
+  dur: string
+  opacity: string
+  scale: string
+  keyTimes?: string
+}
+
+const waveDur = `${WAVE_SECONDS}s`
+const arrivalTimes = ARRIVAL_STEPS.map((step) => step.at.toFixed(3)).join(";")
+const arrivalOpacity = ARRIVAL_STEPS.map((step) => step.opacity).join(";")
+const riderTimes = `0;${HEAD_ARRIVES.toFixed(3)};1`
+const riderFadeTimes = [0, RIDER_FADE, HEAD_ARRIVES, HEAD_ARRIVES + RIDER_FADE, 1]
+  .map((share) => share.toFixed(3))
+  .join(";")
+const breathDur = `${BREATH_SECONDS}s`
+
+function waveAlong(
+  gradientId: string,
+  kind: LinkKind,
+  from: Point,
+  to: Point,
+  receiver: { center: Point; r: number },
+  beginSeconds: number,
+  back: boolean,
+) {
+  // The gradient's ends move rather than a gradientTransform, which Safari
+  // does not animate.
+  const dx = to.x - from.x
+  const dy = to.y - from.y
+  const waveEnds: Record<GradientEnd, ReturnType<typeof waveSlide>> = {
+    x1: waveSlide(from.x - dx * BAND_LENGTH, dx),
+    y1: waveSlide(from.y - dy * BAND_LENGTH, dy),
+    x2: waveSlide(from.x, dx),
+    y2: waveSlide(from.y, dy),
+  }
+  const begin = startedAgo(beginSeconds, WAVE_SECONDS)
+  const arrival: Ring = {
+    center: roundPoint(receiver.center),
+    r: receiver.r,
+    className: kind === "spine" ? "imap-ring-spine" : undefined,
+    begin,
+    dur: waveDur,
+    opacity: arrivalOpacity,
+    scale: ARRIVAL_STEPS.map((step) => growth(receiver.r, step.grow)).join(
+      ";",
+    ),
+    keyTimes: arrivalTimes,
+  }
+  return {
+    gradientId,
+    waveEnds,
+    begin,
+    arrival,
+    riderPoints: back ? "1;0;0" : "0;1;1",
+  }
+}
+
+function draw(
+  name: DrawingName,
+  layout: MapLayout,
+  { width = layout.width, height = layout.height, labelSize = 12 } = {},
+) {
+  const { pad } = layout
+  const stretch = (point: Point): Point => ({
+    x:
+      pad.x +
+      ((point.x - pad.x) * (width - 2 * pad.x)) / (layout.width - 2 * pad.x),
+    y:
+      pad.top +
+      ((point.y - pad.top) * (height - pad.top - pad.bottom)) /
+        (layout.height - pad.top - pad.bottom),
+  })
+  const drawnPosition = (id: NodeId) => stretch(layout.positions[id])
+
+  const nodes = tools.map((tool) => {
+    const { x, y } = roundPoint(drawnPosition(tool.id))
+    const r = radiusOf(tool.id)
+    const markSize = toTenth((r >= 28 ? 24 : 20) * (marks[tool.id].scale ?? 1))
+    return {
+      ...tool,
+      x,
+      y,
+      r,
+      mark: {
+        x: toTenth(x - markSize / 2),
+        y: toTenth(y - markSize / 2),
+        size: markSize,
+      },
+      dot: { x: toTenth(x + r - 7), y: toTenth(y - r + 7) },
+      labelY: toTenth(y + r + 6 + labelSize),
+    }
+  })
+  const hub = roundPoint(drawnPosition("ube"))
+
+  const lines = links.map((link, index) => {
+    // Bent where the layout placed the ends, so a stretched curve keeps the
+    // shape the layout was checked with.
+    const laidSource = layout.positions[link.source]
+    const laidTarget = layout.positions[link.target]
+    const dx = laidTarget.x - laidSource.x
+    const dy = laidTarget.y - laidSource.y
+    const length = Math.max(1, Math.hypot(dx, dy))
+    const bend = Math.min(90, length * 0.2)
+    const control = stretch({
+      x: (laidSource.x + laidTarget.x) / 2 - (dy / length) * bend,
+      y: (laidSource.y + laidTarget.y) / 2 + (dx / length) * bend,
+    })
+    const from = drawnPosition(link.source)
+    const to = drawnPosition(link.target)
+    const sourceRim = radiusOf(link.source)
+    const targetRim = radiusOf(link.target)
+    // A two-way link leaves room for an arrowhead at both ends.
+    const start = roundPoint(
+      towards(from, control, sourceRim + (link.twoWay ? 6 : 4)),
+    )
+    const end = roundPoint(towards(to, control, targetRim + 6))
+    const beginSeconds = index * WAVE_STAGGER
+    const flows = [
+      waveAlong(
+        flowId(name, index, false),
+        link.kind,
+        start,
+        end,
+        { center: to, r: targetRim },
+        beginSeconds,
+        false,
+      ),
+    ]
+    if (link.twoWay) {
+      flows.push(
+        waveAlong(
+          flowId(name, index, true),
+          link.kind,
+          end,
+          start,
+          { center: from, r: sourceRim },
+          beginSeconds + WAVE_SECONDS / 2,
+          true,
+        ),
+      )
+    }
+    return {
+      kind: link.kind,
+      twoWay: link.twoWay,
+      d: `M ${start.x} ${start.y} Q ${toTenth(control.x)} ${toTenth(control.y)} ${end.x} ${end.y}`,
+      flows,
+    }
+  })
+
+  const breaths: Ring[] = [
+    ...nodes.map(
+      (node, index): Ring => ({
+        center: { x: node.x, y: node.y },
+        r: node.r,
+        begin: startedAgo(index * BREATH_STAGGER, BREATH_SECONDS),
+        dur: breathDur,
+        opacity: "0.35;0",
+        scale: `1;${growth(node.r, BREATH_REACH)}`,
+      }),
+    ),
+    {
+      center: hub,
+      r: HUB_RADIUS,
+      className: "imap-ring-hub",
+      begin: "0s",
+      dur: breathDur,
+      opacity: "0.5;0",
+      scale: `1;${growth(HUB_RADIUS, HUB_BREATH_REACH)}`,
+    },
+  ]
+  const ringGroups = [
+    {
+      name: "arrivals",
+      rings: lines.flatMap((line) => line.flows.map((flow) => flow.arrival)),
+    },
+    { name: "breaths", rings: breaths },
+  ]
+
+  return {
+    name,
+    width,
+    height,
+    labelSize,
+    nodes,
+    hub,
+    lines,
+    ringGroups,
+  }
+}
+
+const drawings = [
+  // The container's full width, and a little taller so the map does not
+  // look flat.
+  draw("wide", landscapeLayout, { width: 1136, height: 680 }),
+  draw("landscape", landscapeLayout),
+  // Larger names, since a 390px phone draws this box at about 0.75x.
+  draw("portrait", portraitLayout, { labelSize: 14 }),
+]
+
+const waveTimes = `0;${WAVE_TRAVEL};1`
+async function markImage(image: ImageMetadata) {
+  const { src } = await getImage({
+    src: image,
+    width: MARK_IMAGE_WIDTH,
+    format: "webp",
+  })
+  return { src, width: image.width, height: image.height }
+}
+const symbols = await Promise.all(
+  tools.map(async (tool) => {
+    const mark = marks[tool.id]
+    return "image" in mark
+      ? {
+          kind: "image" as const,
+          id: markId(tool.id),
+          image: await markImage(mark.image),
+        }
+      : {
+          kind: "paths" as const,
+          id: markId(tool.id),
+          viewBox: mark.viewBox,
+          transform: mark.transform,
+          paths: mark.paths,
+        }
+  }),
+)
+const labelOf = new Map(tools.map((tool) => [tool.id, tool.label]))
+const toolNames = tools.map((tool) => tool.label).join(", ")
+const spineNames = spines
+  .map((spine) => {
+    const tool = labelOf.get(spine.source) ?? spine.source
+    const carries = spine.label.toLowerCase()
+    return `${tool} (${carries}${spine.twoWay ? ", both ways" : ""})`
+  })
+  .join(", ")
+const bracketBottom = toTenth((BRACKET_HEIGHT * WORD_SIZE) / 2)
+const bracketTop = -bracketBottom
+const bracketInner = WORD_HALF_WIDTH + 3
+const bracketOuter = bracketInner + 5
+---
+
+<div
+  class="imap"
+  role="img"
+  aria-label={`Ube's integrations map: Ube in the centre, linked directly to ${spineNames}, with data flowing between the tools. The tools: ${toolNames}.`}
+>
+  <svg class="imap-sprite" width="0" height="0" aria-hidden="true">
+    <defs>
+      {
+        symbols.map((symbol) =>
+          symbol.kind === "image" ? (
+            <symbol
+              id={symbol.id}
+              viewBox={`0 0 ${symbol.image.width} ${symbol.image.height}`}
+            >
+              <image
+                href={symbol.image.src}
+                width={symbol.image.width}
+                height={symbol.image.height}
+              />
+            </symbol>
+          ) : (
+            <symbol id={symbol.id} viewBox={symbol.viewBox}>
+              <g transform={symbol.transform}>
+                {symbol.paths.map((path) => (
+                  <path
+                    d={path.d}
+                    fill={path.fill}
+                    fill-rule={path.fillRule}
+                    transform={path.transform}
+                  />
+                ))}
+              </g>
+            </symbol>
+          ),
+        )
+      }
+    </defs>
+  </svg>
+
+  {
+    drawings.map((drawing) => (
+      <svg
+        class={`imap-drawing imap-${drawing.name}`}
+        viewBox={`0 0 ${drawing.width} ${drawing.height}`}
+        style={`--imap-label-size: ${drawing.labelSize}px`}
+        aria-hidden="true"
+      >
+        <defs>
+          {linkKinds.map((kind) => (
+            <marker
+              id={arrowId(drawing.name, kind)}
+              viewBox="0 0 8 8"
+              refX="7"
+              refY="4"
+              markerWidth={arrowSize[kind]}
+              markerHeight={arrowSize[kind]}
+              orient="auto-start-reverse"
+              markerUnits="userSpaceOnUse"
+            >
+              <path class={`imap-${kind}-arrow`} d="M 0 1 L 7 4 L 0 7 z" />
+            </marker>
+          ))}
+          {linkKinds.map((kind) => (
+            <linearGradient id={waveId(drawing.name, kind)}>
+              <stop
+                class={`imap-${kind}-wave-tail`}
+                offset="0%"
+                stop-opacity="0"
+              />
+              <stop
+                class={`imap-${kind}-wave-tail`}
+                offset="70%"
+                stop-opacity="0.9"
+              />
+              <stop
+                class={`imap-${kind}-wave-head`}
+                offset={`${HEAD_STOP * 100}%`}
+                stop-opacity="1"
+              />
+              <stop
+                class={`imap-${kind}-wave-head`}
+                offset="100%"
+                stop-opacity="0"
+              />
+            </linearGradient>
+          ))}
+          <radialGradient id={hubGlowId(drawing.name)}>
+            <stop class="imap-hub-glow-stop" offset="0%" stop-opacity="0.45" />
+            <stop class="imap-hub-glow-stop" offset="100%" stop-opacity="0" />
+          </radialGradient>
+          {drawing.lines.flatMap((line) =>
+            line.flows.map((flow) => (
+              <linearGradient
+                id={flow.gradientId}
+                href={href(waveId(drawing.name, line.kind))}
+                gradientUnits="userSpaceOnUse"
+                x1={flow.waveEnds.x1.from}
+                y1={flow.waveEnds.y1.from}
+                x2={flow.waveEnds.x2.from}
+                y2={flow.waveEnds.y2.from}
+              >
+                {gradientEnds.map((end) => (
+                  <animate
+                    attributeName={end}
+                    values={flow.waveEnds[end].values}
+                    keyTimes={waveTimes}
+                    dur={waveDur}
+                    begin={flow.begin}
+                    repeatCount="indefinite"
+                  />
+                ))}
+              </linearGradient>
+            )),
+          )}
+        </defs>
+
+        <circle
+          cx={drawing.hub.x}
+          cy={drawing.hub.y}
+          r={HUB_RADIUS * 3}
+          fill={url(hubGlowId(drawing.name))}
+        />
+
+        {drawing.lines.map((line) => (
+          <path
+            class={`imap-${line.kind}`}
+            d={line.d}
+            marker-start={
+              line.twoWay ? url(arrowId(drawing.name, line.kind)) : undefined
+            }
+            marker-end={url(arrowId(drawing.name, line.kind))}
+          />
+        ))}
+
+        <g class="imap-waves">
+          {drawing.lines.flatMap((line) =>
+            line.flows.map((flow) => (
+              <g>
+                <path
+                  class="imap-wave-glow"
+                  d={line.d}
+                  stroke={url(flow.gradientId)}
+                />
+                <path
+                  class="imap-wave"
+                  d={line.d}
+                  stroke={url(flow.gradientId)}
+                />
+              </g>
+            )),
+          )}
+        </g>
+
+        <g class="imap-riders">
+          {drawing.lines.flatMap((line) =>
+            line.flows.map((flow) => (
+              <g opacity="0">
+                <circle class="imap-rider-halo" r="6" />
+                <circle class="imap-rider" r="2.5" />
+                <animateMotion
+                  path={line.d}
+                  calcMode="linear"
+                  keyPoints={flow.riderPoints}
+                  keyTimes={riderTimes}
+                  dur={waveDur}
+                  begin={flow.begin}
+                  repeatCount="indefinite"
+                />
+                <animate
+                  attributeName="opacity"
+                  values="0;1;1;0;0"
+                  keyTimes={riderFadeTimes}
+                  dur={waveDur}
+                  begin={flow.begin}
+                  repeatCount="indefinite"
+                />
+              </g>
+            )),
+          )}
+        </g>
+
+        {/* Rings scale and fade: animating their radius and stroke instead
+            costs a style pass every frame. */}
+        {drawing.ringGroups.map((group) => (
+          <g class={`imap-${group.name}`}>
+            {group.rings.map((ring) => (
+              <g
+                class={ring.className}
+                transform={`translate(${ring.center.x} ${ring.center.y})`}
+              >
+                <circle r={ring.r} opacity="0">
+                  <animate
+                    attributeName="opacity"
+                    values={ring.opacity}
+                    keyTimes={ring.keyTimes}
+                    dur={ring.dur}
+                    begin={ring.begin}
+                    repeatCount="indefinite"
+                  />
+                  <animateTransform
+                    attributeName="transform"
+                    type="scale"
+                    values={ring.scale}
+                    keyTimes={ring.keyTimes}
+                    dur={ring.dur}
+                    begin={ring.begin}
+                    repeatCount="indefinite"
+                  />
+                </circle>
+              </g>
+            ))}
+          </g>
+        ))}
+
+        {drawing.nodes.map((node) => (
+          <g>
+            <circle class="imap-tool" cx={node.x} cy={node.y} r={node.r} />
+            <use
+              href={href(markId(node.id))}
+              x={node.mark.x}
+              y={node.mark.y}
+              width={node.mark.size}
+              height={node.mark.size}
+            />
+            <circle class="imap-dot" cx={node.dot.x} cy={node.dot.y} r="5" />
+            <text class="imap-label" x={node.x} y={node.labelY}>
+              {node.label}
+            </text>
+          </g>
+        ))}
+
+        <g transform={`translate(${drawing.hub.x} ${drawing.hub.y})`}>
+          <circle class="imap-hub-core" r={HUB_RADIUS} />
+          <path
+            class="imap-hub-bracket"
+            d={`M ${-bracketInner} ${bracketTop} H ${-bracketOuter} V ${bracketBottom} H ${-bracketInner}`}
+          />
+          <text
+            class="imap-hub-word"
+            y={toTenth(WORD_SIZE * WORD_BASELINE)}
+            font-size={WORD_SIZE}
+          >
+            ube
+          </text>
+          <path
+            class="imap-hub-bracket"
+            d={`M ${bracketInner} ${bracketTop} H ${bracketOuter} V ${bracketBottom} H ${bracketInner}`}
+          />
+        </g>
+      </svg>
+    ))
+  }
+
+  <ul class="imap-legend" aria-hidden="true">
+    <li>
+      <svg width="16" height="8" viewBox="0 0 16 8">
+        <path class="imap-spine" d="M 0 4 L 10 4" />
+        <path class="imap-spine-arrow" d="M 10 1 L 16 4 L 10 7 z" />
+      </svg>
+      Ube's own links
+    </li>
+    <li>
+      <svg width="14" height="8" viewBox="0 0 14 8">
+        <path class="imap-handoff" d="M 0 4 L 9 4" />
+        <path class="imap-handoff-arrow" d="M 9 1 L 14 4 L 9 7 z" />
+      </svg>
+      Handoffs between tools
+    </li>
+    <li><span class="imap-legend-dot"></span>Connected</li>
+  </ul>
+</div>
+
+<script src="./integrations-map.client.ts"></script>
+
+<style>
+  .imap {
+    position: relative;
+    width: 100%;
+  }
+  .imap-sprite {
+    position: absolute;
+    width: 0;
+    height: 0;
+    overflow: hidden;
+  }
+  /* One drawing shows at any width, fractional ones under zoom included. */
+  .imap-drawing {
+    display: none;
+    width: 100%;
+    height: auto;
+    overflow: visible;
+    color: var(--ink);
+  }
+  .imap-wide {
+    display: block;
+  }
+  @media (max-width: 1100px) {
+    .imap {
+      max-width: 820px;
+      margin-inline: auto;
+    }
+    .imap-wide {
+      display: none;
+    }
+    .imap-landscape {
+      display: block;
+    }
+  }
+  @media (max-width: 760px) {
+    .imap {
+      max-width: 460px;
+    }
+    .imap-landscape {
+      display: none;
+    }
+    .imap-portrait {
+      display: block;
+    }
+  }
+
+  .imap-handoff,
+  .imap-spine {
+    fill: none;
+    stroke-linecap: round;
+  }
+  .imap-handoff {
+    stroke: var(--success);
+    stroke-width: 1.75;
+    opacity: 0.85;
+  }
+  .imap-spine {
+    stroke: var(--accent-hover);
+    stroke-width: 2.25;
+    opacity: 0.9;
+  }
+  .imap-handoff-arrow {
+    fill: var(--success);
+  }
+  .imap-spine-arrow {
+    fill: var(--accent-hover);
+  }
+  .imap-handoff-wave-tail {
+    stop-color: var(--accent);
+  }
+  .imap-handoff-wave-head {
+    stop-color: color-mix(in oklab, var(--accent-hover) 60%, white);
+  }
+  /* A purple link carries a pale wave, so it shows against the line. */
+  .imap-spine-wave-tail {
+    stop-color: color-mix(in oklab, var(--accent-hover) 55%, white);
+  }
+  .imap-spine-wave-head {
+    stop-color: white;
+  }
+  .imap-waves > g {
+    fill: none;
+    stroke-linecap: round;
+  }
+  .imap-wave-glow {
+    stroke-width: 9;
+    stroke-opacity: 0.4;
+  }
+  .imap-wave {
+    stroke-width: 2.75;
+  }
+  .imap-rider {
+    fill: white;
+  }
+  .imap-rider-halo {
+    fill: color-mix(in oklab, var(--accent-hover) 60%, white);
+    opacity: 0.35;
+  }
+  .imap-arrivals circle,
+  .imap-breaths circle {
+    vector-effect: non-scaling-stroke;
+  }
+  .imap-arrivals circle {
+    fill: color-mix(in oklab, var(--accent-hover) 45%, transparent);
+    stroke: var(--accent-hover);
+    stroke-width: 2.5;
+  }
+  .imap-arrivals .imap-ring-spine circle {
+    stroke: color-mix(in oklab, var(--accent-hover) 40%, white);
+  }
+  .imap-breaths circle {
+    fill: none;
+    stroke: var(--success);
+    stroke-width: 1;
+  }
+  .imap-breaths .imap-ring-hub circle {
+    stroke: var(--accent-hover);
+    stroke-width: 1.25;
+  }
+  .imap-tool {
+    fill: var(--surface-card);
+    stroke: color-mix(in oklab, var(--success) 30%, transparent);
+    stroke-width: 1;
+  }
+  .imap-dot {
+    fill: var(--success);
+    stroke: var(--canvas);
+    stroke-width: 2;
+  }
+  .imap-label {
+    fill: var(--ink);
+    font-family: var(--font-sans);
+    font-size: var(--imap-label-size);
+    text-anchor: middle;
+    /* The halo lets a link pass behind a name. */
+    stroke: var(--canvas);
+    stroke-width: 4px;
+    stroke-linejoin: round;
+    paint-order: stroke;
+  }
+
+  .imap-hub-glow-stop {
+    stop-color: var(--accent-hover);
+  }
+  .imap-hub-core {
+    fill: #18181c;
+    stroke: var(--accent-hover);
+    stroke-width: 1.5;
+  }
+  .imap-hub-word {
+    fill: var(--ink);
+    font-family: var(--font-sans);
+    font-weight: 600;
+    text-anchor: middle;
+  }
+  .imap-hub-bracket {
+    fill: none;
+    stroke: var(--accent);
+    stroke-width: 2.5;
+  }
+
+  .imap-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 16px;
+    margin: 12px 0 0;
+    padding: 0;
+    list-style: none;
+    color: var(--muted);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.88px;
+    text-transform: uppercase;
+  }
+  .imap-legend li {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .imap-legend-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--success);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .imap-waves,
+    .imap-riders,
+    .imap-arrivals,
+    .imap-breaths {
+      display: none;
+    }
+  }
+</style>

@@ -21,7 +21,7 @@
 - **Workflow**: Instruments analytics, aligns user IDs and event taxonomy, sets up attribution and SKAdNetwork, builds dashboards, runs acquisition campaigns, refreshes creatives, proposes retention tests, and optimizes monetization once retention is sticky.
 - **How paid ads are treated**: As a measurement engine first. Campaigns create a steady stream of users so Ube can find working creatives, identify drop-off points, recommend A/B tests, and improve retention and monetization — and only then scale spend.
 - **Approval gates**: Account creation, ad spend, campaign launches, monetization changes, and larger budget increases all require customer approval.
-- **Integrations mentioned on the site**: Amplitude, Firebase, AppsFlyer, RevenueCat, Meta, Google Ads, TikTok, AdMob, Apple, Google Play, Sentry, Codemagic, Docker, Bun, Dart, npm, GitHub, Codex, Claude Code, Sett, Clarity, and Creatify.
+- **Integrations mentioned on the site**: Amplitude, Firebase, BigQuery, AppsFlyer, RevenueCat, PostHog, Meta Ads, Google Ads, TikTok Ads, AdMob, Apple, App Store Connect, Google Play, Sentry, Codemagic, Docker, Bun, Dart, npm, GitHub, Codex, Claude Code, Sett, Clarity, and Creatify.
 
 ## Ube Maintainer
 
