@@ -70,9 +70,10 @@ export const handoffs: Handoff[] = [
 ]
 
 // The hero's drawing: 4:5, so on a phone it stands a little taller than it is
-// wide. Placed by the panel's own layout search (neuron-layout.ts and
-// untangle-layout.ts), sized for the names a phone draws, with Ube held near
-// the middle.
+// wide. Placed by the panel's own layout search (untangle-layout.ts), sized
+// for the names a phone draws, with Ube held near the middle. The script that
+// lays it out, and how to run it, is on Ube-AI/ube-platform#1101:
+// https://github.com/Ube-AI/ube-platform/issues/1101#issuecomment-6726607924
 export const heroLayout = {
   width: 520,
   height: 650,
