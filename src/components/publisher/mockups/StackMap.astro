@@ -1,0 +1,236 @@
+---
+import type { ImageMetadata } from "astro"
+import Wordmark from "@/components/Wordmark.astro"
+import { integrationLogos } from "@/lib/integration-logos"
+
+type StackLogo = { name: string; src: ImageMetadata; invert?: boolean }
+
+const stackLogos: StackLogo[] = [
+  { name: "Firebase", src: integrationLogos.firebase },
+  { name: "Amplitude", src: integrationLogos.amplitude },
+  { name: "Clarity", src: integrationLogos.clarity },
+  { name: "RevenueCat", src: integrationLogos.revenuecat },
+  { name: "AppsFlyer", src: integrationLogos.appsflyer },
+  { name: "AdMob", src: integrationLogos.admob },
+  { name: "Google Ads", src: integrationLogos.googleAds },
+  { name: "Meta", src: integrationLogos.meta },
+  { name: "TikTok", src: integrationLogos.tiktok },
+  { name: "Creatify", src: integrationLogos.creatify },
+  { name: "Sett", src: integrationLogos.sett, invert: true },
+]
+---
+
+<div class="stack-map" aria-label="Distribution stack integrations">
+  <div class="stack-dotgrid" aria-hidden="true"></div>
+  <div class="stack-core">
+    <Wordmark size={32} />
+    <strong>company brain</strong>
+  </div>
+  {
+    stackLogos.map(({ name, src, invert }) => (
+      <div class={`stack-node${invert ? " stack-node-invert" : ""}`}>
+        <img src={src.src} alt="" loading="lazy" />
+        <span>{name}</span>
+      </div>
+    ))
+  }
+</div>
+
+<style>
+  .stack-map {
+    position: relative;
+    min-height: 480px;
+    background: radial-gradient(
+      circle at center,
+      var(--accent-tint),
+      transparent 46%
+    );
+  }
+  .stack-dotgrid {
+    position: absolute;
+    inset: -8%;
+    background-image: radial-gradient(
+      rgba(255, 255, 255, 0.1) 1px,
+      transparent 1.2px
+    );
+    background-size: 22px 22px;
+    pointer-events: none;
+    mask-image:
+      linear-gradient(to right, transparent, #000 12%, #000 88%, transparent),
+      linear-gradient(to bottom, transparent, #000 12%, #000 88%, transparent);
+    -webkit-mask-image:
+      linear-gradient(to right, transparent, #000 12%, #000 88%, transparent),
+      linear-gradient(to bottom, transparent, #000 12%, #000 88%, transparent);
+    mask-composite: intersect;
+    -webkit-mask-composite: source-in;
+    z-index: 0;
+  }
+  .stack-map::before,
+  .stack-map::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    height: 68%;
+    aspect-ratio: 1;
+    transform: translate(-50%, -50%);
+    border: var(--translucent-border-width) solid color-mix(in oklab, var(--accent) 18%, transparent);
+    border-radius: 50%;
+    pointer-events: none;
+  }
+  .stack-map::after {
+    height: 46%;
+  }
+  .stack-core {
+    position: absolute;
+    z-index: 2;
+    left: 50%;
+    top: 50%;
+    width: 172px;
+    height: 172px;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    display: grid;
+    place-content: center;
+    justify-items: center;
+    text-align: center;
+    gap: 7px;
+    background: #18181c;
+    border: 1px solid var(--accent);
+    box-shadow: 0 0 60px rgba(107, 63, 160, 0.28);
+  }
+  .stack-core strong {
+    color: var(--muted);
+    font-size: 12px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.7px;
+  }
+  .stack-node {
+    position: absolute;
+    z-index: 1;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 14px;
+    border-radius: var(--r-pill);
+    background: rgba(14, 14, 17, 0.72);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+    color: var(--body);
+    font-size: 12px;
+    white-space: nowrap;
+  }
+  .stack-node img {
+    width: 20px;
+    height: 20px;
+    object-fit: contain;
+  }
+  .stack-node-invert img {
+    filter: invert(1);
+  }
+  .stack-node:nth-of-type(3) {
+    left: 9%;
+    top: 12%;
+  }
+  .stack-node:nth-of-type(4) {
+    right: 10%;
+    top: 10%;
+  }
+  .stack-node:nth-of-type(5) {
+    left: 7%;
+    top: 34%;
+  }
+  .stack-node:nth-of-type(6) {
+    right: 6%;
+    top: 32%;
+  }
+  .stack-node:nth-of-type(7) {
+    left: 12%;
+    bottom: 31%;
+  }
+  .stack-node:nth-of-type(8) {
+    right: 9%;
+    bottom: 30%;
+  }
+  .stack-node:nth-of-type(9) {
+    left: 10%;
+    bottom: 11%;
+  }
+  .stack-node:nth-of-type(10) {
+    right: 18%;
+    bottom: 10%;
+  }
+  .stack-node:nth-of-type(11) {
+    left: 36%;
+    top: 5%;
+  }
+  .stack-node:nth-of-type(12) {
+    left: 41%;
+    bottom: 15%;
+  }
+  .stack-node:nth-of-type(13) {
+    right: 35%;
+    top: 16%;
+  }
+  @media (max-width: 1100px) {
+    .stack-map {
+      max-width: 760px;
+      width: 100%;
+      margin: 0 auto;
+    }
+  }
+  @media (max-width: 640px) {
+    .stack-map {
+      min-height: 420px;
+    }
+    .stack-node {
+      gap: 6px;
+      padding: 6px 10px;
+      font-size: 11px;
+    }
+    .stack-node img {
+      width: 16px;
+      height: 16px;
+    }
+    .stack-core {
+      width: 132px;
+      height: 132px;
+      gap: 5px;
+    }
+    .stack-core strong {
+      font-size: 10px;
+      letter-spacing: 0.4px;
+    }
+    .stack-node:nth-of-type(3) { left: 6%; top: 8%; }
+    .stack-node:nth-of-type(4) { right: 6%; top: 8%; }
+    .stack-node:nth-of-type(5) { left: 5%; top: 32%; }
+    .stack-node:nth-of-type(6) { right: 1%; top: 32%; }
+    .stack-node:nth-of-type(7) { left: 6%; bottom: 32%; }
+    .stack-node:nth-of-type(8) { right: 6%; bottom: 32%; }
+    .stack-node:nth-of-type(9) { left: 6%; bottom: 8%; }
+    .stack-node:nth-of-type(10) { right: 6%; bottom: 8%; }
+    .stack-node:nth-of-type(11) { left: 35%; top: 2%; }
+    .stack-node:nth-of-type(12) { left: 40%; bottom: 16%; }
+    .stack-node:nth-of-type(13) { right: 34%; top: 16%; }
+  }
+  @media (max-width: 380px) {
+    .stack-map {
+      min-height: 380px;
+    }
+    .stack-node {
+      padding: 5px 8px;
+      font-size: 10px;
+    }
+    .stack-node img {
+      width: 14px;
+      height: 14px;
+    }
+    .stack-core {
+      width: 116px;
+      height: 116px;
+    }
+    .stack-core strong {
+      font-size: 9px;
+    }
+  }
+</style>

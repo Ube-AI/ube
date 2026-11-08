@@ -1,6 +1,6 @@
-// Runs each integrations map drawing only while it is on screen: SMIL keeps
-// animating a drawing hidden at this screen size or scrolled out of view, at
-// a cost on every frame. Under reduced motion every drawing stays paused.
+// Runs the integrations map only while it is on screen: SMIL keeps animating
+// a drawing scrolled out of view, at a cost on every frame. Under reduced
+// motion it stays paused.
 const drawings = document.querySelectorAll<SVGSVGElement>(".imap-drawing")
 const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)")
 const onScreen = new Set<SVGSVGElement>()

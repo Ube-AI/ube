@@ -5,7 +5,7 @@ import {
   PlantIcon,
   SparkleIcon,
 } from "@phosphor-icons/react"
-import WeeklyMockup from "@/components/publisher/mockups/WeeklyMockup.astro"
+import IntegrationsMap from "@/components/publisher/mockups/IntegrationsMap.astro"
 ---
 
 <section class="publisher-hero" id="top">
@@ -52,11 +52,8 @@ import WeeklyMockup from "@/components/publisher/mockups/WeeklyMockup.astro"
       </div>
     </div>
 
-    <div
-      class="publisher-hero-visual fade-in"
-      aria-label="Ube weekly brief mockup"
-    >
-      <WeeklyMockup />
+    <div class="publisher-hero-visual fade-in">
+      <IntegrationsMap />
     </div>
   </div>
 </section>
@@ -165,6 +162,18 @@ import WeeklyMockup from "@/components/publisher/mockups/WeeklyMockup.astro"
     min-width: 0;
   }
 
+  @media (min-width: 1101px) {
+    .publisher-hero {
+      padding: 96px 0 128px;
+    }
+    /* The map stands taller than the copy beside it, so it is held to the
+       screen's height to stay above the fold on a laptop. */
+    .publisher-hero-visual {
+      justify-self: end;
+      width: 100%;
+      max-width: clamp(340px, calc((100svh - 220px) * 0.8), 520px);
+    }
+  }
   @media (min-width: 1025px) {
     .publisher-hero-title {
       font-size: min(clamp(44px, 4.55vw, 58px), 9.5cqi);

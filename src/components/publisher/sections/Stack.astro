@@ -1,48 +1,21 @@
 ---
-import IntegrationsMap from "@/components/publisher/mockups/IntegrationsMap.astro"
-import { handoffs, spines, tools } from "@/data/integrations-map"
-
-const stats = [
-  { value: tools.length, label: "tools on the map" },
-  {
-    value: spines.length + handoffs.length,
-    label: `data links: ${spines.length} with Ube, ${handoffs.length} between tools`,
-  },
-  {
-    value: spines.filter((spine) => spine.twoWay).length,
-    label: "two-way links with Ube: ads and creatives",
-  },
-]
+import StackMap from "@/components/publisher/mockups/StackMap.astro"
 ---
 
 <section class="section stack-section" id="stack">
-  <div class="container">
-    <div class="stack-head">
-      <div>
-        <div class="eyebrow">The stack</div>
-        <h2 class="t-display-lg publisher-section-title">
-          Ube is <em>the</em> orchestrator.
-        </h2>
-      </div>
+  <div class="container stack-layout">
+    <div>
+      <div class="eyebrow">The stack</div>
+      <h2 class="t-display-lg publisher-section-title">
+        Ube is <em>the</em> orchestrator.
+      </h2>
       <p class="t-body-md body publisher-section-copy">
         Under the hood, Ube's agentic AI platform runs the same market-leading tools the top studios use.
         Because it knows your app, it is able to wire them optimally.
         When your app outgrows Ube, the distribution stack is yours to keep.
       </p>
     </div>
-    <div class="stack-map">
-      <IntegrationsMap />
-    </div>
-    <dl class="stack-stats">
-      {
-        stats.map((stat) => (
-          <div class="stack-stat">
-            <dt class="t-body-sm">{stat.label}</dt>
-            <dd class="t-display-md">{stat.value}</dd>
-          </div>
-        ))
-      }
-    </dl>
+    <StackMap />
   </div>
 </section>
 
@@ -53,80 +26,26 @@ const stats = [
     overflow: hidden;
     isolation: isolate;
   }
-  /* Title and copy share the top row, so the map gets the full width. */
-  .stack-head {
+  .stack-layout {
+    position: relative;
+    z-index: 1;
     display: grid;
-    grid-template-columns: minmax(0, 0.82fr) minmax(0, 1fr);
+    grid-template-columns: minmax(0, 0.82fr) minmax(420px, 1fr);
     gap: 56px;
-    align-items: end;
+    align-items: center;
   }
   .publisher-section-title {
     margin: 18px 0 0;
     max-width: 840px;
   }
   .publisher-section-copy {
-    margin: 0;
+    margin: 18px 0 0;
     max-width: 680px;
     line-height: 1.65;
   }
-  .stack-map {
-    margin-top: 48px;
-  }
-  .stack-stats {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    margin: 40px 0 0;
-    border-top: 1px solid var(--hairline-strong);
-  }
-  .stack-stat {
-    display: flex;
-    flex-direction: column-reverse;
-    justify-content: flex-end;
-    gap: 6px;
-    padding: 20px 24px 0 0;
-  }
-  .stack-stat + .stack-stat {
-    padding-left: 24px;
-    border-left: 1px solid var(--hairline-strong);
-  }
-  .stack-stat dt {
-    color: var(--muted);
-  }
-  .stack-stat dd {
-    margin: 0;
-    color: var(--ink);
-    font-variant-numeric: tabular-nums;
-  }
   @media (max-width: 1100px) {
-    .stack-head {
+    .stack-layout {
       grid-template-columns: 1fr;
-      gap: 0;
-    }
-    .publisher-section-copy {
-      margin-top: 18px;
-    }
-    .stack-map {
-      margin-top: 40px;
-    }
-  }
-  @media (max-width: 640px) {
-    .stack-stats {
-      grid-template-columns: 1fr;
-    }
-    .stack-stat,
-    .stack-stat + .stack-stat {
-      flex-direction: row-reverse;
-      justify-content: flex-end;
-      align-items: baseline;
-      gap: 14px;
-      padding: 14px 0;
-      border-left: 0;
-    }
-    .stack-stat + .stack-stat {
-      border-top: 1px solid var(--hairline-strong);
-    }
-    .stack-stat dd {
-      min-width: 2ch;
     }
   }
 </style>

@@ -69,62 +69,35 @@ export const handoffs: Handoff[] = [
   { source: "ube_sdk", target: "clarity" },
 ]
 
-// Each box keeps the hub at the centre of the area inside its padding.
-export type MapLayout = {
+// The hero's drawing: 4:5, so on a phone it stands a little taller than it is
+// wide. Placed by the panel's own layout search (neuron-layout.ts and
+// untangle-layout.ts), sized for the names a phone draws, with Ube held near
+// the middle.
+export const heroLayout = {
+  width: 520,
+  height: 650,
+  positions: {
+    ube: { x: 290, y: 299.5 },
+    ube_sdk: { x: 79.9, y: 592.8 },
+    revenuecat: { x: 384.8, y: 97.4 },
+    firebase: { x: 479.9, y: 583.4 },
+    bigquery: { x: 480.1, y: 34 },
+    appsflyer: { x: 44.9, y: 184 },
+    amplitude: { x: 145.6, y: 36 },
+    posthog: { x: 458.3, y: 262.1 },
+    app_store_connect: { x: 245.6, y: 129.9 },
+    google_play: { x: 306.4, y: 573.2 },
+    admob: { x: 183, y: 435.4 },
+    github: { x: 343.3, y: 203.4 },
+    meta_ads: { x: 159.4, y: 206.8 },
+    google_ads: { x: 192.2, y: 551.8 },
+    tiktok_ads: { x: 166.2, y: 315.1 },
+    clarity: { x: 32.1, y: 481.6 },
+    creatify: { x: 437.9, y: 369.3 },
+    sett: { x: 341.3, y: 410.7 },
+  },
+} as const satisfies {
   width: number
   height: number
-  pad: { x: number; top: number; bottom: number }
   positions: Record<NodeId, Point>
-}
-
-export const landscapeLayout: MapLayout = {
-  width: 740,
-  height: 640,
-  pad: { x: 62, top: 52, bottom: 72 },
-  positions: {
-    ube: { x: 370, y: 310 },
-    ube_sdk: { x: 678, y: 568 },
-    revenuecat: { x: 257.1, y: 123.7 },
-    firebase: { x: 678, y: 60.4 },
-    bigquery: { x: 104.4, y: 52 },
-    appsflyer: { x: 62, y: 568 },
-    amplitude: { x: 62, y: 199.5 },
-    posthog: { x: 468.8, y: 52 },
-    app_store_connect: { x: 222, y: 225 },
-    google_play: { x: 678, y: 252.3 },
-    admob: { x: 533.3, y: 406.9 },
-    github: { x: 504.8, y: 214.9 },
-    meta_ads: { x: 192.9, y: 442 },
-    google_ads: { x: 651.7, y: 423.1 },
-    tiktok_ads: { x: 154, y: 348.4 },
-    clarity: { x: 498.5, y: 568 },
-    creatify: { x: 371.5, y: 177.8 },
-    sett: { x: 341, y: 470.1 },
-  },
-}
-
-export const portraitLayout: MapLayout = {
-  width: 460,
-  height: 960,
-  pad: { x: 56, top: 44, bottom: 60 },
-  positions: {
-    ube: { x: 230, y: 472 },
-    ube_sdk: { x: 72.9, y: 900 },
-    revenuecat: { x: 389, y: 324.4 },
-    firebase: { x: 397.2, y: 900 },
-    bigquery: { x: 397.2, y: 86 },
-    appsflyer: { x: 63.2, y: 240.5 },
-    amplitude: { x: 290.8, y: 63 },
-    posthog: { x: 395.6, y: 523 },
-    app_store_connect: { x: 305, y: 169.8 },
-    google_play: { x: 262.4, y: 875.2 },
-    admob: { x: 238.5, y: 747.2 },
-    github: { x: 184.1, y: 579.7 },
-    meta_ads: { x: 169, y: 350.7 },
-    google_ads: { x: 141.2, y: 807.9 },
-    tiktok_ads: { x: 259.5, y: 313.5 },
-    clarity: { x: 57.5, y: 721.9 },
-    creatify: { x: 301.9, y: 664.3 },
-    sett: { x: 319.7, y: 400.3 },
-  },
 }
