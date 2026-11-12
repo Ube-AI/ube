@@ -47,6 +47,11 @@ const DRIFT_COST = 0.02
 const LENGTH_COST = 1
 // Each map unit two tools sit closer than GAP.
 const CLOSE_COST = 40
+// Tools spread unevenly round Ube (spreadCheck), each squared unit: a gap
+// between neighbours off an even share of the way round, and a tool off the
+// tools' average distance from Ube.
+const UNEVEN_ANGLE_COST = 0.2
+const UNEVEN_REACH_COST = 0.05
 
 type Box = { left: number; top: number; right: number; bottom: number }
 // What one check found; `cost` is the part that grows by degree.
@@ -144,6 +149,7 @@ const indexOf = (id: NodeId) => {
   if (index < 0) throw new Error(`${id} is not on the map.`)
   return index
 }
+const hubIndex = indexOf("ube")
 const lines = links.map((link) => ({
   from: indexOf(link.source),
   to: indexOf(link.target),
@@ -355,10 +361,41 @@ const driftCheck = (node: number) =>
     cost: distance(item(positions, node), item(nodes, node).start) * DRIFT_COST,
   })
 
+// How unevenly the tools sit round Ube, measured on an ellipse the shape of
+// the drawing so the tools can use its height.
+function spreadCheck() {
+  const hub = item(positions, hubIndex)
+  const squash = width / height
+  const around = positions.flatMap((point, node) => {
+    if (node === hubIndex) return []
+    const dx = point.x - hub.x
+    const dy = (point.y - hub.y) * squash
+    return [{ angle: Math.atan2(dy, dx), reach: Math.hypot(dx, dy) }]
+  })
+  const averageReach =
+    around.reduce((sum, tool) => sum + tool.reach, 0) / around.length
+  const share = (2 * Math.PI) / around.length
+  const angles = around.map((tool) => tool.angle).sort((a, b) => a - b)
+  let angleOff = 0
+  for (const [k, angle] of angles.entries()) {
+    // The last tool's neighbour is the first, a full turn on.
+    const next =
+      k === angles.length - 1
+        ? item(angles, 0) + 2 * Math.PI
+        : item(angles, k + 1)
+    angleOff += ((next - angle - share) * averageReach) ** 2
+  }
+  let reachOff = 0
+  for (const tool of around) reachOff += (tool.reach - averageReach) ** 2
+  return tally({
+    cost: angleOff * UNEVEN_ANGLE_COST + reachOff * UNEVEN_REACH_COST,
+  })
+}
+
 // Every cost that depends on where one tool sits.
 function localCost(node: number) {
   const own = item(linesAt, node)
-  let cost = price(driftCheck(node))
+  let cost = price(driftCheck(node)) + price(spreadCheck())
   for (const index of own) {
     const line = item(lines, index)
     lines.forEach((other, otherIndex) => {
@@ -394,6 +431,7 @@ function survey() {
     })
     add(lineCheck(line))
   })
+  add(spreadCheck())
   nodes.forEach((_, a) => {
     add(driftCheck(a))
     for (let b = a + 1; b < nodes.length; b++) add(toolPairCheck(a, b))

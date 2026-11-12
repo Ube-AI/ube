@@ -24,7 +24,9 @@ type Handoff = { source: ToolId; target: ToolId }
 type Spine = { source: ToolId; label: string; twoWay?: boolean }
 export type Point = { x: number; y: number }
 
-export const HUB_RADIUS = 40
+// Every tool is drawn the same size, and Ube larger.
+export const HUB_RADIUS = 56
+const TOOL_RADIUS = 26
 // The space between a tool's circle and the top of its name.
 export const LABEL_GAP = 12
 
@@ -87,15 +89,8 @@ export const links: Link[] = [
   })),
 ]
 
-const handoffCount = new Map<NodeId, number>()
-for (const { source, target } of handoffs) {
-  handoffCount.set(source, (handoffCount.get(source) ?? 0) + 1)
-  handoffCount.set(target, (handoffCount.get(target) ?? 0) + 1)
-}
-
-// A tool with more handoffs is drawn larger, as on the panel.
 export const radiusOf = (id: NodeId) =>
-  id === "ube" ? HUB_RADIUS : 22 + Math.min(10, (handoffCount.get(id) ?? 0) * 2)
+  id === "ube" ? HUB_RADIUS : TOOL_RADIUS
 
 function towards(point: Point, target: Point, distance: number): Point {
   const ux = target.x - point.x
@@ -140,20 +135,20 @@ export const heroLayout = {
   width: 520,
   height: 650,
   positions: {
-    ube: { x: 268, y: 317 },
-    ube_sdk: { x: 81.4, y: 586.4 },
-    revenuecat: { x: 468.2, y: 124.3 },
-    firebase: { x: 474.2, y: 525.5 },
-    appsflyer: { x: 44.9, y: 225.4 },
-    posthog: { x: 389.7, y: 235.6 },
-    app_store_connect: { x: 356.8, y: 45.5 },
-    google_play: { x: 317.1, y: 505.4 },
-    admob: { x: 137.9, y: 347.5 },
-    github: { x: 286.2, y: 157.9 },
-    meta_ads: { x: 167.8, y: 207.1 },
-    google_ads: { x: 169, y: 481.9 },
-    tiktok_ads: { x: 201.2, y: 45.7 },
-    clarity: { x: 31, y: 459.2 },
+    ube: { x: 252, y: 323.3 },
+    ube_sdk: { x: 81.4, y: 582.5 },
+    revenuecat: { x: 468.2, y: 202 },
+    firebase: { x: 480.6, y: 567.4 },
+    appsflyer: { x: 44.9, y: 151.9 },
+    posthog: { x: 396.3, y: 323.9 },
+    app_store_connect: { x: 420.2, y: 76.9 },
+    google_play: { x: 321.8, y: 549.7 },
+    admob: { x: 157, y: 382.1 },
+    github: { x: 301.1, y: 174.5 },
+    meta_ads: { x: 168.2, y: 165.7 },
+    google_ads: { x: 203.5, y: 526.8 },
+    tiktok_ads: { x: 234.1, y: 45.7 },
+    clarity: { x: 32, y: 333 },
   },
 } as const satisfies {
   width: number

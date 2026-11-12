@@ -30,18 +30,17 @@ const RING_RISE_SECONDS = 0.3
 const RING_FADE_SECONDS = 1.1
 const RING_PEAK = 0.5
 const RIDER_FADE_SECONDS = 0.15
-const BREATH_SECONDS = 4
-const BREATH_STAGGER = 1.1
-const BREATH_REACH = 18
-const HUB_BREATH_REACH = 27
-// Wordmark.astro's proportions at 22px: brackets 5px wide and 0.88em tall,
-// 3px clear of a word about 40px wide, the baseline 0.36em below the centre.
-const WORD_SIZE = 22
-const WORD_HALF_WIDTH = 20
+// Wordmark.astro's proportions at its default 30px: brackets 5px wide and
+// 0.88em tall, 3px clear of a word about 1.8em wide, the baseline 0.36em below
+// the centre.
+const WORD_SIZE = 30
+const WORD_HALF_WIDTH = WORD_SIZE * 0.9
 const WORD_BASELINE = 0.36
 const BRACKET_HEIGHT = 0.88
-// Four times the widest an image mark is drawn.
-const MARK_IMAGE_WIDTH = 96
+// The size of a tool's logo inside its circle.
+const MARK_SIZE = 22
+// Four times the size a mark is drawn.
+const MARK_IMAGE_WIDTH = MARK_SIZE * 4
 
 const arrowSize: Record<LinkKind, number> = { handoff: 6, spine: 7 }
 
@@ -50,7 +49,6 @@ const arrowId = (kind: LinkKind) => `imap-${kind}-arrow`
 const waveId = (kind: LinkKind) => `imap-${kind}-wave`
 const flowId = (link: number, back: boolean) =>
   `imap-wave-${link}${back ? "-back" : ""}`
-const hubGlowId = "imap-hub-glow"
 const href = (id: string) => `#${id}`
 const url = (id: string) => `url(#${id})`
 
@@ -68,19 +66,7 @@ const keyTimesAt = (seconds: number[]) =>
 const gradientEnds = ["x1", "y1", "x2", "y2"] as const
 type GradientEnd = (typeof gradientEnds)[number]
 
-type Ring = {
-  center: Point
-  r: number
-  className?: string
-  begin: string
-  dur: string
-  opacity: string
-  scale: string
-  keyTimes?: string
-}
-
 const waveDur = `${WAVE_SECONDS}s`
-const breathDur = `${BREATH_SECONDS}s`
 
 function waveAlong(
   gradientId: string,
@@ -119,11 +105,10 @@ function waveAlong(
     y2: slide(from.y + uy * head, uy),
   }
   const begin = startedAgo(beginSeconds, WAVE_SECONDS)
-  const arrival: Ring = {
+  const arrival = {
     center: roundPoint(receiver.center),
     r: receiver.r,
     begin,
-    dur: waveDur,
     opacity: `0;0;${RING_PEAK};0;0`,
     scale: [0, 0, 2, 7, 7].map((by) => growth(receiver.r, by)).join(";"),
     keyTimes: keyTimesAt([
@@ -158,16 +143,14 @@ const { width, height, positions } = heroLayout
 const nodes = tools.map((tool) => {
   const { x, y } = roundPoint(positions[tool.id])
   const r = radiusOf(tool.id)
-  const markSize = r >= 28 ? 24 : 20
   return {
     ...tool,
     x,
     y,
     r,
     mark: {
-      x: toTenth(x - markSize / 2),
-      y: toTenth(y - markSize / 2),
-      size: markSize,
+      x: toTenth(x - MARK_SIZE / 2),
+      y: toTenth(y - MARK_SIZE / 2),
     },
     dot: { x: toTenth(x + r - 7), y: toTenth(y - r + 7) },
     // The name's top; its size is set in CSS, per screen width.
@@ -187,18 +170,22 @@ const lines = links.map((link, index) => {
   const control = roundPoint(curve.control)
   const beginSeconds = index * WAVE_STAGGER
   const flows = [
-    waveAlong(
-      flowId(index, false),
-      start,
-      end,
-      { center: to, r: targetRim },
-      beginSeconds,
-      false,
-    ),
+    {
+      lands: link.target,
+      ...waveAlong(
+        flowId(index, false),
+        start,
+        end,
+        { center: to, r: targetRim },
+        beginSeconds,
+        false,
+      ),
+    },
   ]
   if (link.twoWay) {
-    flows.push(
-      waveAlong(
+    flows.push({
+      lands: link.source,
+      ...waveAlong(
         flowId(index, true),
         end,
         start,
@@ -206,7 +193,7 @@ const lines = links.map((link, index) => {
         beginSeconds + WAVE_SECONDS / 2,
         true,
       ),
-    )
+    })
   }
   return {
     kind: link.kind,
@@ -216,34 +203,11 @@ const lines = links.map((link, index) => {
   }
 })
 
-const breaths: Ring[] = [
-  ...nodes.map(
-    (node, index): Ring => ({
-      center: { x: node.x, y: node.y },
-      r: node.r,
-      begin: startedAgo(index * BREATH_STAGGER, BREATH_SECONDS),
-      dur: breathDur,
-      opacity: "0.35;0",
-      scale: `1;${growth(node.r, BREATH_REACH)}`,
-    }),
-  ),
-  {
-    center: hub,
-    r: HUB_RADIUS,
-    className: "imap-ring-hub",
-    begin: "0s",
-    dur: breathDur,
-    opacity: "0.5;0",
-    scale: `1;${growth(HUB_RADIUS, HUB_BREATH_REACH)}`,
-  },
-]
-const ringGroups = [
-  {
-    name: "arrivals",
-    rings: lines.flatMap((line) => line.flows.map((flow) => flow.arrival)),
-  },
-  { name: "breaths", rings: breaths },
-]
+// A tool's ring flares each time a wave lands on it. Ube takes a wave from
+// each of its links, so its ring would never go dark, and it has none.
+const arrivals = lines.flatMap((line) =>
+  line.flows.flatMap((flow) => (flow.lands === "ube" ? [] : [flow.arrival])),
+)
 
 async function markImage(image: ImageMetadata) {
   const { src } = await getImage({
@@ -368,10 +332,6 @@ const bracketOuter = bracketInner + 5
           </linearGradient>
         ))
       }
-      <radialGradient id={hubGlowId}>
-        <stop class="imap-hub-glow-stop" offset="0%" stop-opacity="0.45" />
-        <stop class="imap-hub-glow-stop" offset="100%" stop-opacity="0" />
-      </radialGradient>
       {
         lines.flatMap((line) =>
           line.flows.map((flow) => (
@@ -399,8 +359,6 @@ const bracketOuter = bracketInner + 5
         )
       }
     </defs>
-
-    <circle cx={hub.x} cy={hub.y} r={HUB_RADIUS * 3} fill={url(hubGlowId)} />
 
     {
       lines.map((line) => (
@@ -462,38 +420,33 @@ const bracketOuter = bracketInner + 5
 
     {/* Rings scale and fade: animating their radius and stroke instead
         costs a style pass every frame. */}
-    {
-      ringGroups.map((group) => (
-        <g class={`imap-${group.name}`}>
-          {group.rings.map((ring) => (
-            <g
-              class={ring.className}
-              transform={`translate(${ring.center.x} ${ring.center.y})`}
-            >
-              <circle r={ring.r} opacity="0">
-                <animate
-                  attributeName="opacity"
-                  values={ring.opacity}
-                  keyTimes={ring.keyTimes}
-                  dur={ring.dur}
-                  begin={ring.begin}
-                  repeatCount="indefinite"
-                />
-                <animateTransform
-                  attributeName="transform"
-                  type="scale"
-                  values={ring.scale}
-                  keyTimes={ring.keyTimes}
-                  dur={ring.dur}
-                  begin={ring.begin}
-                  repeatCount="indefinite"
-                />
-              </circle>
-            </g>
-          ))}
-        </g>
-      ))
-    }
+    <g class="imap-arrivals">
+      {
+        arrivals.map((ring) => (
+          <g transform={`translate(${ring.center.x} ${ring.center.y})`}>
+            <circle r={ring.r} opacity="0">
+              <animate
+                attributeName="opacity"
+                values={ring.opacity}
+                keyTimes={ring.keyTimes}
+                dur={waveDur}
+                begin={ring.begin}
+                repeatCount="indefinite"
+              />
+              <animateTransform
+                attributeName="transform"
+                type="scale"
+                values={ring.scale}
+                keyTimes={ring.keyTimes}
+                dur={waveDur}
+                begin={ring.begin}
+                repeatCount="indefinite"
+              />
+            </circle>
+          </g>
+        ))
+      }
+    </g>
 
     {
       nodes.map((node) => (
@@ -503,8 +456,8 @@ const bracketOuter = bracketInner + 5
             href={href(markId(node.id))}
             x={node.mark.x}
             y={node.mark.y}
-            width={node.mark.size}
-            height={node.mark.size}
+            width={MARK_SIZE}
+            height={MARK_SIZE}
           />
           <circle class="imap-dot" cx={node.dot.x} cy={node.dot.y} r="5" />
           <text class="imap-label" x={node.x} y={node.labelY} dy="0.8em">
@@ -624,23 +577,11 @@ const bracketOuter = bracketInner + 5
     fill: var(--accent-hover);
     opacity: 0.25;
   }
-  .imap-arrivals circle,
-  .imap-breaths circle {
-    vector-effect: non-scaling-stroke;
-  }
   .imap-arrivals circle {
     fill: color-mix(in oklab, var(--accent-hover) 35%, transparent);
     stroke: var(--accent-hover);
     stroke-width: 2;
-  }
-  .imap-breaths circle {
-    fill: none;
-    stroke: var(--success);
-    stroke-width: 1;
-  }
-  .imap-breaths .imap-ring-hub circle {
-    stroke: var(--accent-hover);
-    stroke-width: 1.25;
+    vector-effect: non-scaling-stroke;
   }
   .imap-tool {
     fill: var(--surface-card);
@@ -671,9 +612,6 @@ const bracketOuter = bracketInner + 5
     }
   }
 
-  .imap-hub-glow-stop {
-    stop-color: var(--accent-hover);
-  }
   .imap-hub-core {
     fill: #18181c;
     stroke: var(--accent-hover);
@@ -720,8 +658,7 @@ const bracketOuter = bracketInner + 5
   @media (prefers-reduced-motion: reduce) {
     .imap-waves,
     .imap-riders,
-    .imap-arrivals,
-    .imap-breaths {
+    .imap-arrivals {
       display: none;
     }
   }
