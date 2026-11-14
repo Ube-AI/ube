@@ -139,6 +139,12 @@ const jsonLdBlocks = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : []
 
     <!-- Browser chrome tint (matches --canvas in styles.css) -->
     <meta name="theme-color" content="#1e1e22" />
+    <!-- The site is dark-only. color-scheme gives native controls and
+         scrollbars the dark theme; the lock stops the Dark Reader extension
+         from re-theming the pages, which turns the white Request access
+         buttons dark and the integrations map's discs and names light. -->
+    <meta name="color-scheme" content="dark" />
+    <meta name="darkreader-lock" />
 
     <!-- Web app manifest for share-to-homescreen on mobile -->
     <link rel="manifest" href="/site.webmanifest" />
