@@ -1,6 +1,5 @@
 import { CONTACT_EMAIL, GITHUB_URL, LINKEDIN_URL } from "@/constants"
 import type { FaqItem } from "@/data/faq-items"
-import { tools } from "@/data/integrations-map"
 
 type JsonLd = Record<string, unknown>
 
@@ -173,11 +172,6 @@ export const buildMaintainerSchema = (
   }
 }
 
-// The tools on the home page's integrations map, less Ube's own SDK.
-const mapToolList = new Intl.ListFormat("en").format(
-  tools.filter((tool) => tool.id !== "ube_sdk").map((tool) => tool.label),
-)
-
 // The flagship node. Named `buildUbeSchema` (was `buildPublisherSchema`)
 // because Publisher stopped being a product name and became the whole of
 // Ube — it owns `/`, the <title>, and the Organization's primary offering.
@@ -201,7 +195,9 @@ export const buildUbeSchema = (
     creator: { "@id": ids.orgId },
     featureList: [
       "Audits and instruments mobile apps with analytics and attribution SDKs",
-      `Works with ${mapToolList}`,
+      // Every growth tool the site names, in the hero's map or the Stack
+      // section. Keep it in step with the list in public/llms.txt.
+      "Works with Firebase, Amplitude, PostHog, Clarity, RevenueCat, AppsFlyer, AdMob, Google Ads, Meta Ads, TikTok Ads, App Store Connect, Google Play, GitHub, Creatify, and Sett",
       "Sets up dashboards, MMP imports, SKAdNetwork schema, and event forwarding",
       "Creates and tests ad creatives across paid acquisition channels",
       "Finds drop-off points and recommends retention and monetization experiments",

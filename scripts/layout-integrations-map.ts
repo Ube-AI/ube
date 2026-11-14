@@ -1,12 +1,12 @@
 // Lays out the hero's integrations map. After changing its tools or links,
-// run `node scripts/layout-integrations-map.ts` from the repo root (Node 24)
-// and it rewrites heroLayout.positions in src/data/integrations-map.ts. It
-// starts from the positions it last wrote, and even with no changes a run can
-// move tools a long way, so look at the map before keeping the result.
+// run `npm run layout-map` and it rewrites heroLayout.positions in
+// src/data/integrations-map.ts. It starts from the positions it last wrote,
+// and even with no changes a run can move tools a long way, so look at the
+// map before keeping the result. The npm script passes the flag Node 22 needs
+// before 22.18 to run TypeScript; later versions run it without one.
 import { readFileSync, writeFileSync } from "node:fs"
 import {
   heroLayout,
-  LABEL_GAP,
   linkCurve,
   links,
   type NodeId,
@@ -30,19 +30,17 @@ const STEPS = 60000
 const SEGMENTS = 12
 // How far Ube may move from the middle of the drawing.
 const HUB_REACH = 8
-// Names as a phone draws them, in map units (.imap-label in IntegrationsMap.astro).
-const NAME_SIZE = 16
-const NAME_HEIGHT = NAME_SIZE * 1.1
-// A wave must land and its ring fade within the 5 s cycle (waveAlong in
-// IntegrationsMap.astro): (5 s - 1.4 s) x 150 units a second is 540, less a margin.
+// Map units kept clear under the lowest tools, so the legend can sit close
+// under the drawing (.imap-legend in IntegrationsMap.astro).
+const BOTTOM_ROOM = 36
+// A wave must land and its ring fade within one cycle (waveAlong in
+// IntegrationsMap.astro): (7.5 s - 2.1 s) x 100 units a second is 540, less a
+// margin. Slowing the map down stretches both, so the length stays.
 const MAX_LINK = 520
 // What a failure, a crossing, and each map unit of drift from the start or of
 // link length cost.
 const FAIL_COST = 5000
 const CROSSING_COST = 3000
-// A link under its own tool's name: the name's halo hides it, but it reads
-// better clear of the name.
-const OWN_NAME_COST = 200
 const DRIFT_COST = 0.02
 const LENGTH_COST = 1
 // Each map unit two tools sit closer than GAP.
@@ -55,24 +53,15 @@ const UNEVEN_REACH_COST = 0.05
 
 type Box = { left: number; top: number; right: number; bottom: number }
 // What one check found; `cost` is the part that grows by degree.
-type Tally = {
-  fails: number
-  crossings: number
-  underOwnName: number
-  cost: number
-}
+type Tally = { fails: number; crossings: number; cost: number }
 const tally = (found: Partial<Tally>): Tally => ({
   fails: 0,
   crossings: 0,
-  underOwnName: 0,
   cost: 0,
   ...found,
 })
 const price = (found: Tally) =>
-  found.fails * FAIL_COST +
-  found.crossings * CROSSING_COST +
-  found.underOwnName * OWN_NAME_COST +
-  found.cost
+  found.fails * FAIL_COST + found.crossings * CROSSING_COST + found.cost
 
 const item = <T>(list: readonly T[], index: number): T => {
   const value = list[index]
@@ -82,15 +71,6 @@ const item = <T>(list: readonly T[], index: number): T => {
 const clamp = (value: number, low: number, high: number) =>
   Math.min(high, Math.max(low, value))
 const distance = (a: Point, b: Point) => Math.hypot(a.x - b.x, a.y - b.y)
-
-// Inter's advances, roughly, in em.
-const advance = (character: string) => {
-  if (" iljI".includes(character)) return 0.27
-  if ("ftr".includes(character)) return 0.38
-  if ("mwMW&".includes(character)) return 0.86
-  if (character >= "A" && character <= "Z") return 0.68
-  return 0.57
-}
 
 const { width, height } = heroLayout
 const middle = { x: width / 2, y: height / 2 }
@@ -106,21 +86,9 @@ const onRing = (index: number) => {
   }
 }
 
-// Ube's name sits inside its circle; every tool has one under it.
-const nameOf = (id: NodeId) => {
-  if (id === "ube") return ""
-  const tool = tools.find((candidate) => candidate.id === id)
-  if (tool === undefined) throw new Error(`${id} has no name.`)
-  return tool.label
-}
-
 const nodes = ids.map((id) => {
   const r = radiusOf(id)
-  const label = nameOf(id)
-  const nameHalf =
-    ([...label].reduce((sum, c) => sum + advance(c), 0) * NAME_SIZE) / 2
-  // Where its centre may go, with its circle and name inside the drawing.
-  const inset = Math.max(r, nameHalf) + 6
+  // Where its centre may go, with its circle inside the drawing.
   const limit: Box =
     id === "ube"
       ? {
@@ -130,17 +98,17 @@ const nodes = ids.map((id) => {
           bottom: middle.y + HUB_REACH,
         }
       : {
-          left: inset,
-          right: width - inset,
+          left: r + 6,
+          right: width - (r + 6),
           top: r + 8,
-          bottom: height - (r + LABEL_GAP + NAME_HEIGHT + 6),
+          bottom: height - (r + BOTTOM_ROOM),
         }
   const startFrom = known[id] ?? onRing(newTools.indexOf(id))
   const start = {
     x: clamp(startFrom.x, limit.left, limit.right),
     y: clamp(startFrom.y, limit.top, limit.bottom),
   }
-  return { id, r, nameHalf, limit, start }
+  return { id, r, limit, start }
 })
 const positions: Point[] = nodes.map((node) => ({ ...node.start }))
 
@@ -219,24 +187,6 @@ function distanceToSegment(point: Point, a: Point, b: Point) {
   return distance(point, { x: a.x + t * dx, y: a.y + t * dy })
 }
 
-// Whether the segment a-b enters a box, by clipping it to the box's slabs.
-function segmentEntersBox(a: Point, b: Point, box: Box) {
-  let low = 0
-  let high = 1
-  const clip = (start: number, delta: number, min: number, max: number) => {
-    if (Math.abs(delta) < 1e-9) return start >= min && start <= max
-    const t1 = (min - start) / delta
-    const t2 = (max - start) / delta
-    low = Math.max(low, Math.min(t1, t2))
-    high = Math.min(high, Math.max(t1, t2))
-    return low <= high
-  }
-  return (
-    clip(a.x, b.x - a.x, box.left, box.right) &&
-    clip(a.y, b.y - a.y, box.top, box.bottom)
-  )
-}
-
 const segments = (line: Line) =>
   line.points.slice(1).map((end, k) => [item(line.points, k), end] as const)
 
@@ -264,46 +214,22 @@ function pairCheck(a: Line, b: Line) {
   return tally({ crossings: crosses(a, b) ? 1 : 0 })
 }
 
-function nameBox(node: number, margin: number): Box {
-  const { r, nameHalf } = item(nodes, node)
-  const { x, y } = item(positions, node)
-  return {
-    left: x - nameHalf - margin,
-    right: x + nameHalf + margin,
-    top: y + r + LABEL_GAP - margin,
-    bottom: y + r + LABEL_GAP + NAME_HEIGHT + margin,
-  }
-}
-
-// A link running too close to a tool it does not touch, or through its name,
-// fails; one running under its own tool's name only costs more.
+// A link running too close to a tool it does not touch fails.
 function throughCheck(line: Line, node: number) {
+  if (touches(line, node)) return tally({})
   const centre = item(positions, node)
   const clearance = item(nodes, node).r + 12
-  const hasName = item(nodes, node).nameHalf > 0
-  const name = nameBox(node, 3)
-  const reach = hasName
-    ? {
-        left: Math.min(centre.x - clearance, name.left),
-        right: Math.max(centre.x + clearance, name.right),
-        top: centre.y - clearance,
-        bottom: name.bottom,
-      }
-    : {
-        left: centre.x - clearance,
-        right: centre.x + clearance,
-        top: centre.y - clearance,
-        bottom: centre.y + clearance,
-      }
+  const reach = {
+    left: centre.x - clearance,
+    right: centre.x + clearance,
+    top: centre.y - clearance,
+    bottom: centre.y + clearance,
+  }
   if (!overlaps(line.box, reach)) return tally({})
-  const ownTool = touches(line, node)
-  const underName =
-    hasName && segments(line).some(([a, b]) => segmentEntersBox(a, b, name))
-  if (ownTool) return tally({ underOwnName: underName ? 1 : 0 })
   const tooClose = segments(line).some(
     ([a, b]) => distanceToSegment(centre, a, b) < clearance,
   )
-  return tally({ fails: tooClose || underName ? 1 : 0 })
+  return tally({ fails: tooClose ? 1 : 0 })
 }
 
 const insideDrawing = (box: Box) =>
@@ -320,31 +246,10 @@ const lineCheck = (line: Line) =>
     cost: line.chord * LENGTH_COST,
   })
 
-function nameHitsCircle(name: number, circle: number) {
-  if (item(nodes, name).nameHalf === 0) return false
-  const box = nameBox(name, 4)
-  const centre = item(positions, circle)
-  const nearest = {
-    x: clamp(centre.x, box.left, box.right),
-    y: clamp(centre.y, box.top, box.bottom),
-  }
-  return distance(centre, nearest) < item(nodes, circle).r + 4
-}
-
-// Two tools, or their names, touching.
-function collide(a: number, b: number) {
-  const namesTouch =
-    item(nodes, a).nameHalf > 0 &&
-    item(nodes, b).nameHalf > 0 &&
-    overlaps(nameBox(a, 4), nameBox(b, 4))
-  return (
-    distance(item(positions, a), item(positions, b)) <
-      item(nodes, a).r + item(nodes, b).r + 16 ||
-    namesTouch ||
-    nameHitsCircle(a, b) ||
-    nameHitsCircle(b, a)
-  )
-}
+// Two tools touching.
+const collide = (a: number, b: number) =>
+  distance(item(positions, a), item(positions, b)) <
+  item(nodes, a).r + item(nodes, b).r + 16
 
 // Touching tools fail; tools closer than GAP cost more the closer they are.
 function toolPairCheck(a: number, b: number) {
@@ -421,7 +326,6 @@ function survey() {
   const add = (more: Tally) => {
     found.fails += more.fails
     found.crossings += more.crossings
-    found.underOwnName += more.underOwnName
     found.cost += more.cost
   }
   lines.forEach((line, index) => {
@@ -504,18 +408,16 @@ let kept: ReturnType<typeof anneal> | undefined
 for (let run = 0; run < RUNS; run++) {
   const result = anneal(random(SEED + run * 7919))
   place(result.positions)
-  const { fails, crossings, underOwnName } = survey()
+  const { fails, crossings } = survey()
   console.info(
-    `run ${run}: cost ${Math.round(result.cost)}, ${fails} failures, ${crossings} crossings, ${underOwnName} under their own name`,
+    `run ${run}: cost ${Math.round(result.cost)}, ${fails} failures, ${crossings} crossings`,
   )
   if (!kept || result.cost < kept.cost) kept = result
 }
 if (!kept) throw new Error("RUNS must be at least 1.")
 place(kept.positions)
-const { fails, crossings, underOwnName } = survey()
-console.info(
-  `kept: ${fails} failures, ${crossings} crossings, ${underOwnName} under their own name`,
-)
+const { fails, crossings } = survey()
+console.info(`kept: ${fails} failures, ${crossings} crossings`)
 
 if (fails > 0) {
   console.error("The best layout still fails, so it was not written.")

@@ -27,8 +27,6 @@ export type Point = { x: number; y: number }
 // Every tool is drawn the same size, and Ube larger.
 export const HUB_RADIUS = 56
 const TOOL_RADIUS = 26
-// The space between a tool's circle and the top of its name.
-export const LABEL_GAP = 12
 
 // Links to Ube; a two-way link is one Ube also writes to. TikTok Ads comes
 // from the site's own copy.
@@ -129,8 +127,7 @@ export function linkCurve(
 
 // The hero's drawing: 4:5, so on a phone it stands a little taller than it is
 // wide. The positions come from scripts/layout-integrations-map.ts: after
-// changing the tools or links, run `node scripts/layout-integrations-map.ts`
-// from the repo root and it rewrites them.
+// changing the tools or links, run `npm run layout-map` and it rewrites them.
 export const heroLayout = {
   width: 520,
   height: 650,

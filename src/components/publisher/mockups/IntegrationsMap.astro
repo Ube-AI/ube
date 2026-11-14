@@ -4,7 +4,6 @@ import { getImage } from "astro:assets"
 import {
   HUB_RADIUS,
   heroLayout,
-  LABEL_GAP,
   type LinkKind,
   linkCurve,
   linkKinds,
@@ -17,19 +16,22 @@ import {
 } from "@/data/integrations-map"
 import { marks } from "@/lib/integrations-map-marks"
 
-const WAVE_SECONDS = 5
-const WAVE_STAGGER = 1.37
+// Slows the whole animation down evenly: every time below is multiplied by
+// it and the signal speed divided, so the waves keep their order and spacing.
+const SLOWDOWN = 1.5
+const WAVE_SECONDS = 5 * SLOWDOWN
+const WAVE_STAGGER = 1.37 * SLOWDOWN
 // Every signal moves at this speed, in map units a second, so a long link
 // takes longer to cross than a short one.
-const SIGNAL_SPEED = 150
+const SIGNAL_SPEED = 150 / SLOWDOWN
 // The bright band is as long on a short link as on a long one.
 const BAND_LENGTH = 90
 const HEAD_STOP = 0.92
 // After a wave lands, the receiver's ring takes this long to flare and fade.
-const RING_RISE_SECONDS = 0.3
-const RING_FADE_SECONDS = 1.1
+const RING_RISE_SECONDS = 0.3 * SLOWDOWN
+const RING_FADE_SECONDS = 1.1 * SLOWDOWN
 const RING_PEAK = 0.5
-const RIDER_FADE_SECONDS = 0.15
+const RIDER_FADE_SECONDS = 0.15 * SLOWDOWN
 // Wordmark.astro's proportions at its default 30px: brackets 5px wide and
 // 0.88em tall, 3px clear of a word about 1.8em wide, the baseline 0.36em below
 // the centre.
@@ -43,6 +45,12 @@ const MARK_SIZE = 22
 const MARK_IMAGE_WIDTH = MARK_SIZE * 4
 
 const arrowSize: Record<LinkKind, number> = { handoff: 6, spine: 7 }
+// What the legend says each kind of link is, keyed with a short arrow drawn
+// like the link.
+const legendText: Record<LinkKind, string> = {
+  handoff: "Ube configures",
+  spine: "Ube orchestrates",
+}
 
 const markId = (tool: ToolId) => `imap-mark-${tool}`
 const arrowId = (kind: LinkKind) => `imap-${kind}-arrow`
@@ -153,8 +161,6 @@ const nodes = tools.map((tool) => {
       y: toTenth(y - MARK_SIZE / 2),
     },
     dot: { x: toTenth(x + r - 7), y: toTenth(y - r + 7) },
-    // The name's top; its size is set in CSS, per screen width.
-    labelY: toTenth(y + r + LABEL_GAP),
   }
 })
 const hub = roundPoint(positions.ube)
@@ -451,6 +457,9 @@ const bracketOuter = bracketInner + 5
     {
       nodes.map((node) => (
         <g>
+          {/* The name shows on hover; screen readers get the names from
+              the map's label. */}
+          <title>{node.label}</title>
           <circle class="imap-tool" cx={node.x} cy={node.y} r={node.r} />
           <use
             href={href(markId(node.id))}
@@ -460,9 +469,6 @@ const bracketOuter = bracketInner + 5
             height={MARK_SIZE}
           />
           <circle class="imap-dot" cx={node.dot.x} cy={node.dot.y} r="5" />
-          <text class="imap-label" x={node.x} y={node.labelY} dy="0.8em">
-            {node.label}
-          </text>
         </g>
       ))
     }
@@ -488,14 +494,17 @@ const bracketOuter = bracketInner + 5
   </svg>
 
   <ul class="imap-legend" aria-hidden="true">
-    <li><span class="imap-legend-dot"></span>Ube configures</li>
-    <li>
-      <svg width="16" height="8" viewBox="0 0 16 8">
-        <path class="imap-spine" d="M 0 4 L 10 4" />
-        <path class="imap-spine-arrow" d="M 10 1 L 16 4 L 10 7 z" />
-      </svg>
-      Ube orchestrates
-    </li>
+    {
+      linkKinds.map((kind) => (
+        <li>
+          <svg width="16" height="8" viewBox="0 0 16 8">
+            <path class={`imap-${kind}`} d="M 0 4 L 10 4" />
+            <path class={`imap-${kind}-arrow`} d="M 10 1 L 16 4 L 10 7 z" />
+          </svg>
+          {legendText[kind]}
+        </li>
+      ))
+    }
   </ul>
 </div>
 
@@ -505,9 +514,6 @@ const bracketOuter = bracketInner + 5
   .imap {
     position: relative;
     width: 100%;
-    max-width: 520px;
-    margin-inline: auto;
-    container-type: inline-size;
   }
   .imap-drawing {
     display: block;
@@ -585,25 +591,6 @@ const bracketOuter = bracketInner + 5
     stroke: var(--canvas);
     stroke-width: 2;
   }
-  .imap-label {
-    fill: var(--ink);
-    font-family: var(--font-sans);
-    font-size: 13px;
-    text-anchor: middle;
-    /* The halo lets a link pass behind a name. */
-    stroke: var(--canvas);
-    stroke-width: 4px;
-    stroke-linejoin: round;
-    paint-order: stroke;
-  }
-  /* Drawn small, on a phone or a short laptop screen, the names grow in map
-     units so they stay readable. The layout leaves room for names this large. */
-  @container (max-width: 440px) {
-    .imap-label {
-      font-size: 16px;
-    }
-  }
-
   .imap-hub-core {
     fill: #18181c;
     stroke: var(--accent-hover);
@@ -626,7 +613,9 @@ const bracketOuter = bracketInner + 5
     flex-wrap: wrap;
     justify-content: center;
     gap: 6px 16px;
-    margin: 28px 0 0;
+    /* The layout keeps room below the lowest tools (BOTTOM_ROOM in
+       scripts/layout-integrations-map.ts), so the legend sits close. */
+    margin: 8px 0 0;
     padding: 0;
     list-style: none;
     color: var(--muted);
@@ -639,12 +628,6 @@ const bracketOuter = bracketInner + 5
     display: flex;
     align-items: center;
     gap: 6px;
-  }
-  .imap-legend-dot {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: var(--success);
   }
 
   @media (prefers-reduced-motion: reduce) {

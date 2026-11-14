@@ -159,6 +159,9 @@ import IntegrationsMap from "@/components/publisher/mockups/IntegrationsMap.astr
 
   .publisher-hero-visual {
     position: relative;
+    justify-self: center;
+    width: 100%;
+    max-width: 520px;
     min-width: 0;
   }
 
@@ -167,11 +170,11 @@ import IntegrationsMap from "@/components/publisher/mockups/IntegrationsMap.astr
       padding: 96px 0 128px;
     }
     /* The map stands taller than the copy beside it, so it is held to the
-       screen's height to stay above the fold on a laptop. */
+       screen's height to stay above the fold on a laptop. On a taller screen
+       it fills its column. */
     .publisher-hero-visual {
       justify-self: end;
-      width: 100%;
-      max-width: clamp(340px, calc((100svh - 260px) * 0.8), 520px);
+      max-width: max(340px, calc((100svh - 240px) * 0.8));
     }
   }
   @media (min-width: 1025px) {
