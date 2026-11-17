@@ -167,14 +167,16 @@ import IntegrationsMap from "@/components/publisher/mockups/IntegrationsMap.astr
 
   @media (min-width: 1101px) {
     .publisher-hero {
-      padding: 96px 0 128px;
+      padding: 72px 0 128px;
     }
     /* The map stands taller than the copy beside it, so it is held to the
-       screen's height to stay above the fold on a laptop. On a taller screen
-       it fills its column. */
+       screen's height to stay above the fold on a laptop, and sits in the
+       middle of its column to stay near the title. On a taller screen it
+       fills the column. The 216px is the nav (73), the padding above (72),
+       the map's legend (25) and 46px clear of the fold. The 0.8 is the
+       map's width over its height (520 by 650). */
     .publisher-hero-visual {
-      justify-self: end;
-      max-width: max(340px, calc((100svh - 240px) * 0.8));
+      max-width: max(340px, calc((100svh - 216px) * 0.8));
     }
   }
   @media (min-width: 1025px) {
