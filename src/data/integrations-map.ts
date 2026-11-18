@@ -100,15 +100,22 @@ function towards(point: Point, target: Point, distance: number): Point {
   }
 }
 
-// A link bends to the same side of its direction as on the panel, and is
-// trimmed to the rims of its two circles. A two-way link leaves room for an
-// arrowhead at both ends.
+// Each kind's arrowhead size, in map units. The hero's marker draws a head in
+// an 8 by 8 box with its base on the line's end and its tip 7 box units on, so
+// the tip reaches 7/8 of the size past the line.
+export const arrowSize: Record<LinkKind, number> = { handoff: 6, spine: 7 }
+const arrowReach = (kind: LinkKind) => (arrowSize[kind] * 7) / 8
+
+// A link bends to the same side of its direction as on the panel, and stops
+// short of the rims of its two circles: 4 map units at a plain end and 6 at an
+// end with an arrowhead. There the line also stops short by the head's length,
+// so the tip lands 6 short of the rim. A two-way link has a head at both ends.
 export function linkCurve(
   from: Point,
   to: Point,
   fromRadius: number,
   toRadius: number,
-  twoWay: boolean,
+  { twoWay, kind }: Pick<Link, "twoWay" | "kind">,
 ) {
   const dx = to.x - from.x
   const dy = to.y - from.y
@@ -118,10 +125,11 @@ export function linkCurve(
     x: (from.x + to.x) / 2 - (dy / length) * bend,
     y: (from.y + to.y) / 2 + (dx / length) * bend,
   }
+  const reach = arrowReach(kind)
   return {
-    start: towards(from, control, fromRadius + (twoWay ? 6 : 4)),
+    start: towards(from, control, fromRadius + (twoWay ? 6 + reach : 4)),
     control,
-    end: towards(to, control, toRadius + 6),
+    end: towards(to, control, toRadius + 6 + reach),
   }
 }
 
@@ -152,3 +160,11 @@ export const heroLayout = {
   height: number
   positions: Record<NodeId, Point>
 }
+
+export const nodeIds: NodeId[] = ["ube", ...tools.map((tool) => tool.id)]
+const rightmostRim = Math.max(
+  ...nodeIds.map((id) => heroLayout.positions[id].x + radiusOf(id)),
+)
+// The share of the hero drawing's width right of its rightmost circle, so the
+// hero can line that circle up with the nav's right edge.
+export const heroRightRoom = 1 - rightmostRim / heroLayout.width

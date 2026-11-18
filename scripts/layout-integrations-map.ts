@@ -10,9 +10,9 @@ import {
   linkCurve,
   links,
   type NodeId,
+  nodeIds,
   type Point,
   radiusOf,
-  tools,
 } from "../src/data/integrations-map.ts"
 
 const setting = (name: string, fallback: number) => {
@@ -74,9 +74,8 @@ const distance = (a: Point, b: Point) => Math.hypot(a.x - b.x, a.y - b.y)
 
 const { width, height } = heroLayout
 const middle = { x: width / 2, y: height / 2 }
-const ids: NodeId[] = ["ube", ...tools.map((tool) => tool.id)]
 const known: Partial<Record<NodeId, Point>> = heroLayout.positions
-const newTools = ids.filter((id) => !known[id])
+const newTools = nodeIds.filter((id) => !known[id])
 // Where a new tool starts: on a ring around Ube.
 const onRing = (index: number) => {
   const angle = (2 * Math.PI * (index + 0.5)) / newTools.length
@@ -86,7 +85,7 @@ const onRing = (index: number) => {
   }
 }
 
-const nodes = ids.map((id) => {
+const nodes = nodeIds.map((id) => {
   const r = radiusOf(id)
   // Where its centre may go, with its circle inside the drawing.
   const limit: Box =
@@ -113,7 +112,7 @@ const nodes = ids.map((id) => {
 const positions: Point[] = nodes.map((node) => ({ ...node.start }))
 
 const indexOf = (id: NodeId) => {
-  const index = ids.indexOf(id)
+  const index = nodeIds.indexOf(id)
   if (index < 0) throw new Error(`${id} is not on the map.`)
   return index
 }
@@ -122,12 +121,13 @@ const lines = links.map((link) => ({
   from: indexOf(link.source),
   to: indexOf(link.target),
   twoWay: link.twoWay,
+  kind: link.kind,
   points: [] as Point[],
   box: { left: 0, top: 0, right: 0, bottom: 0 },
   chord: 0,
 }))
 type Line = (typeof lines)[number]
-const linesAt = ids.map((_, node) =>
+const linesAt = nodeIds.map((_, node) =>
   lines.flatMap((line, index) =>
     line.from === node || line.to === node ? [index] : [],
   ),
@@ -144,7 +144,7 @@ function resample(line: Line) {
     item(positions, line.to),
     from.r,
     to.r,
-    line.twoWay,
+    line,
   )
   line.points = Array.from({ length: SEGMENTS + 1 }, (_, k) => {
     const t = k / SEGMENTS
@@ -424,7 +424,7 @@ if (fails > 0) {
   process.exitCode = 1
 } else {
   const tenth = (value: number) => Math.round(value * 10) / 10
-  const block = ids
+  const block = nodeIds
     .map((id, node) => {
       const { x, y } = item(positions, node)
       return `    ${id}: { x: ${tenth(x)}, y: ${tenth(y)} },`

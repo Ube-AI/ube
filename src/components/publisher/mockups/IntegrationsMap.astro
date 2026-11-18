@@ -2,6 +2,7 @@
 import type { ImageMetadata } from "astro"
 import { getImage } from "astro:assets"
 import {
+  arrowSize,
   HUB_RADIUS,
   heroLayout,
   type LinkKind,
@@ -30,7 +31,7 @@ const HEAD_STOP = 0.92
 // After a wave lands, the receiver's ring takes this long to flare and fade.
 const RING_RISE_SECONDS = 0.3 * SLOWDOWN
 const RING_FADE_SECONDS = 1.1 * SLOWDOWN
-const RING_PEAK = 0.5
+const RING_PEAK = 0.4
 const RIDER_FADE_SECONDS = 0.15 * SLOWDOWN
 // Wordmark.astro's proportions at its default 30px: brackets 5px wide and
 // 0.88em tall, 3px clear of a word about 1.8em wide, the baseline 0.36em below
@@ -44,17 +45,10 @@ const MARK_SIZE = 22
 // Four times the size a mark is drawn.
 const MARK_IMAGE_WIDTH = MARK_SIZE * 4
 
-const arrowSize: Record<LinkKind, number> = { handoff: 6, spine: 7 }
-// What the legend says each kind of link is, keyed with a short arrow drawn
-// like the link.
-const legendText: Record<LinkKind, string> = {
-  handoff: "Ube configures",
-  spine: "Ube orchestrates",
-}
-
 const markId = (tool: ToolId) => `imap-mark-${tool}`
 const arrowId = (kind: LinkKind) => `imap-${kind}-arrow`
-const waveId = (kind: LinkKind) => `imap-${kind}-wave`
+const WAVE_ID = "imap-wave-band"
+const LEGEND_WAVE_ID = "imap-legend-wave"
 const flowId = (link: number, back: boolean) =>
   `imap-wave-${link}${back ? "-back" : ""}`
 const href = (id: string) => `#${id}`
@@ -170,7 +164,7 @@ const lines = links.map((link, index) => {
   const to = positions[link.target]
   const sourceRim = radiusOf(link.source)
   const targetRim = radiusOf(link.target)
-  const curve = linkCurve(from, to, sourceRim, targetRim, link.twoWay)
+  const curve = linkCurve(from, to, sourceRim, targetRim, link)
   const start = roundPoint(curve.start)
   const end = roundPoint(curve.end)
   const control = roundPoint(curve.control)
@@ -296,54 +290,39 @@ const bracketOuter = bracketInner + 5
           ),
         )
       }
+      {/* A head's base sits on its line's end, as linkCurve expects. */}
       {
         linkKinds.map((kind) => (
           <marker
             id={arrowId(kind)}
             viewBox="0 0 8 8"
-            refX="7"
+            refX="0"
             refY="4"
             markerWidth={arrowSize[kind]}
             markerHeight={arrowSize[kind]}
             orient="auto-start-reverse"
             markerUnits="userSpaceOnUse"
           >
-            <path class={`imap-${kind}-arrow`} d="M 0 1 L 7 4 L 0 7 z" />
+            <path class="imap-arrow" d="M 0 1 L 7 4 L 0 7 z" />
           </marker>
         ))
       }
-      {
-        linkKinds.map((kind) => (
-          <linearGradient id={waveId(kind)}>
-            <stop
-              class={`imap-${kind}-wave-tail`}
-              offset="0%"
-              stop-opacity="0"
-            />
-            <stop
-              class={`imap-${kind}-wave-tail`}
-              offset="70%"
-              stop-opacity="0.9"
-            />
-            <stop
-              class={`imap-${kind}-wave-head`}
-              offset={`${HEAD_STOP * 100}%`}
-              stop-opacity="1"
-            />
-            <stop
-              class={`imap-${kind}-wave-head`}
-              offset="100%"
-              stop-opacity="0"
-            />
-          </linearGradient>
-        ))
-      }
+      <linearGradient id={WAVE_ID}>
+        <stop class="imap-wave-tail" offset="0%" stop-opacity="0" />
+        <stop class="imap-wave-tail" offset="70%" stop-opacity="0.75" />
+        <stop
+          class="imap-wave-head"
+          offset={`${HEAD_STOP * 100}%`}
+          stop-opacity="0.9"
+        />
+        <stop class="imap-wave-head" offset="100%" stop-opacity="0" />
+      </linearGradient>
       {
         lines.flatMap((line) =>
           line.flows.map((flow) => (
             <linearGradient
               id={flow.gradientId}
-              href={href(waveId(line.kind))}
+              href={href(WAVE_ID)}
               gradientUnits="userSpaceOnUse"
               x1={flow.waveEnds.x1.from}
               y1={flow.waveEnds.y1.from}
@@ -369,7 +348,7 @@ const bracketOuter = bracketInner + 5
     {
       lines.map((line) => (
         <path
-          class={`imap-${line.kind}`}
+          class={`imap-link imap-${line.kind}`}
           d={line.d}
           marker-start={line.twoWay ? url(arrowId(line.kind)) : undefined}
           marker-end={url(arrowId(line.kind))}
@@ -493,18 +472,36 @@ const bracketOuter = bracketInner + 5
     </g>
   </svg>
 
+  {/* The green links are what Ube sets up, and the purple flow along them is
+      what it runs. */}
   <ul class="imap-legend" aria-hidden="true">
-    {
-      linkKinds.map((kind) => (
-        <li>
-          <svg width="16" height="8" viewBox="0 0 16 8">
-            <path class={`imap-${kind}`} d="M 0 4 L 10 4" />
-            <path class={`imap-${kind}-arrow`} d="M 10 1 L 16 4 L 10 7 z" />
-          </svg>
-          {legendText[kind]}
-        </li>
-      ))
-    }
+    <li>
+      <svg class="imap-link" width="16" height="8" viewBox="0 0 16 8">
+        <path class="imap-handoff" d="M 1 4 L 10 4" />
+        <path class="imap-arrow" d="M 10 1 L 16 4 L 10 7 z" />
+      </svg>
+      Ube configures
+    </li>
+    <li class="imap-legend-flow">
+      <svg width="16" height="8" viewBox="0 0 16 8">
+        <linearGradient
+          id={LEGEND_WAVE_ID}
+          gradientUnits="userSpaceOnUse"
+          x1="1"
+          x2="12"
+        >
+          <stop class="imap-wave-tail" offset="0%" stop-opacity="0" />
+          <stop class="imap-wave-head" offset="100%" stop-opacity="0.9" />
+        </linearGradient>
+        <path
+          class="imap-wave"
+          d="M 1 4 L 12 4"
+          stroke={url(LEGEND_WAVE_ID)}
+        />
+        <circle class="imap-rider" cx="12.5" cy="4" r="2.5" />
+      </svg>
+      Ube orchestrates
+    </li>
   </ul>
 </div>
 
@@ -523,60 +520,53 @@ const bracketOuter = bracketInner + 5
     color: var(--ink);
   }
 
+  /* Every link is green; only the flow along it is purple. A link and its
+     arrowheads fade together. */
+  .imap-link {
+    opacity: 0.8;
+  }
   .imap-handoff,
   .imap-spine {
     fill: none;
+    stroke: var(--success);
     stroke-linecap: round;
   }
   .imap-handoff {
-    stroke: var(--success);
     stroke-width: 1.75;
-    opacity: 0.85;
   }
   .imap-spine {
-    stroke: var(--accent-hover);
     stroke-width: 2.25;
-    opacity: 0.7;
   }
-  .imap-handoff-arrow {
+  .imap-arrow {
     fill: var(--success);
   }
-  .imap-spine-arrow {
-    fill: var(--accent-hover);
-  }
-  .imap-handoff-wave-tail {
+  .imap-wave-tail {
     stop-color: var(--accent);
   }
-  .imap-handoff-wave-head {
+  .imap-wave-head {
     stop-color: var(--accent-hover);
   }
-  /* A purple link carries a lighter wave, so it shows against the line. */
-  .imap-spine-wave-tail {
-    stop-color: color-mix(in oklab, var(--accent-hover) 85%, white);
-  }
-  .imap-spine-wave-head {
-    stop-color: color-mix(in oklab, var(--accent-hover) 70%, white);
-  }
-  .imap-waves > g {
+  .imap-waves > g,
+  .imap-legend .imap-wave {
     fill: none;
     stroke-linecap: round;
   }
   .imap-wave-glow {
     stroke-width: 7;
-    stroke-opacity: 0.25;
+    stroke-opacity: 0.2;
   }
   .imap-wave {
     stroke-width: 2.25;
   }
   .imap-rider {
-    fill: color-mix(in oklab, var(--accent-hover) 60%, white);
+    fill: color-mix(in oklab, var(--accent-hover) 80%, white);
   }
   .imap-rider-halo {
     fill: var(--accent-hover);
-    opacity: 0.25;
+    opacity: 0.2;
   }
   .imap-arrivals circle {
-    fill: color-mix(in oklab, var(--accent-hover) 35%, transparent);
+    fill: color-mix(in oklab, var(--accent-hover) 25%, transparent);
     stroke: var(--accent-hover);
     stroke-width: 2;
     vector-effect: non-scaling-stroke;
@@ -634,6 +624,10 @@ const bracketOuter = bracketInner + 5
     .imap-waves,
     .imap-riders,
     .imap-arrivals {
+      display: none;
+    }
+    /* With the flow gone, its key has nothing to point at. */
+    .imap-legend .imap-legend-flow {
       display: none;
     }
   }
