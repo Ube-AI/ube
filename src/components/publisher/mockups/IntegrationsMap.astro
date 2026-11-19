@@ -472,16 +472,10 @@ const bracketOuter = bracketInner + 5
     </g>
   </svg>
 
-  {/* The green links are what Ube sets up, and the purple flow along them is
-      what it runs. */}
+  {/* The green dot on a tool means Ube sets it up, and the purple flow along
+      the links is what it runs. */}
   <ul class="imap-legend" aria-hidden="true">
-    <li>
-      <svg class="imap-link" width="16" height="8" viewBox="0 0 16 8">
-        <path class="imap-handoff" d="M 1 4 L 10 4" />
-        <path class="imap-arrow" d="M 10 1 L 16 4 L 10 7 z" />
-      </svg>
-      Ube configures
-    </li>
+    <li><span class="imap-legend-dot"></span>Ube configures</li>
     <li class="imap-legend-flow">
       <svg width="16" height="8" viewBox="0 0 16 8">
         <linearGradient
@@ -618,6 +612,12 @@ const bracketOuter = bracketInner + 5
     display: flex;
     align-items: center;
     gap: 6px;
+  }
+  .imap-legend-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--success);
   }
 
   @media (prefers-reduced-motion: reduce) {
