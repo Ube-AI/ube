@@ -195,7 +195,9 @@ export const buildUbeSchema = (
     creator: { "@id": ids.orgId },
     featureList: [
       "Audits and instruments mobile apps with analytics and attribution SDKs",
-      "Works with Firebase, Amplitude, Clarity, RevenueCat, AppsFlyer, AdMob, Google Ads, Meta, TikTok, Creatify, and Sett",
+      // Every growth tool the site names, in the hero's map or the Stack
+      // section. Keep it in step with the list in public/llms.txt.
+      "Works with Firebase, Amplitude, PostHog, Clarity, RevenueCat, AppsFlyer, AdMob, Google Ads, Meta Ads, TikTok Ads, App Store Connect, Google Play, GitHub, Creatify, and Sett",
       "Sets up dashboards, MMP imports, SKAdNetwork schema, and event forwarding",
       "Creates and tests ad creatives across paid acquisition channels",
       "Finds drop-off points and recommends retention and monetization experiments",

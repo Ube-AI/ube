@@ -5,7 +5,10 @@ import {
   PlantIcon,
   SparkleIcon,
 } from "@phosphor-icons/react"
-import WeeklyMockup from "@/components/publisher/mockups/WeeklyMockup.astro"
+import IntegrationsMap from "@/components/publisher/mockups/IntegrationsMap.astro"
+import { heroRightRoom } from "@/data/integrations-map"
+
+const mapRightRoom = `${(heroRightRoom * 100).toFixed(2)}%`
 ---
 
 <section class="publisher-hero" id="top">
@@ -52,18 +55,15 @@ import WeeklyMockup from "@/components/publisher/mockups/WeeklyMockup.astro"
       </div>
     </div>
 
-    <div
-      class="publisher-hero-visual fade-in"
-      aria-label="Ube weekly brief mockup"
-    >
-      <WeeklyMockup />
+    <div class="publisher-hero-visual fade-in">
+      <IntegrationsMap />
     </div>
   </div>
 </section>
 
 <script src="./hero.client.ts"></script>
 
-<style>
+<style define:vars={{ mapRightRoom }}>
   .publisher-hero {
     position: relative;
     overflow: hidden;
@@ -95,8 +95,8 @@ import WeeklyMockup from "@/components/publisher/mockups/WeeklyMockup.astro"
     position: relative;
     z-index: 1;
     display: grid;
-    grid-template-columns: 1.1fr 1fr;
-    gap: 60px;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
     align-items: center;
   }
   .publisher-hero-inner > * {
@@ -162,9 +162,29 @@ import WeeklyMockup from "@/components/publisher/mockups/WeeklyMockup.astro"
 
   .publisher-hero-visual {
     position: relative;
+    justify-self: center;
+    width: 100%;
+    max-width: 520px;
     min-width: 0;
   }
 
+  @media (min-width: 1101px) {
+    .publisher-hero {
+      padding: 48px 0 128px;
+    }
+    /* The map stands taller than the copy beside it, so on a laptop it is
+       held to the screen's height, with the legend just under the fold, and
+       on a taller screen it fills its column. The 121px is the nav (73) and
+       the padding above (48); the 0.8 is the map's width over its height
+       (520 by 650). It sits at the column's right edge, moved right by the
+       room the drawing leaves beside its rightmost circle, so that circle
+       lines up with the nav's right edge as the copy lines up with the logo. */
+    .publisher-hero-visual {
+      justify-self: end;
+      max-width: max(340px, calc((100svh - 121px) * 0.8));
+      translate: var(--mapRightRoom) 0;
+    }
+  }
   @media (min-width: 1025px) {
     .publisher-hero-title {
       font-size: min(clamp(44px, 4.55vw, 58px), 9.5cqi);
