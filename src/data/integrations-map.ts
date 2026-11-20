@@ -106,10 +106,16 @@ function towards(point: Point, target: Point, distance: number): Point {
 export const arrowSize: Record<LinkKind, number> = { handoff: 6, spine: 7 }
 const arrowReach = (kind: LinkKind) => (arrowSize[kind] * 7) / 8
 
+// How far, in map units, both ends of a bent link must stay short of the point
+// its bend pulls towards. Closer, the line hooks just before its arrowhead;
+// past that point it folds back and the head points away from the circle.
+const MIN_BEND_ROOM = 12
+
 // A link bends to the same side of its direction as on the panel, and stops
 // short of the rims of its two circles: 4 map units at a plain end and 6 at an
 // end with an arrowhead. There the line also stops short by the head's length,
 // so the tip lands 6 short of the rim. A two-way link has a head at both ends.
+// A link too short to bend without hooking runs straight.
 export function linkCurve(
   from: Point,
   to: Point,
@@ -126,10 +132,25 @@ export function linkCurve(
     y: (from.y + to.y) / 2 + (dx / length) * bend,
   }
   const reach = arrowReach(kind)
+  const startsAt = fromRadius + (twoWay ? 6 + reach : 4)
+  const endsAt = toRadius + 6 + reach
+  const room = Math.min(
+    Math.hypot(control.x - from.x, control.y - from.y) - startsAt,
+    Math.hypot(control.x - to.x, control.y - to.y) - endsAt,
+  )
+  if (room < MIN_BEND_ROOM) {
+    const start = towards(from, to, startsAt)
+    const end = towards(to, from, endsAt)
+    return {
+      start,
+      control: { x: (start.x + end.x) / 2, y: (start.y + end.y) / 2 },
+      end,
+    }
+  }
   return {
-    start: towards(from, control, fromRadius + (twoWay ? 6 + reach : 4)),
+    start: towards(from, control, startsAt),
     control,
-    end: towards(to, control, toRadius + 6 + reach),
+    end: towards(to, control, endsAt),
   }
 }
 
